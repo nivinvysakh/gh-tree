@@ -12,9 +12,12 @@ import * as path from "path";
 export function updateMarkdownContent(
   existingContent: string,
   imageRelativePath: string,
-  altText: string = "tree"
+  altText: string = "tree",
+  cacheBust: boolean = true
 ): string {
-  const imageMarkdown = `![${altText}](${imageRelativePath})`;
+  const cleanPath = imageRelativePath.split("?")[0];
+  const finalPath = cacheBust ? `${cleanPath}?v=${Date.now()}` : cleanPath;
+  const imageMarkdown = `![${altText}](${finalPath})`;
   const startTag = "<!-- commit-tree-start -->";
   const endTag = "<!-- commit-tree-end -->";
 
@@ -52,7 +55,8 @@ export function updateMarkdownContent(
 export function updateMarkdownFile(
   markdownFilePath: string,
   imagePath: string,
-  altText: string = "tree"
+  altText: string = "tree",
+  cacheBust: boolean = true
 ): boolean {
   if (!markdownFilePath) return false;
 
@@ -75,7 +79,7 @@ export function updateMarkdownFile(
     content = fs.readFileSync(resolvedMarkdown, "utf-8");
   }
 
-  const updatedContent = updateMarkdownContent(content, relPath, altText);
+  const updatedContent = updateMarkdownContent(content, relPath, altText, cacheBust);
   fs.mkdirSync(path.dirname(resolvedMarkdown), { recursive: true });
   fs.writeFileSync(resolvedMarkdown, updatedContent, "utf-8");
   return true;

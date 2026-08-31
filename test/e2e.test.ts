@@ -58,6 +58,6 @@ describe("End-to-End GIF Generation", () => {
     updateMarkdownFile(tempReadmePath, tempGifPath, "tree");
 
     const readmeContent = fs.readFileSync(tempReadmePath, "utf-8");
-    expect(readmeContent).toContain("![tree](tree.gif)");
+    expect(readmeContent).toMatch(/!\[tree\]\(tree\.gif\?v=\d+\)/);
   });
 });
