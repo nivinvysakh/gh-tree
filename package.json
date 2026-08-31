@@ -18,7 +18,7 @@
     "gifenc": "^1.0.3"
   },
   "devDependencies": {
-    "@types/node": "^20.14.0",
+    "@types/node": "^26.4.0",
     "@vercel/ncc": "^0.38.1",
     "tsx": "^4.23.13",
     "typescript": "^5.5.4",
