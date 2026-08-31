@@ -1,5 +1,8 @@
-name: "gh-tree"
-description: "Renders your GitHub contribution graph as an animated Minecraft Oak Tree (leaves = commits, flowers = open PRs, red apples = merged PRs, golden apples = assigned PRs)"
+name: "Minecraft Commit Tree"
+description: "Renders your GitHub contribution graph as an animated Minecraft Oak Tree with a transparent background."
+branding:
+  icon: "git-commit"
+  color: "green"
 inputs:
   github-token:
     description: "GitHub Token or Personal Access Token with read:user scope"
