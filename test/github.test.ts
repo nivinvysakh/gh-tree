@@ -12,7 +12,7 @@ describe("github module", () => {
     global.fetch = originalFetch;
   });
 
-  it("fetches and correctly parses contribution calendar and PRs", async () => {
+  it("fetches and correctly parses contribution calendar and PRs strictly within window", async () => {
     const mockGraphQLResponse = {
       data: {
         user: {
@@ -71,13 +71,20 @@ describe("github module", () => {
             ],
           },
           mergedPRs: {
-            totalCount: 1,
+            totalCount: 2,
             nodes: [
               {
                 id: "pr_2",
                 url: "https://github.com/test/repo/pull/2",
                 mergedAt: "2026-08-17T15:00:00Z",
                 createdAt: "2026-08-16T08:00:00Z",
+              },
+              // Old merged PR from 2 years ago (must be ignored!)
+              {
+                id: "pr_old",
+                url: "https://github.com/test/repo/pull/old",
+                mergedAt: "2024-01-01T00:00:00Z",
+                createdAt: "2023-12-01T00:00:00Z",
               },
             ],
           },
@@ -104,6 +111,7 @@ describe("github module", () => {
 
     expect(result.totalCommits).toBe(42);
     expect(result.totalOpenPRs).toBe(1);
+    // pr_old was outside window, so only 1 merged PR counted
     expect(result.totalMergedPRs).toBe(1);
     expect(result.totalAssignedPRs).toBe(1);
     expect(result.weeks).toHaveLength(2);

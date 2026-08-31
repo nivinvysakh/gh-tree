@@ -79,7 +79,7 @@ const QUERY = `
 
 /**
  * Fetches the authenticated user's contribution calendar, authored PRs,
- * merged PRs, and assigned PRs using GitHub's GraphQL API.
+ * merged PRs, and assigned PRs within the date window using GitHub's GraphQL API.
  */
 export async function fetchContributions(
   token: string,
@@ -140,7 +140,7 @@ export async function fetchContributions(
     };
   });
 
-  // Collect and deduplicate PR events
+  // Collect and deduplicate PR events strictly within the date window
   const countedOpenPRs = new Set<string>();
   const countedMergedPRs = new Set<string>();
   const countedAssignedPRs = new Set<string>();
@@ -154,15 +154,17 @@ export async function fetchContributions(
 
     if (pr.merged || pr.state === "MERGED") {
       if (!countedMergedPRs.has(prKey)) {
-        countedMergedPRs.add(prKey);
         const dateStr = (pr.mergedAt || item.occurredAt || pr.createdAt || "").slice(0, 10);
-        assignPRToWeek(weeks, dateStr, "merged");
+        if (assignPRToWeek(weeks, dateStr, "merged")) {
+          countedMergedPRs.add(prKey);
+        }
       }
     } else if (pr.state === "OPEN") {
       if (!countedOpenPRs.has(prKey)) {
-        countedOpenPRs.add(prKey);
         const dateStr = (item.occurredAt || pr.createdAt || "").slice(0, 10);
-        assignPRToWeek(weeks, dateStr, "open");
+        if (assignPRToWeek(weeks, dateStr, "open")) {
+          countedOpenPRs.add(prKey);
+        }
       }
     }
   }
@@ -172,9 +174,10 @@ export async function fetchContributions(
   for (const pr of directOpenNodes) {
     const prKey = pr.id || pr.url || pr.createdAt;
     if (!countedOpenPRs.has(prKey)) {
-      countedOpenPRs.add(prKey);
       const dateStr = (pr.createdAt || "").slice(0, 10);
-      assignPRToWeek(weeks, dateStr, "open");
+      if (assignPRToWeek(weeks, dateStr, "open")) {
+        countedOpenPRs.add(prKey);
+      }
     }
   }
 
@@ -183,9 +186,10 @@ export async function fetchContributions(
   for (const pr of directMergedNodes) {
     const prKey = pr.id || pr.url || pr.mergedAt || pr.createdAt;
     if (!countedMergedPRs.has(prKey)) {
-      countedMergedPRs.add(prKey);
       const dateStr = (pr.mergedAt || pr.createdAt || "").slice(0, 10);
-      assignPRToWeek(weeks, dateStr, "merged");
+      if (assignPRToWeek(weeks, dateStr, "merged")) {
+        countedMergedPRs.add(prKey);
+      }
     }
   }
 
@@ -195,9 +199,10 @@ export async function fetchContributions(
     if (!pr) continue;
     const prKey = pr.id || pr.url || pr.createdAt;
     if (!countedAssignedPRs.has(prKey)) {
-      countedAssignedPRs.add(prKey);
       const dateStr = (pr.createdAt || "").slice(0, 10);
-      assignPRToWeek(weeks, dateStr, "assigned");
+      if (assignPRToWeek(weeks, dateStr, "assigned")) {
+        countedAssignedPRs.add(prKey);
+      }
     }
   }
 
@@ -214,23 +219,28 @@ function assignPRToWeek(
   weeks: ContributionWeek[],
   dateStr: string,
   type: "open" | "merged" | "assigned"
-): void {
-  if (weeks.length === 0) return;
+): boolean {
+  if (weeks.length === 0 || !dateStr) return false;
 
-  let matchedIndex = weeks.findIndex((w) => {
+  const firstWeek = weeks[0];
+  const lastWeek = weeks[weeks.length - 1];
+  const windowStart = firstWeek.days[0]?.date || "";
+  const windowEnd = lastWeek.days[lastWeek.days.length - 1]?.date || "";
+
+  // Strictly enforce that the PR must have occurred within the weeks window
+  if (windowStart && dateStr < windowStart) {
+    return false;
+  }
+  if (windowEnd && dateStr > windowEnd) {
+    return false;
+  }
+
+  const matchedIndex = weeks.findIndex((w) => {
     if (w.days.length === 0) return false;
     const start = w.days[0].date;
     const end = w.days[w.days.length - 1].date;
     return dateStr >= start && dateStr <= end;
   });
-
-  if (matchedIndex === -1) {
-    if (dateStr < (weeks[0].days[0]?.date || "")) {
-      matchedIndex = 0;
-    } else {
-      matchedIndex = weeks.length - 1;
-    }
-  }
 
   if (matchedIndex >= 0 && matchedIndex < weeks.length) {
     if (type === "open") {
@@ -240,5 +250,8 @@ function assignPRToWeek(
     } else {
       weeks[matchedIndex].assignedPRs += 1;
     }
+    return true;
   }
+
+  return false;
 }
