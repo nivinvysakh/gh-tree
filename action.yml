@@ -1,0 +1,59 @@
+name: "gh-tree"
+description: "Renders your GitHub contribution graph as an animated Minecraft Oak Tree (leaves = commits, flowers = open PRs, red apples = merged PRs, golden apples = assigned PRs)"
+inputs:
+  github-token:
+    description: "GitHub Token (${{ secrets.GITHUB_TOKEN }} or PAT with read:user scope)"
+    required: false
+    default: ${{ github.token }}
+  github-login:
+    description: "GitHub username whose contributions drive the tree (defaults to repository owner)"
+    required: false
+    default: ${{ github.repository_owner }}
+  output-path:
+    description: "Where to write the generated GIF"
+    required: false
+    default: "tree.gif"
+  markdown-path:
+    description: "Path to markdown file to update with the GIF (defaults to README.md, set empty to disable)"
+    required: false
+    default: "README.md"
+  auto-commit:
+    description: "Whether to automatically commit and push the generated tree.gif and updated README.md"
+    required: false
+    default: "true"
+  commit-message:
+    description: "Commit message when auto-committing"
+    required: false
+    default: "chore: update commit tree [skip ci]"
+  days:
+    description: "How many days of history to pull (bucketed into weekly branches)"
+    required: false
+    default: "140"
+  frames:
+    description: "Number of animation frames in the loop"
+    required: false
+    default: "20"
+  frame-delay-ms:
+    description: "Delay per GIF frame in milliseconds"
+    required: false
+    default: "100"
+  width:
+    required: false
+    default: "460"
+  height:
+    required: false
+    default: "420"
+outputs:
+  gif-path:
+    description: "Absolute path to the generated GIF"
+  total-commits:
+    description: "Total contributions counted in the date range"
+  open-prs:
+    description: "Total open pull requests authored by user"
+  merged-prs:
+    description: "Total merged pull requests"
+  assigned-prs:
+    description: "Total open pull requests assigned to user"
+runs:
+  using: "node20"
+  main: "dist/index.js"

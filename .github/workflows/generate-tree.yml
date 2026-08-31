@@ -1,0 +1,38 @@
+name: Generate Commit Tree
+
+on:
+  schedule:
+    # Every day at 00:00 UTC
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  render-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build action bundle
+        run: npm run build
+
+      - name: Render Minecraft Tree
+        uses: ./
+        with:
+          github-token: ${{ secrets.TREE_PAT || secrets.GITHUB_TOKEN }}
+          github-login: ${{ github.repository_owner }}
+          output-path: "tree.gif"
+          markdown-path: "README.md"
