@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { encodeGif } from "../src/gif";
 
 describe("gif module", () => {
-  it("encodes SVG frames into a valid GIF with GIF89a magic header", () => {
+  it("encodes SVG frames into a valid GIF with GIF89a magic header", async () => {
     const frame1 = {
       svg: `<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
         <rect width="100" height="100" fill="#6ec6ff" />
@@ -16,7 +16,7 @@ describe("gif module", () => {
       </svg>`,
     };
 
-    const bytes = encodeGif([frame1, frame2], 100, 100, 100);
+    const bytes = await encodeGif([frame1, frame2], 100, 100, 100);
 
     expect(bytes).toBeInstanceOf(Uint8Array);
     expect(bytes.length).toBeGreaterThan(0);

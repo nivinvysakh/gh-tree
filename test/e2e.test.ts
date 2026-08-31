@@ -7,7 +7,7 @@ import { encodeGif } from "../src/gif";
 import { updateMarkdownFile } from "../src/markdown";
 
 describe("End-to-End GIF Generation", () => {
-  it("generates a tree.gif with leaves, flowers, and fruits, and updates README.md", () => {
+  it("generates a tree.gif with leaves, flowers, and fruits, and updates README.md", async () => {
     const weeks = [];
     const now = new Date();
     for (let i = 14; i >= 0; i--) {
@@ -32,7 +32,7 @@ describe("End-to-End GIF Generation", () => {
       svg: renderFrame(layout, i, frameCount),
     }));
 
-    const gifBytes = encodeGif(frames, width, height, 100);
+    const gifBytes = await encodeGif(frames, width, height, 100);
     const outputPath = path.resolve(__dirname, "../tree.gif");
     fs.writeFileSync(outputPath, gifBytes);
 

@@ -6,7 +6,7 @@ import { encodeGif } from "../src/gif";
 import { updateMarkdownFile } from "../src/markdown";
 import { ContributionWeek } from "../src/github";
 
-function runMockGeneration(): void {
+async function runMockGeneration(): Promise<void> {
   console.log("Generating full Minecraft Commit Tree GIF preview showcasing all features...");
 
   // 14 weeks crafted to showcase all levels: 0 (dormant), 1 (light), 2 (medium), 3 (lush), 4 (emerald)
@@ -55,7 +55,7 @@ function runMockGeneration(): void {
   }));
 
   console.log("Encoding transparent GIF...");
-  const gifBytes = encodeGif(frames, width, height, frameDelayMs);
+  const gifBytes = await encodeGif(frames, width, height, frameDelayMs);
 
   const outputPath = path.resolve(__dirname, "../tree.gif");
   fs.writeFileSync(outputPath, gifBytes);

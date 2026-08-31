@@ -88,7 +88,7 @@ async function run(): Promise<void> {
     }));
 
     core.info("Encoding animated GIF...");
-    const gifBytes = encodeGif(frames, width, height, frameDelayMs);
+    const gifBytes = await encodeGif(frames, width, height, frameDelayMs);
 
     const resolvedPath = path.resolve(outputPath);
     fs.mkdirSync(path.dirname(resolvedPath), { recursive: true });
