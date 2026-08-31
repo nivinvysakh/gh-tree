@@ -59,7 +59,7 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 
 | Input             | Default      | Description                                      |
 |-------------------|--------------|--------------------------------------------------|
-| `github-token`    | `${{ github.token }}` | GitHub Token or PAT with `read:user` scope |
+| `github-token`    | *(Required)* | GitHub Token or PAT with `read:user` scope |
 | `github-login`    | `repository_owner`    | GitHub username (defaults to repo owner)   |
 | `output-path`     | `tree.gif`   | Filepath where the generated GIF is written      |
 | `markdown-path`   | `README.md`  | Markdown file to update (set empty to disable)   |

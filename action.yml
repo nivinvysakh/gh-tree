@@ -2,13 +2,11 @@ name: "gh-tree"
 description: "Renders your GitHub contribution graph as an animated Minecraft Oak Tree (leaves = commits, flowers = open PRs, red apples = merged PRs, golden apples = assigned PRs)"
 inputs:
   github-token:
-    description: "GitHub Token (${{ secrets.GITHUB_TOKEN }} or PAT with read:user scope)"
-    required: false
-    default: ${{ github.token }}
+    description: "GitHub Token or Personal Access Token with read:user scope"
+    required: true
   github-login:
     description: "GitHub username whose contributions drive the tree (defaults to repository owner)"
     required: false
-    default: ${{ github.repository_owner }}
   output-path:
     description: "Where to write the generated GIF"
     required: false
