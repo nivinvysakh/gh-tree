@@ -1,6 +1,6 @@
 <div align="center">
 
-# gh-tree
+# gh-tree 🌴
 
 
 <!-- commit-tree-start -->
@@ -49,8 +49,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
-
-> **Note**: If you want the tree to reflect contributions across private and external repositories, create a Personal Access Token (PAT) with `read:user` scope, save it in your repo secrets as `TREE_PAT`, and use `${{ secrets.TREE_PAT }}`.
+> [!NOTE]
+> If you want the tree to reflect contributions across private and external repositories, create a Personal Access Token (PAT) with `read:user` scope, save it in your repo secrets as `TREE_PAT`, and use `${{ secrets.TREE_PAT }}`.
 
 ### Embed in Your README.md
 Add this anywhere in your `README.md`:
@@ -112,3 +112,20 @@ Build action bundle:
 ```bash
 npm run build
 ```
+
+## Contributors 👥
+Big thanks to all of the amazing people who have helped by contributing to this project!
+
+<a href="https://github.com/nivinvysakh/gh-tree/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nivinvysakh/gh-tree" />
+</a>
+
+---
+
+<div align="center">
+
+[![GitHub Action](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/marketplace/actions/minecraft-commit-tree)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+[![Licence](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)](./LICENSE)
+
+</div>
