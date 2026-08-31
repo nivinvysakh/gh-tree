@@ -7,34 +7,39 @@ import { updateMarkdownFile } from "../src/markdown";
 import { ContributionWeek } from "../src/github";
 
 function runMockGeneration(): void {
-  console.log("Generating Minecraft Commit Tree GIF (commits determine leaf greenness, flowers & golden apples on grass, red apples in canopy)...");
+  console.log("Generating full Minecraft Commit Tree GIF preview showcasing all features...");
 
-  const weeks: ContributionWeek[] = [];
+  // 14 weeks crafted to showcase all levels: 0 (dormant), 1 (light), 2 (medium), 3 (lush), 4 (emerald)
+  const commitCounts = [
+    3,  // Tier 0 (bottom left outer) - Level 1
+    18, // Tier 0 (bottom left inner) - Level 3
+    42, // Tier 0 (bottom center) - Level 4
+    2,  // Tier 0 (bottom right inner) - Level 1
+    0,  // Tier 0 (bottom right outer) - Level 0 (no commits)
+    0,  // Tier -1 (mid left outer) - Level 0 (no commits)
+    12, // Tier -1 (mid left inner) - Level 2
+    38, // Tier -1 (mid center) - Level 4
+    8,  // Tier -1 (mid right inner) - Level 2
+    0,  // Tier -1 (mid right outer) - Level 0 (no commits)
+    34, // Tier -2 (upper left) - Level 4
+    25, // Tier -2 (upper center) - Level 3
+    28, // Tier -2 (upper right) - Level 3
+    48, // Tier -3 (top peak) - Level 4 (large commits)
+  ];
+
   const now = new Date();
-  const weekCount = 14;
-
-  for (let i = weekCount - 1; i >= 0; i--) {
-    const d = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+  const weeks: ContributionWeek[] = commitCounts.map((count, idx) => {
+    const d = new Date(now.getTime() - (13 - idx) * 7 * 24 * 60 * 60 * 1000);
     const dateStr = d.toISOString().slice(0, 10);
-    
-    // Vary commit activity from 0 to 45 across weeks
-    const commits = i === 13 ? 35 : i % 4 === 0 ? 0 : i % 3 === 0 ? 25 : (i * 3 + 2);
-    
-    // Flowers for open authored PRs (max 4 on grass)
-    const openPRs = i === 3 || i === 9 ? 2 : 0;
-    // Red apples for merged PRs (max 4 in canopy)
-    const mergedPRs = i === 6 || i === 12 ? 2 : 0;
-    // Golden apples for assigned PRs (max 4 on grass)
-    const assignedPRs = i === 2 || i === 8 ? 2 : 0;
 
-    weeks.push({
-      days: [{ date: dateStr, count: commits }],
-      total: commits,
-      openPRs,
-      mergedPRs,
-      assignedPRs,
-    });
-  }
+    return {
+      days: [{ date: dateStr, count }],
+      total: count,
+      openPRs: idx === 3 || idx === 10 ? 2 : 0,    // Total 4 flowers (2 left, 2 right)
+      mergedPRs: idx === 2 || idx === 8 ? 2 : 0,   // Total 4 red apples in canopy
+      assignedPRs: idx === 1 || idx === 7 ? 2 : 0, // Total 4 golden apples (2 far-left, 2 far-right)
+    };
+  });
 
   const width = 460;
   const height = 420;
@@ -59,7 +64,7 @@ function runMockGeneration(): void {
   const readmePath = path.resolve(__dirname, "../README.md");
   updateMarkdownFile(readmePath, outputPath, "tree");
   console.log(`✓ Updated ${readmePath} with ![tree](tree.gif)`);
-  console.log("Done! Open tree.gif to view your Minecraft Commit Tree.");
+  console.log("Done! Open tree.gif to view your full Minecraft Commit Tree preview.");
 }
 
 runMockGeneration();
