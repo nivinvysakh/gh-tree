@@ -20,7 +20,7 @@ export interface ContributionData {
 }
 
 const QUERY = `
-  query ($login: String!, $from: DateTime!, $to: DateTime!, $assignedQuery: String!) {
+  query ($login: String!, $from: DateTime!, $to: DateTime!, $assignedQuery: String!, $reviewQuery: String!) {
     user(login: $login) {
       contributionsCollection(from: $from, to: $to) {
         contributionCalendar {
@@ -41,6 +41,16 @@ const QUERY = `
               state
               merged
               mergedAt
+              createdAt
+            }
+          }
+        }
+        pullRequestReviewContributions(first: 100) {
+          nodes {
+            occurredAt
+            pullRequest {
+              id
+              url
               createdAt
             }
           }
@@ -74,12 +84,22 @@ const QUERY = `
         }
       }
     }
+    reviewedPRs: search(query: $reviewQuery, type: ISSUE, first: 100) {
+      issueCount
+      nodes {
+        ... on PullRequest {
+          id
+          url
+          createdAt
+        }
+      }
+    }
   }
 `;
 
 /**
  * Fetches the authenticated user's contribution calendar, authored PRs,
- * merged PRs, and assigned PRs within the date window using GitHub's GraphQL API.
+ * merged PRs, PR reviews, and assigned PRs within the date window using GitHub's GraphQL API.
  */
 export async function fetchContributions(
   token: string,
@@ -89,6 +109,7 @@ export async function fetchContributions(
   const to = new Date();
   const from = new Date(to.getTime() - days * 24 * 60 * 60 * 1000);
   const assignedQuery = `is:pr is:open assignee:${login}`;
+  const reviewQuery = `is:pr reviewed-by:${login}`;
 
   const res = await fetch("https://api.github.com/graphql", {
     method: "POST",
@@ -104,6 +125,7 @@ export async function fetchContributions(
         from: from.toISOString(),
         to: to.toISOString(),
         assignedQuery,
+        reviewQuery,
       },
     }),
   });
@@ -169,6 +191,20 @@ export async function fetchContributions(
     }
   }
 
+  // Process pullRequestReviewContributions (PR Reviews -> Golden Apples 🍏✨)
+  const reviewContribs = collection.pullRequestReviewContributions?.nodes || [];
+  for (const item of reviewContribs) {
+    const pr = item.pullRequest;
+    if (!pr) continue;
+    const prKey = `review-${pr.id || pr.url || item.occurredAt}`;
+    if (!countedAssignedPRs.has(prKey)) {
+      const dateStr = (item.occurredAt || pr.createdAt || "").slice(0, 10);
+      if (assignPRToWeek(weeks, dateStr, "assigned")) {
+        countedAssignedPRs.add(prKey);
+      }
+    }
+  }
+
   // Process direct openPRs query
   const directOpenNodes = userData.openPRs?.nodes || [];
   for (const pr of directOpenNodes) {
@@ -198,6 +234,19 @@ export async function fetchContributions(
   for (const pr of assignedNodes) {
     if (!pr) continue;
     const prKey = pr.id || pr.url || pr.createdAt;
+    if (!countedAssignedPRs.has(prKey)) {
+      const dateStr = (pr.createdAt || "").slice(0, 10);
+      if (assignPRToWeek(weeks, dateStr, "assigned")) {
+        countedAssignedPRs.add(prKey);
+      }
+    }
+  }
+
+  // Process reviewed PRs from search
+  const reviewedNodes = json.data?.reviewedPRs?.nodes || [];
+  for (const pr of reviewedNodes) {
+    if (!pr) continue;
+    const prKey = `rev-search-${pr.id || pr.url || pr.createdAt}`;
     if (!countedAssignedPRs.has(prKey)) {
       const dateStr = (pr.createdAt || "").slice(0, 10);
       if (assignPRToWeek(weeks, dateStr, "assigned")) {

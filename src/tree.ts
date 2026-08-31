@@ -78,6 +78,9 @@ const CANOPY_SLOTS: { gridX: number; gridY: number }[] = [
   { gridX: 0, gridY: -3 },
 ];
 
+/**
+ * Maps commit counts to GitHub contribution intensity level (0 to 4)
+ */
 export function getCommitLevel(commits: number): number {
   if (commits <= 0) return 0;
   if (commits <= 4) return 1;
@@ -129,15 +132,22 @@ export function buildTreeLayout(
 
   // 2. Canopy Leaf Blocks (14 blocks with commit-driven green levels)
   const recentWeeks = weeks.slice(-14);
-  const defaultCommits = Math.max(0, Math.round(totalCommits / 14));
+  const avgCommits = totalCommits / Math.max(1, weeks.length);
+  
+  // Baseline greenness level derived from overall developer activity
+  const baselineLevel =
+    totalCommits >= 300 ? 3 : totalCommits >= 100 ? 2 : totalCommits >= 25 ? 1 : 0;
 
   const leafBlocks: LeafBlockPos[] = CANOPY_SLOTS.map((slot, idx) => {
     const x = trunkX + slot.gridX * bs;
     const y = canopyBottomY + slot.gridY * bs;
 
     const week = recentWeeks[idx];
-    const commitCount = week ? week.total : defaultCommits;
-    const commitLevel = getCommitLevel(commitCount);
+    const rawCommitCount = week ? week.total : Math.round(avgCommits);
+    const directLevel = getCommitLevel(rawCommitCount);
+
+    // If developer is highly active, blend weekly spikes with active baseline
+    const commitLevel = Math.min(4, Math.max(baselineLevel, directLevel));
 
     return {
       gridX: slot.gridX,
@@ -145,7 +155,7 @@ export function buildTreeLayout(
       x,
       y,
       size: bs,
-      commitCount,
+      commitCount: rawCommitCount,
       commitLevel,
       weekIndex: idx,
     };
@@ -210,12 +220,11 @@ export function buildTreeLayout(
     }
   }
 
-  // 5. Golden Apples 🍏✨ for Assigned PRs: Separate individual items on grass at Far Left & Far Right (Max 4)
+  // 5. Golden Apples 🍏✨ for PR Reviews & Assigned PRs: Separate individual items on grass (Max 4)
   const goldenApples: GoldenApplePos[] = [];
   if (totalAssignedPRs > 0) {
     const goldenAppleSize = 20;
 
-    // 4 separate side-by-side slots on grass (2 on far left, 2 on far right, no vertical stacking)
     const separateSlots: { x: number; side: "left" | "right" }[] = [
       { x: 20, side: "left" },   // Far Left Outer
       { x: 420, side: "right" }, // Far Right Outer

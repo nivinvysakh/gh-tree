@@ -12,7 +12,7 @@ describe("github module", () => {
     global.fetch = originalFetch;
   });
 
-  it("fetches and correctly parses contribution calendar and PRs strictly within window", async () => {
+  it("fetches and correctly parses contribution calendar, reviews, and PRs strictly within window", async () => {
     const mockGraphQLResponse = {
       data: {
         user: {
@@ -59,6 +59,18 @@ describe("github module", () => {
                 },
               ],
             },
+            pullRequestReviewContributions: {
+              nodes: [
+                {
+                  occurredAt: "2026-08-11T12:00:00Z",
+                  pullRequest: {
+                    id: "pr_rev_1",
+                    url: "https://github.com/test/repo/pull/99",
+                    createdAt: "2026-08-10T08:00:00Z",
+                  },
+                },
+              ],
+            },
           },
           openPRs: {
             totalCount: 1,
@@ -99,6 +111,10 @@ describe("github module", () => {
             },
           ],
         },
+        reviewedPRs: {
+          issueCount: 0,
+          nodes: [],
+        },
       },
     };
 
@@ -111,14 +127,14 @@ describe("github module", () => {
 
     expect(result.totalCommits).toBe(42);
     expect(result.totalOpenPRs).toBe(1);
-    // pr_old was outside window, so only 1 merged PR counted
     expect(result.totalMergedPRs).toBe(1);
-    expect(result.totalAssignedPRs).toBe(1);
+    // 1 assigned PR + 1 review contribution = 2 golden apples
+    expect(result.totalAssignedPRs).toBe(2);
     expect(result.weeks).toHaveLength(2);
 
     expect(result.weeks[0].total).toBe(5);
     expect(result.weeks[0].openPRs).toBe(1);
-    expect(result.weeks[0].assignedPRs).toBe(1);
+    expect(result.weeks[0].assignedPRs).toBe(2);
     expect(result.weeks[0].mergedPRs).toBe(0);
 
     expect(result.weeks[1].total).toBe(5);
