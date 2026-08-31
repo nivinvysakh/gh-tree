@@ -24,7 +24,7 @@ function tryAutoCommit(files: string[], message: string): void {
     const filesToAdd: string[] = [];
     for (const file of files) {
       if (fs.existsSync(file)) {
-        execSync(`git add "${file}"`);
+        execSync(`git add -f "${file}"`);
         filesToAdd.push(file);
       }
     }
