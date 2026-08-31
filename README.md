@@ -1,10 +1,20 @@
+<div align="center">
+
 # gh-tree
+
 
 <!-- commit-tree-start -->
 ![tree](tree.gif)
 <!-- commit-tree-end -->
 
-Renders your GitHub contribution graph and pull requests as an animated **Minecraft Oak Tree** with a **transparent background**:
+
+<p>
+  <b>Renders your GitHub contribution graph and pull requests as an animated Minecraft Oak Tree with a transparent background.</b>
+</p>
+
+</div>
+
+---
 
 - **Minecraft Oak Leaves** — weekly commits drive the lushness and green intensity levels (Level 0 pale/dormant to Level 4 rich emerald) across the 14 canopy blocks without deforming the tree structure.
 - **Minecraft Flowers 🌸 (Open Authored PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the grass ground (2 left / 2 right).
