@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: nivin/gh-tree@main
+      - uses: nivinvysakh/gh-tree@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
