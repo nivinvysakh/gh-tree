@@ -1,13 +1,26 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterAll } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
+import * as os from "os";
 import { buildTreeLayout } from "../src/tree";
 import { renderFrame } from "../src/svg";
 import { encodeGif } from "../src/gif";
 import { updateMarkdownFile } from "../src/markdown";
 
 describe("End-to-End GIF Generation", () => {
-  it("generates a tree.gif with leaves, flowers, and fruits, and updates README.md", async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "gh-tree-test-"));
+  const tempGifPath = path.join(tempDir, "tree.gif");
+  const tempReadmePath = path.join(tempDir, "README.md");
+
+  afterAll(() => {
+    try {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    } catch {
+      // ignore
+    }
+  });
+
+  it("generates a tree.gif with leaves, flowers, apples, and golden apples, and updates markdown", async () => {
     const weeks = [];
     const now = new Date();
     for (let i = 14; i >= 0; i--) {
@@ -16,11 +29,13 @@ describe("End-to-End GIF Generation", () => {
       const commits = i === 10 ? 25 : i % 3 === 0 ? 8 : 2;
       const openPRs = i === 5 || i === 11 ? 2 : 0;
       const mergedPRs = i === 8 || i === 12 ? 3 : 0;
+      const assignedPRs = i === 2 || i === 7 ? 2 : 0;
       weeks.push({
         days: [{ date: dateStr, count: commits }],
         total: commits,
         openPRs,
         mergedPRs,
+        assignedPRs,
       });
     }
 
@@ -33,16 +48,16 @@ describe("End-to-End GIF Generation", () => {
     }));
 
     const gifBytes = await encodeGif(frames, width, height, 100);
-    const outputPath = path.resolve(__dirname, "../tree.gif");
-    fs.writeFileSync(outputPath, gifBytes);
+    fs.writeFileSync(tempGifPath, gifBytes);
 
-    expect(fs.existsSync(outputPath)).toBe(true);
+    expect(fs.existsSync(tempGifPath)).toBe(true);
     expect(gifBytes.length).toBeGreaterThan(1000);
 
-    const readmePath = path.resolve(__dirname, "../README.md");
-    updateMarkdownFile(readmePath, outputPath, "tree");
+    // Initial dummy README
+    fs.writeFileSync(tempReadmePath, "# Test Repo\n\n<!-- commit-tree-start -->\n<!-- commit-tree-end -->\n", "utf-8");
+    updateMarkdownFile(tempReadmePath, tempGifPath, "tree");
 
-    const readmeContent = fs.readFileSync(readmePath, "utf-8");
+    const readmeContent = fs.readFileSync(tempReadmePath, "utf-8");
     expect(readmeContent).toContain("![tree](tree.gif)");
   });
 });
