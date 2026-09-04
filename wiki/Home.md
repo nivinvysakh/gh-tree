@@ -30,3 +30,27 @@ Explore our detailed documentation and game mechanics below:
 ```
 
 *(See [Getting Started](Getting-Started) for complete workflow automation examples!)*
+
+---
+
+## 💖 Used By
+
+This project is empowering developers to gamify their profiles! Are you using `gh-tree`? Open a PR to add your profile here!
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/sudo-arash">
+        <img src="https://github.com/sudo-arash.png?size=100" width="100px;" alt="Arash"/><br />
+        <sub><b>sudo-arash</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/nivinvysakh">
+        <img src="https://github.com/nivinvysakh.png?size=100" width="100px;" alt="Nivin"/><br />
+        <sub><b>Nivin</b></sub>
+      </a>
+    </td>
+    <!-- You can easily add more <td> blocks here as more users join! -->
+  </tr>
+</table>
