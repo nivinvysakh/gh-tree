@@ -4,7 +4,7 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif)
+![tree](tree.gif?v=1788513185715)
 <!-- commit-tree-end -->
 
 
@@ -57,7 +57,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif)
+![tree](tree.gif?v=1788513185715)
 <!-- commit-tree-end -->
 ```
 

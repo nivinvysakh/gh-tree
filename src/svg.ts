@@ -61,6 +61,56 @@ const LEAF_LEVEL_PALETTES = [
   ["#1a6b24", "#0f4e17", "#08350e", "#35b349"],
 ];
 
+function renderMinecraftSun(
+  x: number,
+  y: number,
+  size: number,
+  frameIndex: number,
+  totalFrames: number
+): string {
+  const ps = size / 10;
+  const shimmer = (frameIndex % Math.max(1, totalFrames)) < totalFrames / 2;
+  const glow = shimmer ? 1.0 : 0.0;
+
+  return `
+    <!-- Minecraft Sun -->
+    <g shape-rendering="crispEdges">
+      <!-- Outer Golden Sun Flare Glow -->
+      <rect x="${(x - glow * 2).toFixed(1)}" y="${(y - glow * 2).toFixed(1)}" width="${(size + glow * 4).toFixed(1)}" height="${(size + glow * 4).toFixed(1)}" fill="#ffe082" opacity="${shimmer ? 0.35 : 0.2}" />
+      <!-- Outer Yellow Sun Frame -->
+      <rect x="${(x + ps).toFixed(1)}" y="${(y + ps).toFixed(1)}" width="${(size - 2 * ps).toFixed(1)}" height="${(size - 2 * ps).toFixed(1)}" fill="#fbc02d" />
+      <!-- Inner Warm Golden Layer -->
+      <rect x="${(x + 2 * ps).toFixed(1)}" y="${(y + 2 * ps).toFixed(1)}" width="${(size - 4 * ps).toFixed(1)}" height="${(size - 4 * ps).toFixed(1)}" fill="#fff176" />
+      <!-- Pure White Solar Core -->
+      <rect x="${(x + 3 * ps).toFixed(1)}" y="${(y + 3 * ps).toFixed(1)}" width="${(size - 6 * ps).toFixed(1)}" height="${(size - 6 * ps).toFixed(1)}" fill="#ffffff" />
+    </g>
+  `;
+}
+
+function renderMinecraftCloud(
+  x: number,
+  y: number,
+  scale: number = 1.0,
+  opacity: number = 0.85
+): string {
+  const ps = 2.4 * scale;
+  return `
+    <g shape-rendering="crispEdges" opacity="${opacity}">
+      <!-- Stepped Cloud Top Puff -->
+      <rect x="${(x + 8 * ps).toFixed(1)}" y="${(y - 2 * ps).toFixed(1)}" width="${(8 * ps).toFixed(1)}" height="${(2 * ps).toFixed(1)}" fill="#ffffff" />
+      <rect x="${(x + 4 * ps).toFixed(1)}" y="${y.toFixed(1)}" width="${(16 * ps).toFixed(1)}" height="${(3 * ps).toFixed(1)}" fill="#ffffff" />
+      
+      <!-- Main Cloud White Body -->
+      <rect x="${x.toFixed(1)}" y="${(y + 3 * ps).toFixed(1)}" width="${(24 * ps).toFixed(1)}" height="${(4 * ps).toFixed(1)}" fill="#ffffff" />
+      <rect x="${(x + 2 * ps).toFixed(1)}" y="${(y + 1 * ps).toFixed(1)}" width="${(20 * ps).toFixed(1)}" height="${(2 * ps).toFixed(1)}" fill="#ffffff" />
+      
+      <!-- Stepped Cloud Bottom Shading (Minecraft grey-blue shadow) -->
+      <rect x="${(x + 1 * ps).toFixed(1)}" y="${(y + 7 * ps).toFixed(1)}" width="${(22 * ps).toFixed(1)}" height="${(2 * ps).toFixed(1)}" fill="#cfd8dc" />
+      <rect x="${(x + 3 * ps).toFixed(1)}" y="${(y + 9 * ps).toFixed(1)}" width="${(18 * ps).toFixed(1)}" height="${(1.5 * ps).toFixed(1)}" fill="#b0bec5" />
+    </g>
+  `;
+}
+
 function renderMinecraftGround(width: number, height: number, groundY: number): string {
   const grassHeight = 14;
   return `
@@ -234,6 +284,27 @@ export function renderFrame(
 ): string {
   const { width, height, groundY, trunkBlocks, leafBlocks, flowers, apples, goldenApples } = layout;
 
+  // Sky elements: Minecraft Sun & Floating Clouds
+  const sunX = width - 82; // Right upper sky (378px)
+  const sunY = 18;
+  const sunSize = 34;
+  const sunSvg = renderMinecraftSun(sunX, sunY, sunSize, frameIndex, totalFrames);
+
+  // Two drifting Minecraft clouds with seamless looping
+  const driftRatio = totalFrames > 0 ? frameIndex / totalFrames : 0;
+  
+  // Cloud 1: Left upper sky
+  const cloud1BaseX = 18;
+  const cloud1X = cloud1BaseX + Math.sin(driftRatio * Math.PI * 2) * 8;
+  const cloud1Y = 32;
+  const cloud1Svg = renderMinecraftCloud(cloud1X, cloud1Y, 1.0, 0.85);
+
+  // Cloud 2: Right mid sky
+  const cloud2BaseX = width - 110;
+  const cloud2X = cloud2BaseX - Math.sin(driftRatio * Math.PI * 2) * 6;
+  const cloud2Y = 62;
+  const cloud2Svg = renderMinecraftCloud(cloud2X, cloud2Y, 0.75, 0.75);
+
   // 1. Grass & Dirt Ground Layer
   const groundSvg = renderMinecraftGround(width, height, groundY);
 
@@ -255,6 +326,9 @@ export function renderFrame(
   const goldenApplesSvg = (goldenApples || []).map((g) => renderGoldenAppleOnGrass(g, frameIndex)).join("\n");
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+  ${sunSvg}
+  ${cloud1Svg}
+  ${cloud2Svg}
   ${groundSvg}
   ${trunkSvg}
   ${leavesSvg}

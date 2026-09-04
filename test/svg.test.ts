@@ -33,13 +33,17 @@ describe("Minecraft SVG module", () => {
     assignedPRs: 1,
   };
 
-  it("renders a transparent background SVG string with grass ground and Minecraft tree", () => {
+  it("renders a transparent background SVG string with grass ground, sun, clouds, and Minecraft tree", () => {
     const svg = renderFrame(mockLayout, 0, 20);
 
     expect(svg).toContain('<svg width="460" height="420"');
     expect(svg).toContain('viewBox="0 0 460 420"');
     expect(svg).toContain("</svg>");
     expect(svg).toContain('shape-rendering="crispEdges"');
+
+    // Sun & Clouds
+    expect(svg).toContain('fill="#fbc02d"');
+    expect(svg).toContain('fill="#cfd8dc"');
 
     // Grass & Dirt ground
     expect(svg).toContain('fill="#7cb342"');
