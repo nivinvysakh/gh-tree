@@ -1,0 +1,46 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'wiki/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Repo
+        uses: actions/checkout@v4
+
+      - name: Sync Wiki Documentation
+        run: |
+          WIKI_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git"
+          
+          # Attempt to clone the wiki repository
+          if git clone "$WIKI_URL" wiki-repo 2>/dev/null; then
+            echo "✓ Wiki repository cloned successfully."
+            cp -rf wiki/* wiki-repo/
+            cd wiki-repo
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            if git status --porcelain | grep -q .; then
+              git add .
+              git commit -m "docs(wiki): sync wiki documentation from main"
+              git push origin HEAD:master
+              echo "✓ Wiki successfully synced and published to GitHub Wiki!"
+            else
+              echo "No changes to sync."
+            fi
+          else
+            echo "::warning ::Wiki repository not found or not initialized yet."
+            echo "To initialize the GitHub Wiki:"
+            echo "1. Go to https://github.com/${{ github.repository }}/wiki"
+            echo "2. Click 'Create the first page' and save it."
+            echo "3. Re-run this workflow (or push a commit) to automatically sync all wiki guides."
+          fi
