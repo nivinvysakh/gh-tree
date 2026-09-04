@@ -105,8 +105,8 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain('fill="#ffd600"');
     expect(svg).toContain('fill="#ff1744"');
 
-    // Lapis Lazuli Ore (#1565c0 + pyrite #ffd54f)
-    expect(svg).toContain('fill="#1565c0"');
+    // Lapis Lazuli Ore (#1d57b8 + pyrite #ffd54f)
+    expect(svg).toContain('fill="#1d57b8"');
     expect(svg).toContain('fill="#ffd54f"');
 
     // Netherite / Ancient Debris Block (#2b2622 + metallic bronze #d4a373)

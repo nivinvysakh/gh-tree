@@ -354,10 +354,36 @@ function renderMinecraftGround(
           <rect x="${ore.x + 10}" y="${ore.y + 13}" width="2" height="2" fill="#ffd166" />
         </g>
       `;
+    } else if (ore.type === "lapis") {
+      // Lapis Lazuli Ore (Royal Ultramarine Clusters with embedded Pyrite Flecks)
+      oresSvg += `
+        <!-- LAPIS ORE BLOCK -->
+        <g shape-rendering="crispEdges">
+          <rect x="${ore.x}" y="${ore.y}" width="24" height="20" fill="#616161" />
+          <rect x="${ore.x + 2}" y="${ore.y + 2}" width="20" height="16" fill="#757575" />
+          
+          <!-- Top-Left Lapis Cluster with embedded pyrite -->
+          <rect x="${ore.x + 4}" y="${ore.y + 4}" width="6" height="5" fill="#103f91" />
+          <rect x="${ore.x + 5}" y="${ore.y + 4}" width="4" height="4" fill="#1d57b8" />
+          <rect x="${ore.x + 5}" y="${ore.y + 4}" width="2" height="2" fill="#5c95e8" />
+          <rect x="${ore.x + 7}" y="${ore.y + 6}" width="2" height="2" fill="#ffd54f" />
+
+          <!-- Right Lapis Cluster -->
+          <rect x="${ore.x + 13}" y="${ore.y + 6}" width="5" height="5" fill="#103f91" />
+          <rect x="${ore.x + 14}" y="${ore.y + 6}" width="4" height="4" fill="#1d57b8" />
+          <rect x="${ore.x + 15}" y="${ore.y + 8}" width="2" height="2" fill="#0a2560" />
+          <rect x="${ore.x + 14}" y="${ore.y + 7}" width="2" height="2" fill="#ffd54f" />
+
+          <!-- Bottom Lapis Cluster -->
+          <rect x="${ore.x + 7}" y="${ore.y + 12}" width="7" height="5" fill="#103f91" />
+          <rect x="${ore.x + 8}" y="${ore.y + 12}" width="5" height="4" fill="#1d57b8" />
+          <rect x="${ore.x + 9}" y="${ore.y + 13}" width="2" height="2" fill="#5c95e8" />
+          <rect x="${ore.x + 11}" y="${ore.y + 14}" width="2" height="2" fill="#ffd54f" />
+        </g>
+      `;
     } else {
       const palette = ORE_PALETTES[ore.type] || ORE_PALETTES.diamond;
       const { gemColor, gemShine, gemShadow } = palette;
-      const isLapis = ore.type === "lapis";
 
       oresSvg += `
         <!-- ${ore.type.toUpperCase()} ORE BLOCK -->
@@ -370,7 +396,6 @@ function renderMinecraftGround(
           <rect x="${ore.x + 15}" y="${ore.y + 7}" width="2" height="2" fill="${gemShadow}" />
           <rect x="${ore.x + 8}" y="${ore.y + 12}" width="5" height="4" fill="${gemColor}" />
           <rect x="${ore.x + 9}" y="${ore.y + 13}" width="2" height="2" fill="${gemShine}" />
-          ${isLapis ? `<rect x="${ore.x + 6}" y="${ore.y + 8}" width="2" height="2" fill="#ffd54f" />` : ""}
         </g>
       `;
     }
