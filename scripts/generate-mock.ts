@@ -31,6 +31,7 @@ async function generateGifVariant(
 
   const gifBytes = await encodeGif(frames, width, height, frameDelayMs);
   const outputPath = path.resolve(__dirname, `../${filename}`);
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, gifBytes);
   console.log(`✓ Generated ${filename} [${treeType.toUpperCase()} | ${weather.type.toUpperCase()}] - ${(gifBytes.length / 1024).toFixed(1)} KB`);
   return outputPath;
@@ -81,17 +82,17 @@ async function runMockGeneration(): Promise<void> {
 
   const variants: { file: string; weather: WeatherCondition; treeType: TreeType }[] = [
     { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" }, treeType: "oak" },
-    { file: "tree-sakura.gif", weather: { type: "sunny", description: "Sunny Sakura Blossom" }, treeType: "sakura" },
-    { file: "tree-sakura-rain.gif", weather: { type: "rain", description: "Sakura in Rain" }, treeType: "sakura" },
-    { file: "tree-sakura-snow.gif", weather: { type: "snow", description: "Sakura in Snow" }, treeType: "sakura" },
-    { file: "tree-spruce.gif", weather: { type: "sunny", description: "Taiga Spruce" }, treeType: "spruce" },
-    { file: "tree-spruce-snow.gif", weather: { type: "snow", description: "Taiga Spruce in Snow" }, treeType: "spruce" },
-    { file: "tree-birch.gif", weather: { type: "sunny", description: "Birch Forest" }, treeType: "birch" },
-    { file: "tree-birch-rain.gif", weather: { type: "rain", description: "Birch in Rain" }, treeType: "birch" },
-    { file: "tree-night.gif", weather: { type: "night", description: "Clear starry night (Moon & Clouds)", isDay: false }, treeType: "oak" },
-    { file: "tree-rain.gif", weather: { type: "rain", description: "Rain showers & storm clouds" }, treeType: "oak" },
-    { file: "tree-snow.gif", weather: { type: "snow", description: "Snowfall & snowy caps" }, treeType: "spruce" },
-    { file: "tree-cloudy.gif", weather: { type: "cloudy", description: "Overcast clouds" }, treeType: "oak" },
+    { file: "assets/tree-sakura.gif", weather: { type: "sunny", description: "Sunny Sakura Blossom" }, treeType: "sakura" },
+    { file: "assets/tree-sakura-rain.gif", weather: { type: "rain", description: "Sakura in Rain" }, treeType: "sakura" },
+    { file: "assets/tree-sakura-snow.gif", weather: { type: "snow", description: "Sakura in Snow" }, treeType: "sakura" },
+    { file: "assets/tree-spruce.gif", weather: { type: "sunny", description: "Taiga Spruce" }, treeType: "spruce" },
+    { file: "assets/tree-spruce-snow.gif", weather: { type: "snow", description: "Taiga Spruce in Snow" }, treeType: "spruce" },
+    { file: "assets/tree-birch.gif", weather: { type: "sunny", description: "Birch Forest" }, treeType: "birch" },
+    { file: "assets/tree-birch-rain.gif", weather: { type: "rain", description: "Birch in Rain" }, treeType: "birch" },
+    { file: "assets/tree-night.gif", weather: { type: "night", description: "Clear starry night (Moon & Clouds)", isDay: false }, treeType: "oak" },
+    { file: "assets/tree-rain.gif", weather: { type: "rain", description: "Rain showers & storm clouds" }, treeType: "oak" },
+    { file: "assets/tree-snow.gif", weather: { type: "snow", description: "Snowfall & snowy caps" }, treeType: "spruce" },
+    { file: "assets/tree-cloudy.gif", weather: { type: "cloudy", description: "Overcast clouds" }, treeType: "oak" },
   ];
 
   for (const variant of variants) {

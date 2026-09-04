@@ -4,7 +4,7 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788515413990)
+![tree](tree.gif?v=1788515867041)
 <!-- commit-tree-end -->
 
 
@@ -33,12 +33,12 @@
 
 | **Classic Oak 🌳** (`tree-type: oak`) | **Sakura Cherry Blossom 🌸** (`tree-type: sakura`) |
 | :---: | :---: |
-| ![Oak](tree.gif) | ![Sakura](tree-sakura.gif) |
+| ![Oak](tree.gif) | ![Sakura](assets/tree-sakura.gif) |
 | *Classic Oak, Bee, Beehive & Ore* | *Cherry blossom pinks & falling petals* |
 
 | **Taiga Spruce 🌲** (`tree-type: spruce`) | **Birch Forest ⚪** (`tree-type: birch`) |
 | :---: | :---: |
-| ![Spruce](tree-spruce.gif) | ![Birch](tree-birch.gif) |
+| ![Spruce](assets/tree-spruce.gif) | ![Birch](assets/tree-birch.gif) |
 | *Dark coniferous needles & spruce bark* | *White notched birch bark & olive leaves* |
 
 ---
@@ -47,12 +47,12 @@
 
 | **Sunny ☀️** (`weather: sunny`) | **Starry Night 🌕✨** (`weather: night`) |
 | :---: | :---: |
-| ![Sunny](tree.gif) | ![Night](tree-night.gif) |
+| ![Sunny](tree.gif) | ![Night](assets/tree-night.gif) |
 | *Glowing Minecraft Sun & solar flares* | *Minecraft Moon, craters & twinkling stars* |
 
 | **Rainy 🌧️** (`weather: rain`) | **Snowy ❄️** (`weather: snow`) | **Cloudy ☁️** (`weather: cloudy`) |
 | :---: | :---: | :---: |
-| ![Rain](tree-rain.gif) | ![Snow](tree-snow.gif) | ![Cloudy](tree-cloudy.gif) |
+| ![Rain](assets/tree-rain.gif) | ![Snow](assets/tree-snow.gif) | ![Cloudy](assets/tree-cloudy.gif) |
 | *Slanted rain streaks & splashes* | *Fluttering snow & snow-capped leaves* | *Multi-layered drifting overcast clouds* |
 
 ---
@@ -130,7 +130,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788515413990)
+![tree](tree.gif?v=1788515867041)
 <!-- commit-tree-end -->
 ```
 
