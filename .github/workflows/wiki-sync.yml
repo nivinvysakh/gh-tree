@@ -36,7 +36,11 @@ jobs:
             if git status --porcelain | grep -q .; then
               git add .
               git commit -m "docs(wiki): sync wiki documentation from main"
-              git push
+              BRANCH=$(git rev-parse --abbrev-ref HEAD)
+              if [ "$BRANCH" = "HEAD" ] || [ -z "$BRANCH" ]; then
+                BRANCH="master"
+              fi
+              git push -u origin "$BRANCH"
               echo "✓ Wiki successfully synced!"
             else
               echo "No changes to sync."
