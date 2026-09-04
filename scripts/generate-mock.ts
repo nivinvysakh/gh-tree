@@ -5,9 +5,31 @@ import { renderFrame } from "../src/svg";
 import { encodeGif } from "../src/gif";
 import { updateMarkdownFile } from "../src/markdown";
 import { ContributionWeek } from "../src/github";
+import { WeatherCondition } from "../src/weather";
+
+async function generateWeatherGif(
+  filename: string,
+  weather: WeatherCondition,
+  weeks: ContributionWeek[],
+  width: number,
+  height: number,
+  frameCount: number,
+  frameDelayMs: number
+): Promise<string> {
+  const layout = buildTreeLayout(weeks, undefined, { width, height, weather });
+  const frames = Array.from({ length: frameCount }, (_, i) => ({
+    svg: renderFrame(layout, i, frameCount),
+  }));
+
+  const gifBytes = await encodeGif(frames, width, height, frameDelayMs);
+  const outputPath = path.resolve(__dirname, `../${filename}`);
+  fs.writeFileSync(outputPath, gifBytes);
+  console.log(`✓ Generated ${filename} (${weather.type.toUpperCase()}) - ${(gifBytes.length / 1024).toFixed(1)} KB`);
+  return outputPath;
+}
 
 async function runMockGeneration(): Promise<void> {
-  console.log("Generating full Minecraft Commit Tree GIF preview showcasing all features...");
+  console.log("Generating local mock GIFs for all weather conditions (Sunny, Rain, Snow, Cloudy)...\n");
 
   // 14 weeks crafted to showcase all levels: 0 (dormant), 1 (light), 2 (medium), 3 (lush), 4 (emerald)
   const commitCounts = [
@@ -43,28 +65,35 @@ async function runMockGeneration(): Promise<void> {
 
   const width = 460;
   const height = 420;
-  const frameCount = 12;
-  const frameDelayMs = 120;
+  const frameCount = 14;
+  const frameDelayMs = 110;
 
-  console.log(`Building Minecraft tree layout with commit green levels for ${weeks.length} weeks...`);
-  const layout = buildTreeLayout(weeks, undefined, { width, height });
+  const weatherVariants: { file: string; weather: WeatherCondition }[] = [
+    { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" } },
+    { file: "tree-night.gif", weather: { type: "night", description: "Clear starry night (Moon & Clouds)", isDay: false } },
+    { file: "tree-rain.gif", weather: { type: "rain", description: "Rain showers & storm clouds" } },
+    { file: "tree-snow.gif", weather: { type: "snow", description: "Snowfall & snowy caps" } },
+    { file: "tree-cloudy.gif", weather: { type: "cloudy", description: "Overcast clouds" } },
+  ];
 
-  console.log(`Rendering ${frameCount} animation frames...`);
-  const frames = Array.from({ length: frameCount }, (_, i) => ({
-    svg: renderFrame(layout, i, frameCount),
-  }));
+  for (const variant of weatherVariants) {
+    const outputPath = await generateWeatherGif(
+      variant.file,
+      variant.weather,
+      weeks,
+      width,
+      height,
+      frameCount,
+      frameDelayMs
+    );
 
-  console.log("Encoding transparent GIF...");
-  const gifBytes = await encodeGif(frames, width, height, frameDelayMs);
+    if (variant.file === "tree.gif") {
+      const readmePath = path.resolve(__dirname, "../README.md");
+      updateMarkdownFile(readmePath, outputPath, "tree");
+    }
+  }
 
-  const outputPath = path.resolve(__dirname, "../tree.gif");
-  fs.writeFileSync(outputPath, gifBytes);
-  console.log(`✓ Generated ${outputPath} (${(gifBytes.length / 1024).toFixed(1)} KB)`);
-
-  const readmePath = path.resolve(__dirname, "../README.md");
-  updateMarkdownFile(readmePath, outputPath, "tree");
-  console.log(`✓ Updated ${readmePath} with ![tree](tree.gif)`);
-  console.log("Done! Open tree.gif to view your full Minecraft Commit Tree preview.");
+  console.log("\nAll mock GIFs generated successfully!");
 }
 
 runMockGeneration();

@@ -1,4 +1,5 @@
 import { ContributionWeek } from "./github";
+import { WeatherCondition } from "./weather";
 
 export const BLOCK_PIXELS = 16;
 export const PIXEL_SCALE = 3.0;
@@ -55,6 +56,7 @@ export interface TreeLayout {
   openPRs: number;
   mergedPRs: number;
   assignedPRs: number;
+  weather: WeatherCondition;
 }
 
 const CANOPY_SLOTS: { gridX: number; gridY: number }[] = [
@@ -95,10 +97,12 @@ export function buildTreeLayout(
   opts: {
     width?: number;
     height?: number;
+    weather?: WeatherCondition;
   } = {}
 ): TreeLayout {
   const width = opts.width ?? 460;
   const height = opts.height ?? 420;
+  const weather = opts.weather ?? { type: "sunny", description: "Clear sky" };
   const bs = BLOCK_SIZE; // 48px
 
   let totalCommits = 0;
@@ -258,5 +262,6 @@ export function buildTreeLayout(
     openPRs: totalOpenPRs,
     mergedPRs: totalMergedPRs,
     assignedPRs: totalAssignedPRs,
+    weather,
   };
 }

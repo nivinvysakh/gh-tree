@@ -4,7 +4,7 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788513185715)
+![tree](tree.gif?v=1788513707416)
 <!-- commit-tree-end -->
 
 
@@ -20,7 +20,22 @@
 - **Minecraft Flowers 🌸 (Open Authored PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the grass ground (2 left / 2 right).
 - **Minecraft Red Apples 🍎 (Merged PRs)** — up to 4 ripe red apples hanging beneath the canopy leaf blocks.
 - **Minecraft Golden Apples 🍏✨ (Assigned PRs)** — up to 4 enchanted golden apples placed side-by-side on the far-left and far-right grass ground.
+- **Live Weather & Day/Night Cycle ☀️🌕🌧️❄️☁️** — real-time weather integration (via Open-Meteo) rendering animated Minecraft Sun, Starry Night Moon & twinkling stars, Rain streaks & splashes, Snowfall & snow caps, or Drifting clouds.
 - **Transparent Background** — pure alpha transparency that seamlessly blends into dark and light GitHub profiles and READMEs.
+
+---
+
+## Weather Showcase 🌦️
+
+| **Sunny ☀️** (`weather: sunny`) | **Starry Night 🌕✨** (`weather: night`) |
+| :---: | :---: |
+| ![Sunny](tree.gif) | ![Night](tree-night.gif) |
+| *Glowing Minecraft Sun & solar flares* | *Minecraft Moon, craters & twinkling stars* |
+
+| **Rainy 🌧️** (`weather: rain`) | **Snowy ❄️** (`weather: snow`) | **Cloudy ☁️** (`weather: cloudy`) |
+| :---: | :---: | :---: |
+| ![Rain](tree-rain.gif) | ![Snow](tree-snow.gif) | ![Cloudy](tree-cloudy.gif) |
+| *Slanted rain streaks & splashes* | *Fluttering snow & snow-capped leaves* | *Multi-layered drifting overcast clouds* |
 
 ---
 
@@ -57,7 +72,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788513185715)
+![tree](tree.gif?v=1788513707416)
 <!-- commit-tree-end -->
 ```
 
@@ -77,6 +92,8 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 | `commit-message`  | `chore: update commit tree [skip ci]` | Commit message for auto-commit |
 | `days`            | `140`        | Days of history to fetch for commit leaves (~14–20 weekly branches)|
 | `pr-days`         | `14`         | Recency timer in days for flowers, red apples, and golden apples |
+| `city`            | `""`         | City for live weather (e.g. `London`, `Tokyo`, `New York`, `Paris`)|
+| `weather`         | `auto`       | Manual weather override (`auto`, `sunny`, `night`, `rain`, `snow`, `cloudy`)|
 | `frames`          | `20`         | Number of animation frames in the loop           |
 | `frame-delay-ms`  | `100`        | Frame delay in milliseconds                      |
 | `width`           | `460`        | Canvas width in pixels                           |
@@ -91,6 +108,8 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 | `open-prs`      | Total open pull requests authored by the user          |
 | `merged-prs`    | Total merged pull requests                             |
 | `assigned-prs`  | Total open pull requests assigned to the user          |
+| `weather-type`  | Detected or active weather type (`sunny`, `night`, `rain`, etc.)|
+| `weather-desc`  | Description of current weather                         |
 
 ---
 

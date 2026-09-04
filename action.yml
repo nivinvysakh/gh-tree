@@ -34,6 +34,14 @@ inputs:
     description: "Recency window in days for flowers (open PRs), red apples (merged PRs), and golden apples (reviews/assignments)"
     required: false
     default: "14"
+  city:
+    description: "City or location name for live weather (e.g. London, Tokyo, New York, Paris)"
+    required: false
+    default: ""
+  weather:
+    description: "Manual weather override or auto (options: auto, sunny, rain, snow, cloudy, night)"
+    required: false
+    default: "auto"
   frames:
     description: "Number of animation frames in the loop"
     required: false
@@ -59,6 +67,10 @@ outputs:
     description: "Total merged pull requests"
   assigned-prs:
     description: "Total open pull requests assigned to user"
+  weather-type:
+    description: "Current weather condition type (sunny, rain, snow, cloudy, night)"
+  weather-desc:
+    description: "Text description of current weather"
 runs:
   using: "node20"
   main: "dist/index.js"

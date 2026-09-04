@@ -7,6 +7,7 @@ import { buildTreeLayout } from "./tree";
 import { renderFrame } from "./svg";
 import { encodeGif } from "./gif";
 import { updateMarkdownFile } from "./markdown";
+import { fetchLiveWeather } from "./weather";
 
 function tryAutoCommit(files: string[], message: string): void {
   try {
@@ -71,6 +72,8 @@ async function run(): Promise<void> {
     const frameDelayMs = parseInt(core.getInput("frame-delay-ms") || "100", 10);
     const width = parseInt(core.getInput("width") || "460", 10);
     const height = parseInt(core.getInput("height") || "420", 10);
+    const city = core.getInput("city") || "";
+    const weatherOverride = core.getInput("weather") || "";
 
     core.info(
       `Fetching contribution calendar (${days} days) and recent PRs/reviews (${prDays} days) for @${login}...`
@@ -83,7 +86,15 @@ async function run(): Promise<void> {
         `${contributions.totalAssignedPRs} reviews/assigned (golden apples, last ${prDays}d).`
     );
 
-    const layout = buildTreeLayout(contributions.weeks, undefined, { width, height });
+    const weather = await fetchLiveWeather(city, weatherOverride);
+    core.info(
+      `Live Weather: ${weather.type.toUpperCase()} (${weather.description}` +
+        (weather.temperatureC !== undefined ? `, ${weather.temperatureC}°C` : "") +
+        (weather.locationName ? ` in ${weather.locationName}` : "") +
+        `)`
+    );
+
+    const layout = buildTreeLayout(contributions.weeks, undefined, { width, height, weather });
 
     core.info(`Rendering ${frameCount} frames...`);
     const frames = Array.from({ length: frameCount }, (_, i) => ({
@@ -115,6 +126,8 @@ async function run(): Promise<void> {
     core.setOutput("open-prs", String(contributions.totalOpenPRs));
     core.setOutput("merged-prs", String(contributions.totalMergedPRs));
     core.setOutput("assigned-prs", String(contributions.totalAssignedPRs));
+    core.setOutput("weather-type", weather.type);
+    core.setOutput("weather-desc", weather.description);
   } catch (err) {
     core.setFailed(err instanceof Error ? err.message : String(err));
   }

@@ -31,6 +31,7 @@ describe("Minecraft SVG module", () => {
     openPRs: 1,
     mergedPRs: 1,
     assignedPRs: 1,
+    weather: { type: "sunny", description: "Clear sky" },
   };
 
   it("renders a transparent background SVG string with grass ground, sun, clouds, and Minecraft tree", () => {
@@ -65,6 +66,49 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain('fill="#d90429"');
     // Golden Apple color
     expect(svg).toContain('fill="#ffb703"');
+  });
+
+  it("renders rain streaks and storm clouds in rain weather", () => {
+    const rainLayout: TreeLayout = {
+      ...mockLayout,
+      weather: { type: "rain", description: "Rain showers" },
+    };
+
+    const svg = renderFrame(rainLayout, 0, 20);
+
+    // Blue rain streaks
+    expect(svg).toContain('fill="#64b5f6"');
+    // Storm cloud shadow
+    expect(svg).toContain('fill="#607d8b"');
+  });
+
+  it("renders falling snowflakes and snowy caps in snow weather", () => {
+    const snowLayout: TreeLayout = {
+      ...mockLayout,
+      weather: { type: "snow", description: "Snowfall" },
+    };
+
+    const svg = renderFrame(snowLayout, 0, 20);
+
+    // Snow ground top
+    expect(svg).toContain('fill="#eceff1"');
+  });
+
+  it("renders Minecraft Moon, stars, and night clouds in night mode", () => {
+    const nightLayout: TreeLayout = {
+      ...mockLayout,
+      weather: { type: "night", description: "Clear starry night", isDay: false },
+    };
+
+    const svg = renderFrame(nightLayout, 0, 20);
+
+    // Minecraft Moon craters & lunar frame
+    expect(svg).toContain('fill="#b0bec5"');
+    expect(svg).toContain('fill="#cfd8dc"');
+    // Twinkling stars
+    expect(svg).toContain('fill="#fff9c4"');
+    // Sun should NOT be present in night mode
+    expect(svg).not.toContain('fill="#fbc02d"');
   });
 
   it("animates across frames", () => {
