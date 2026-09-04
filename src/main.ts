@@ -118,7 +118,7 @@ async function run(): Promise<void> {
       }
     }
 
-    const rawIsOwner = core.getInput("is-owner");
+    const rawIsOwner = (core.getInput("is-owner") || "auto").trim().toLowerCase();
     const isOwner =
       rawIsOwner === "true"
         ? true
@@ -126,7 +126,7 @@ async function run(): Promise<void> {
         ? false
         : Boolean(repoOwner && login.toLowerCase() === repoOwner.toLowerCase());
 
-    const rawIsContributor = core.getInput("is-contributor");
+    const rawIsContributor = (core.getInput("is-contributor") || "auto").trim().toLowerCase();
     const isContributor =
       rawIsContributor === "true"
         ? true
