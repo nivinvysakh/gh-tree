@@ -329,26 +329,51 @@ function renderMinecraftGround(
     emerald: { gemColor: "#00e676", gemShine: "#e8f5e9", gemShadow: "#00a152" },
     gold: { gemColor: "#ffd600", gemShine: "#fff9c4", gemShadow: "#ff8f00" },
     redstone: { gemColor: "#ff1744", gemShine: "#ff8a80", gemShadow: "#b71c1c" },
+    lapis: { gemColor: "#1565c0", gemShine: "#42a5f5", gemShadow: "#0d47a1" },
   };
 
   let oresSvg = "";
   for (const ore of oreBlocks) {
-    const palette = ORE_PALETTES[ore.type] || ORE_PALETTES.diamond;
-    const { gemColor, gemShine, gemShadow } = palette;
+    if (ore.type === "netherite") {
+      // Ancient Debris / Netherite Block (Dark Obsidian & Metallic Bronze/Gold Veins for Repo Owner)
+      oresSvg += `
+        <!-- NETHERITE / ANCIENT DEBRIS BLOCK (REPO OWNER) -->
+        <g shape-rendering="crispEdges">
+          <rect x="${ore.x}" y="${ore.y}" width="24" height="20" fill="#2b2622" />
+          <rect x="${ore.x + 2}" y="${ore.y + 2}" width="20" height="16" fill="#3e3630" />
+          <!-- Dark obsidian cracks -->
+          <rect x="${ore.x + 3}" y="${ore.y + 5}" width="6" height="3" fill="#1c1815" />
+          <rect x="${ore.x + 13}" y="${ore.y + 11}" width="7" height="3" fill="#1c1815" />
+          <!-- Metallic Ancient Debris / Gold Veins -->
+          <rect x="${ore.x + 5}" y="${ore.y + 4}" width="5" height="4" fill="#a08060" />
+          <rect x="${ore.x + 6}" y="${ore.y + 5}" width="3" height="2" fill="#d4a373" />
+          <rect x="${ore.x + 7}" y="${ore.y + 5}" width="1.5" height="1.5" fill="#ffffff" />
+          <rect x="${ore.x + 14}" y="${ore.y + 6}" width="4" height="4" fill="#a08060" />
+          <rect x="${ore.x + 15}" y="${ore.y + 7}" width="2" height="2" fill="#d4a373" />
+          <rect x="${ore.x + 9}" y="${ore.y + 12}" width="5" height="4" fill="#d4a373" />
+          <rect x="${ore.x + 10}" y="${ore.y + 13}" width="2" height="2" fill="#ffd166" />
+        </g>
+      `;
+    } else {
+      const palette = ORE_PALETTES[ore.type] || ORE_PALETTES.diamond;
+      const { gemColor, gemShine, gemShadow } = palette;
+      const isLapis = ore.type === "lapis";
 
-    oresSvg += `
-      <!-- ${ore.type.toUpperCase()} ORE BLOCK -->
-      <g shape-rendering="crispEdges">
-        <rect x="${ore.x}" y="${ore.y}" width="24" height="20" fill="#616161" />
-        <rect x="${ore.x + 2}" y="${ore.y + 2}" width="20" height="16" fill="#757575" />
-        <rect x="${ore.x + 4}" y="${ore.y + 4}" width="4" height="4" fill="${gemColor}" />
-        <rect x="${ore.x + 5}" y="${ore.y + 5}" width="2" height="2" fill="${gemShine}" />
-        <rect x="${ore.x + 14}" y="${ore.y + 6}" width="4" height="4" fill="${gemColor}" />
-        <rect x="${ore.x + 15}" y="${ore.y + 7}" width="2" height="2" fill="${gemShadow}" />
-        <rect x="${ore.x + 8}" y="${ore.y + 12}" width="5" height="4" fill="${gemColor}" />
-        <rect x="${ore.x + 9}" y="${ore.y + 13}" width="2" height="2" fill="${gemShine}" />
-      </g>
-    `;
+      oresSvg += `
+        <!-- ${ore.type.toUpperCase()} ORE BLOCK -->
+        <g shape-rendering="crispEdges">
+          <rect x="${ore.x}" y="${ore.y}" width="24" height="20" fill="#616161" />
+          <rect x="${ore.x + 2}" y="${ore.y + 2}" width="20" height="16" fill="#757575" />
+          <rect x="${ore.x + 4}" y="${ore.y + 4}" width="4" height="4" fill="${gemColor}" />
+          <rect x="${ore.x + 5}" y="${ore.y + 5}" width="2" height="2" fill="${gemShine}" />
+          <rect x="${ore.x + 14}" y="${ore.y + 6}" width="4" height="4" fill="${gemColor}" />
+          <rect x="${ore.x + 15}" y="${ore.y + 7}" width="2" height="2" fill="${gemShadow}" />
+          <rect x="${ore.x + 8}" y="${ore.y + 12}" width="5" height="4" fill="${gemColor}" />
+          <rect x="${ore.x + 9}" y="${ore.y + 13}" width="2" height="2" fill="${gemShine}" />
+          ${isLapis ? `<rect x="${ore.x + 6}" y="${ore.y + 8}" width="2" height="2" fill="#ffd54f" />` : ""}
+        </g>
+      `;
+    }
   }
 
   return `

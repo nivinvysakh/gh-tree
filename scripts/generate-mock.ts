@@ -24,6 +24,8 @@ async function generateGifVariant(
     treeType,
     showSignpost: true,
     showBee: true,
+    isOwner: true,
+    isContributor: true,
   });
   const frames = Array.from({ length: frameCount }, (_, i) => ({
     svg: renderFrame(layout, i, frameCount),

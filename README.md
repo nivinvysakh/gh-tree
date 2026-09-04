@@ -4,7 +4,7 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788516093075)
+![tree](tree.gif?v=1788516584598)
 <!-- commit-tree-end -->
 
 
@@ -20,7 +20,7 @@
 - **Minecraft Oak / Sakura Leaves** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink) across the 14 canopy blocks.
 - **Minecraft Bee 🐝 & Streak Beehive 🍯** — an animated buzzing bee with fluttering wings and a wooden beehive on the trunk celebrating your active commit streak.
 - **Wooden Stat Signpost 🪧** — a neat pixelated wooden signpost on the grass lawn displaying your live commit streak (`⚡ 14d`).
-- **Underground Ore Blocks 💎 (Gold, Diamond, Emerald, Redstone)** — embedded in the dirt ground layer unlocking for commit streaks, pull requests, and volume milestones.
+- **Underground Ore Blocks 💎 (Netherite, Gold, Diamond, Emerald, Lapis, Redstone)** — embedded in the dirt layer featuring special **Netherite** for repo owners, **Lapis Lazuli** for contributors, and milestone ores.
 - **Minecraft Flowers 🌸 (Open PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the lawn.
 - **Minecraft Red Apples 🍎 (Merged PRs)** — up to 4 ripe red apples hanging beneath the canopy leaf blocks.
 - **Minecraft Golden Apples 🍏✨ (Assigned PRs / Reviews)** — up to 4 enchanted golden apples placed on the lawn.
@@ -63,14 +63,16 @@ gh-tree turns your GitHub contributions into living Minecraft collectibles and m
 
 ### 💎 Underground Ore Blocks
 
-Embedded in the underground dirt layer beneath your tree, ore blocks unlock as you hit productivity and collaboration milestones:
+Embedded in the underground dirt layer beneath your tree, 6 distinct ore blocks unlock as you hit maintainer, contribution, and productivity milestones:
 
 | Ore Block | Appearance | Unlock Condition | What It Represents |
 | :--- | :---: | :--- | :--- |
-| **Gold Ore** 🪙 | Radiant gold nuggets *(far-left dirt layer)* | • **Current streak ≥ 7 days**, *OR*<br>• **≥ 50 total commits** | **Streak Dedication** — milestone for sustained contribution rhythm and week-long consistency. |
-| **Diamond Ore** 💎 | Cyan crystalline flecks *(mid-left dirt layer)* | • **≥ 25 total commits** in date range, *OR*<br>• **≥ 1 merged PR** | **Active Contributor** — milestone for regular code contributions and initial PR merges. |
-| **Emerald Ore** ❇️ | Bright emerald green gems *(mid-right dirt layer)* | • **≥ 100 total commits** in date range, *OR*<br>• Any weekly branch reaching **Level 4** (30+ commits in a week) | **Power Contributor** — rare milestone awarded for high commit volume and intense development sprints. |
-| **Redstone Ore** 🔴 | Glowing crimson Redstone *(far-right dirt layer)* | • **Merged PRs ≥ 2**, *OR*<br>• **Total PR activity (open + merged + assigned) ≥ 3**, *OR*<br>• **Current streak ≥ 14 days** | **Engineering & Automation** — milestone honoring pull request lifecycle, code reviews, and multi-week streaks. |
+| **Netherite / Ancient Debris** 🪨 | Dark obsidian with metallic bronze & gold veins *(Slot 0: Far-Left)* | **Repository Owner / Maintainer** (`is-owner: true` or auto-detected) | **👑 Project Maintainer & Creator** — the rarest Minecraft material, awarded exclusively to the repository owner! |
+| **Gold Ore** 🪙 | Radiant gold nuggets *(Slot 1: Mid-Left 1)* | • **Current streak ≥ 7 days**, *OR*<br>• **≥ 50 total commits** | **⚡ Streak Dedication** — milestone for sustained rhythm and week-long consistency. |
+| **Diamond Ore** 💎 | Cyan crystalline flecks *(Slot 2: Mid-Left 2)* | • **≥ 25 total commits** in date range, *OR*<br>• **≥ 1 merged PR** | **💎 Active Contributor** — milestone for regular code contributions and PR merges. |
+| **Emerald Ore** ❇️ | Bright emerald green gems *(Slot 3: Mid-Right 1)* | • **≥ 100 total commits** in date range, *OR*<br>• Any weekly branch reaching **Level 4** (30+ commits/week) | **🏆 Power Contributor** — rare milestone awarded for high commit volume and intense development sprints. |
+| **Lapis Lazuli Ore** 🔷 | Ultramarine blue crystals & gold pyrite *(Slot 4: Mid-Right 2)* | • **Open source contributor** (`is-contributor: true`), *OR*<br>• Any PR authored, merged, or reviewed | **🤝 Open Source Contributor** — special celestial blue ore celebrating community contributors and reviewers! |
+| **Redstone Ore** 🔴 | Glowing crimson Redstone *(Slot 5: Far-Right)* | • **Merged PRs ≥ 2**, *OR*<br>• **Total PR activity ≥ 3**, *OR*<br>• **Current streak ≥ 14 days** | **⚙️ Engineering & Automation** — milestone honoring pull request lifecycle, code reviews, and multi-week streaks. |
 
 ---
 
@@ -162,7 +164,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788516093075)
+![tree](tree.gif?v=1788516584598)
 <!-- commit-tree-end -->
 ```
 
@@ -179,6 +181,8 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 | `tree-type`       | `oak`        | Biome tree type (`oak`, `sakura`, `spruce`, `birch`) |
 | `show-signpost`   | `true`       | Render wooden streak stat signpost on the grass  |
 | `show-bee`        | `true`       | Render animated Minecraft bee around the tree    |
+| `is-owner`        | `auto`       | Sets repo owner status (unlocks Netherite Ore)   |
+| `is-contributor`  | `auto`       | Sets contributor status (unlocks Lapis Lazuli)   |
 | `output-path`     | `tree.gif`   | Filepath where the generated GIF is written      |
 | `markdown-path`   | `README.md`  | Markdown file to update (set empty to disable)   |
 | `auto-commit`     | `true`       | Automatically commits & pushes updated files     |

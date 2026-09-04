@@ -44,10 +44,12 @@ export interface GoldenApplePos {
   side: "left" | "right";
 }
 
+export type OreType = "diamond" | "emerald" | "gold" | "redstone" | "lapis" | "netherite";
+
 export interface OreBlockPos {
   x: number;
   y: number;
-  type: "diamond" | "emerald" | "gold" | "redstone";
+  type: OreType;
 }
 
 export interface BeePos {
@@ -88,6 +90,8 @@ export interface TreeLayout {
   assignedPRs: number;
   currentStreak: number;
   weather: WeatherCondition;
+  isOwner?: boolean;
+  isContributor?: boolean;
 }
 
 const CANOPY_SLOTS: { gridX: number; gridY: number }[] = [
@@ -132,6 +136,8 @@ export function buildTreeLayout(
     treeType?: TreeType;
     showSignpost?: boolean;
     showBee?: boolean;
+    isOwner?: boolean;
+    isContributor?: boolean;
   } = {}
 ): TreeLayout {
   const width = opts.width ?? 460;
@@ -285,27 +291,37 @@ export function buildTreeLayout(
     }
   }
 
-  // 6. Ore Blocks 💎 (Embedded in the ground dirt layer: Gold, Diamond, Emerald, Redstone)
+  // 6. Ore Blocks 💎 (Embedded in underground dirt layer: 6 slots across width 460)
   const oreBlocks: OreBlockPos[] = [];
   
-  // Gold Ore 🪙 (Left Outer: streak >= 7 or totalCommits >= 50)
+  // [Slot 0 - x:20] Netherite Ore 🪨 (Special Repo Owner Ore)
+  if (opts.isOwner === true) {
+    oreBlocks.push({ x: 20, y: groundY + 16, type: "netherite" });
+  }
+
+  // [Slot 1 - x:76] Gold Ore 🪙 (Streak Dedication: streak >= 7 or totalCommits >= 50)
   if (currentStreak >= 7 || totalCommits >= 50) {
-    oreBlocks.push({ x: 32, y: groundY + 16, type: "gold" });
+    oreBlocks.push({ x: 76, y: groundY + 16, type: "gold" });
   }
 
-  // Diamond Ore 💎 (Left Inner: totalCommits >= 25 or mergedPRs >= 1)
+  // [Slot 2 - x:132] Diamond Ore 💎 (Active Contributor: totalCommits >= 25 or mergedPRs >= 1)
   if (totalCommits >= 25 || totalMergedPRs >= 1) {
-    oreBlocks.push({ x: 114, y: groundY + 16, type: "diamond" });
+    oreBlocks.push({ x: 132, y: groundY + 16, type: "diamond" });
   }
 
-  // Emerald Ore ❇️ (Right Inner: totalCommits >= 100 or level 4 leaves)
+  // [Slot 3 - x:280] Emerald Ore ❇️ (Power Contributor: totalCommits >= 100 or level 4 leaves)
   if (totalCommits >= 100 || leafBlocks.some((b) => b.commitLevel === 4)) {
-    oreBlocks.push({ x: 298, y: groundY + 16, type: "emerald" });
+    oreBlocks.push({ x: 280, y: groundY + 16, type: "emerald" });
   }
 
-  // Redstone Ore 🔴 (Right Outer: mergedPRs >= 2 or total PR activity >= 3 or streak >= 14)
+  // [Slot 4 - x:336] Lapis Lazuli Ore 🔷 (Special Open-Source Contributor Ore)
+  if (opts.isContributor === true || totalOpenPRs >= 1 || totalMergedPRs >= 1 || totalAssignedPRs >= 1) {
+    oreBlocks.push({ x: 336, y: groundY + 16, type: "lapis" });
+  }
+
+  // [Slot 5 - x:392] Redstone Ore 🔴 (Engineering & Automation: mergedPRs >= 2 or total PRs >= 3 or streak >= 14)
   if (totalMergedPRs >= 2 || (totalOpenPRs + totalMergedPRs + totalAssignedPRs) >= 3 || currentStreak >= 14) {
-    oreBlocks.push({ x: 380, y: groundY + 16, type: "redstone" });
+    oreBlocks.push({ x: 392, y: groundY + 16, type: "redstone" });
   }
 
   // 7. Wooden Stat Signpost 🪧 (Placed at x: 68 with comfortable spacing)
@@ -344,5 +360,7 @@ export function buildTreeLayout(
     assignedPRs: totalAssignedPRs,
     currentStreak,
     weather,
+    isOwner: opts.isOwner,
+    isContributor: opts.isContributor,
   };
 }

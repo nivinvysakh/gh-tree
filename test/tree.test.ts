@@ -142,8 +142,8 @@ describe("Minecraft tree module", () => {
       expect(layout.oreBlocks.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("unlocks Gold, Diamond, Emerald, and Redstone ores based on their respective milestones", () => {
-      // High streak + high commits + PR merges => all 4 ores
+    it("unlocks Gold, Diamond, Emerald, Redstone, Netherite (owner), and Lapis (contributor) ores", () => {
+      // High streak + high commits + PR merges + isOwner + isContributor => all 6 ores
       const allMilestonesWeek: ContributionWeek[] = [
         {
           days: Array.from({ length: 14 }, (_, i) => ({ date: `2026-08-${String(i + 1).padStart(2, "0")}`, count: 10 })),
@@ -154,13 +154,18 @@ describe("Minecraft tree module", () => {
         },
       ];
 
-      const fullLayout = buildTreeLayout(allMilestonesWeek);
+      const fullLayout = buildTreeLayout(allMilestonesWeek, undefined, {
+        isOwner: true,
+        isContributor: true,
+      });
       const oreTypes = fullLayout.oreBlocks.map((o) => o.type);
+      expect(oreTypes).toContain("netherite");
       expect(oreTypes).toContain("gold");
       expect(oreTypes).toContain("diamond");
       expect(oreTypes).toContain("emerald");
+      expect(oreTypes).toContain("lapis");
       expect(oreTypes).toContain("redstone");
-      expect(fullLayout.oreBlocks).toHaveLength(4);
+      expect(fullLayout.oreBlocks).toHaveLength(6);
     });
   });
 });

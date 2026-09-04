@@ -54,6 +54,14 @@ inputs:
     description: "Whether to render the animated Minecraft bee hovering around the tree"
     required: false
     default: "true"
+  is-owner:
+    description: "Whether the user is the repository owner (auto-detected by default; unlocks Netherite Ore)"
+    required: false
+    default: "auto"
+  is-contributor:
+    description: "Whether the user is a contributor (auto-detected by default; unlocks Lapis Lazuli Ore)"
+    required: false
+    default: "auto"
   frames:
     description: "Number of animation frames in the loop"
     required: false

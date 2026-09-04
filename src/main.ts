@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as fs from "fs";
 import * as path from "path";
 import { execSync } from "child_process";
-import { fetchContributions } from "./github";
+import { fetchContributions, fetchRepoContributors } from "./github";
 import { buildTreeLayout } from "./tree";
 import { renderFrame } from "./svg";
 import { encodeGif } from "./gif";
@@ -100,6 +100,46 @@ async function run(): Promise<void> {
         `) | Biome: ${treeType.toUpperCase()}`
     );
 
+    const repoOwner =
+      process.env.GITHUB_REPOSITORY_OWNER ||
+      (process.env.GITHUB_REPOSITORY ? process.env.GITHUB_REPOSITORY.split("/")[0] : "");
+
+    const currentRepo = process.env.GITHUB_REPOSITORY || "";
+    let isRepoContributor = false;
+    if (currentRepo) {
+      try {
+        const repoContributors = await fetchRepoContributors(token, currentRepo);
+        if (repoContributors.includes(login.toLowerCase())) {
+          isRepoContributor = true;
+          core.info(`✓ Verified @${login} in ${currentRepo} contributors list.`);
+        }
+      } catch (err) {
+        core.debug(`Could not check repo contributors: ${err}`);
+      }
+    }
+
+    const rawIsOwner = core.getInput("is-owner");
+    const isOwner =
+      rawIsOwner === "true"
+        ? true
+        : rawIsOwner === "false"
+        ? false
+        : Boolean(repoOwner && login.toLowerCase() === repoOwner.toLowerCase());
+
+    const rawIsContributor = core.getInput("is-contributor");
+    const isContributor =
+      rawIsContributor === "true"
+        ? true
+        : rawIsContributor === "false"
+        ? false
+        : Boolean(
+            isRepoContributor ||
+              contributions.totalOpenPRs > 0 ||
+              contributions.totalMergedPRs > 0 ||
+              contributions.totalAssignedPRs > 0 ||
+              (repoOwner && login.toLowerCase() !== repoOwner.toLowerCase())
+          );
+
     const layout = buildTreeLayout(contributions.weeks, undefined, {
       width,
       height,
@@ -107,6 +147,8 @@ async function run(): Promise<void> {
       treeType,
       showSignpost,
       showBee,
+      isOwner,
+      isContributor,
     });
 
     core.info(`Rendering ${frameCount} frames...`);

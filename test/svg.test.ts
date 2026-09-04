@@ -77,14 +77,16 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain('fill="#ffb703"');
   });
 
-  it("renders Minecraft bee, beehive, signpost, and diamond, emerald, gold, redstone ore blocks", () => {
+  it("renders Minecraft bee, beehive, signpost, and diamond, emerald, gold, redstone, lapis, netherite ore blocks", () => {
     const layoutWithAllOres: TreeLayout = {
       ...mockLayout,
       oreBlocks: [
-        { x: 32, y: 386, type: "gold" },
-        { x: 114, y: 386, type: "diamond" },
-        { x: 298, y: 386, type: "emerald" },
-        { x: 380, y: 386, type: "redstone" },
+        { x: 20, y: 386, type: "netherite" },
+        { x: 76, y: 386, type: "gold" },
+        { x: 132, y: 386, type: "diamond" },
+        { x: 280, y: 386, type: "emerald" },
+        { x: 336, y: 386, type: "lapis" },
+        { x: 392, y: 386, type: "redstone" },
       ],
     };
     const svg = renderFrame(layoutWithAllOres, 0, 20);
@@ -102,6 +104,14 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain('fill="#00e676"');
     expect(svg).toContain('fill="#ffd600"');
     expect(svg).toContain('fill="#ff1744"');
+
+    // Lapis Lazuli Ore (#1565c0 + pyrite #ffd54f)
+    expect(svg).toContain('fill="#1565c0"');
+    expect(svg).toContain('fill="#ffd54f"');
+
+    // Netherite / Ancient Debris Block (#2b2622 + metallic bronze #d4a373)
+    expect(svg).toContain('fill="#2b2622"');
+    expect(svg).toContain('fill="#d4a373"');
   });
 
   it("renders sakura biome with pink cherry leaves, dark log, and falling petals", () => {

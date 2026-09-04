@@ -277,4 +277,38 @@ describe("github module", () => {
       expect(calculateStreak(weeks)).toBe(0);
     });
   });
+
+  describe("fetchRepoContributors", () => {
+    it("fetches and parses list of repository contributors correctly", async () => {
+      const { fetchRepoContributors } = await import("../src/github");
+      const mockContributors = [
+        { login: "NivinVysakh", id: 1, contributions: 50 },
+        { login: "AliceDev", id: 2, contributions: 12 },
+        { login: "BobCoder", id: 3, contributions: 5 },
+      ];
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => mockContributors,
+      });
+
+      const contributors = await fetchRepoContributors("fake_token", "nivinvysakh/gh-tree");
+      expect(contributors).toEqual(["nivinvysakh", "alicedev", "bobcoder"]);
+    });
+
+    it("returns empty array on API failure or invalid repo format", async () => {
+      const { fetchRepoContributors } = await import("../src/github");
+      
+      const empty1 = await fetchRepoContributors("fake_token", "");
+      expect(empty1).toEqual([]);
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+      });
+
+      const empty2 = await fetchRepoContributors("fake_token", "invalid/repo");
+      expect(empty2).toEqual([]);
+    });
+  });
 });

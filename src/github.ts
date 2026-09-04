@@ -346,3 +346,38 @@ function assignPRToWeek(
 
   return false;
 }
+
+/**
+ * Fetches the list of contributor logins for a repository (e.g. "owner/repo").
+ * Returns an array of lowercase usernames.
+ */
+export async function fetchRepoContributors(
+  token: string,
+  repository: string
+): Promise<string[]> {
+  if (!repository || !repository.includes("/")) {
+    return [];
+  }
+
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repository}/contributors?per_page=100`, {
+      headers: {
+        Authorization: `bearer ${token}`,
+        "User-Agent": "commit-tree-action",
+        Accept: "application/vnd.github+json",
+      },
+    });
+
+    if (!res.ok) {
+      return [];
+    }
+
+    const data = (await res.json()) as any;
+    if (Array.isArray(data)) {
+      return data.map((c: any) => (c.login || "").toLowerCase()).filter(Boolean);
+    }
+    return [];
+  } catch {
+    return [];
+  }
+}
