@@ -75,7 +75,8 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 | `markdown-path`   | `README.md`  | Markdown file to update (set empty to disable)   |
 | `auto-commit`     | `true`       | Automatically commits & pushes updated files     |
 | `commit-message`  | `chore: update commit tree [skip ci]` | Commit message for auto-commit |
-| `days`            | `140`        | Days of history to fetch (~14–20 weekly branches)|
+| `days`            | `140`        | Days of history to fetch for commit leaves (~14–20 weekly branches)|
+| `pr-days`         | `14`         | Recency timer in days for flowers, red apples, and golden apples |
 | `frames`          | `20`         | Number of animation frames in the loop           |
 | `frame-delay-ms`  | `100`        | Frame delay in milliseconds                      |
 | `width`           | `460`        | Canvas width in pixels                           |

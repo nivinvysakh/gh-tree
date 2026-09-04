@@ -27,9 +27,13 @@ inputs:
     required: false
     default: "chore: update commit tree [skip ci]"
   days:
-    description: "How many days of history to pull (bucketed into weekly branches)"
+    description: "How many days of history to pull for commit leaves (bucketed into weekly branches)"
     required: false
     default: "140"
+  pr-days:
+    description: "Recency window in days for flowers (open PRs), red apples (merged PRs), and golden apples (reviews/assignments)"
+    required: false
+    default: "14"
   frames:
     description: "Number of animation frames in the loop"
     required: false

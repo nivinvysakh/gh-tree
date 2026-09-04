@@ -66,18 +66,21 @@ async function run(): Promise<void> {
     const autoCommit = core.getInput("auto-commit") !== "false";
     const commitMessage = core.getInput("commit-message") || "chore: update commit tree [skip ci]";
     const days = parseInt(core.getInput("days") || "140", 10);
+    const prDays = parseInt(core.getInput("pr-days") || "14", 10);
     const frameCount = parseInt(core.getInput("frames") || "20", 10);
     const frameDelayMs = parseInt(core.getInput("frame-delay-ms") || "100", 10);
     const width = parseInt(core.getInput("width") || "460", 10);
     const height = parseInt(core.getInput("height") || "420", 10);
 
-    core.info(`Fetching contribution calendar and PRs for @${login} (last ${days} days)...`);
-    const contributions = await fetchContributions(token, login, days);
     core.info(
-      `Activity in range: ${contributions.totalCommits} commits (leaves), ` +
-        `${contributions.totalOpenPRs} open PRs (flowers), ` +
-        `${contributions.totalMergedPRs} merged PRs (red apples), ` +
-        `${contributions.totalAssignedPRs} assigned PRs (golden apples).`
+      `Fetching contribution calendar (${days} days) and recent PRs/reviews (${prDays} days) for @${login}...`
+    );
+    const contributions = await fetchContributions(token, login, days, prDays);
+    core.info(
+      `Activity in range: ${contributions.totalCommits} commits (14-week canopy), ` +
+        `${contributions.totalOpenPRs} open PRs (flowers, last ${prDays}d), ` +
+        `${contributions.totalMergedPRs} merged PRs (red apples, last ${prDays}d), ` +
+        `${contributions.totalAssignedPRs} reviews/assigned (golden apples, last ${prDays}d).`
     );
 
     const layout = buildTreeLayout(contributions.weeks, undefined, { width, height });

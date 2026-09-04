@@ -123,12 +123,11 @@ describe("github module", () => {
       json: async () => mockGraphQLResponse,
     });
 
-    const result = await fetchContributions("fake_token", "testuser", 30);
+    const result = await fetchContributions("fake_token", "testuser", 30, 30);
 
     expect(result.totalCommits).toBe(42);
     expect(result.totalOpenPRs).toBe(1);
     expect(result.totalMergedPRs).toBe(1);
-    // 1 assigned PR + 1 review contribution = 2 golden apples
     expect(result.totalAssignedPRs).toBe(2);
     expect(result.weeks).toHaveLength(2);
 
@@ -140,6 +139,65 @@ describe("github module", () => {
     expect(result.weeks[1].total).toBe(5);
     expect(result.weeks[1].openPRs).toBe(0);
     expect(result.weeks[1].mergedPRs).toBe(1);
+  });
+
+  it("filters PRs with prDays recency timer window while preserving commit history", async () => {
+    const mockGraphQLResponse = {
+      data: {
+        user: {
+          contributionsCollection: {
+            contributionCalendar: {
+              totalContributions: 100,
+              weeks: [
+                {
+                  contributionDays: [
+                    { date: "2026-08-01", contributionCount: 10 },
+                  ],
+                },
+                {
+                  contributionDays: [
+                    { date: "2026-08-30", contributionCount: 10 },
+                  ],
+                },
+              ],
+            },
+            pullRequestContributions: { nodes: [] },
+            pullRequestReviewContributions: { nodes: [] },
+          },
+          openPRs: {
+            totalCount: 2,
+            nodes: [
+              // Older PR from 30 days ago
+              {
+                id: "pr_old_open",
+                url: "https://github.com/test/repo/pull/1",
+                createdAt: "2026-08-01T09:00:00Z",
+              },
+              // Recent PR from 2 days ago
+              {
+                id: "pr_recent_open",
+                url: "https://github.com/test/repo/pull/2",
+                createdAt: "2026-08-30T09:00:00Z",
+              },
+            ],
+          },
+          mergedPRs: { totalCount: 0, nodes: [] },
+        },
+        assignedPRs: { issueCount: 0, nodes: [] },
+        reviewedPRs: { issueCount: 0, nodes: [] },
+      },
+    };
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockGraphQLResponse,
+    });
+
+    // days = 40 (keeps all 100 commits), but prDays = 5 (only keeps PR from 2026-08-30)
+    const result = await fetchContributions("fake_token", "testuser", 40, 5);
+
+    expect(result.totalCommits).toBe(100);
+    expect(result.totalOpenPRs).toBe(1); // Only the recent PR
   });
 
   it("throws on HTTP errors", async () => {
