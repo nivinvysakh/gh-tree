@@ -64,6 +64,41 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+### Example with Live Weather & Recency Tuning
+
+Customize your tree with live city weather (or manual override) and recent PR activity:
+
+```yaml
+name: Generate Commit Tree
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: nivinvysakh/gh-tree@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Live weather from Open-Meteo for your city (auto-detects sun, night, rain, snow, clouds)
+          city: "Tokyo"
+          # Or manually force a weather condition: auto | sunny | night | rain | snow | cloudy
+          weather: "auto"
+          # Recency window in days for flowers (open PRs), red apples (merged PRs), and golden apples
+          pr-days: "14"
+          # Total days of history to fetch for commit canopy leaves (~14 weekly tiers)
+          days: "140"
+```
+
 > [!NOTE]
 > If you want the tree to reflect contributions across private and external repositories, create a Personal Access Token (PAT) with `read:user` scope, save it in your repo secrets as `TREE_PAT`, and use `${{ secrets.TREE_PAT }}`.
 
