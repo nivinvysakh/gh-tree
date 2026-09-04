@@ -57,6 +57,36 @@
 
 ---
 
+## 🎮 Minecraft Collectibles & Game Mechanics
+
+gh-tree turns your GitHub contributions into living Minecraft collectibles and milestones:
+
+### 💎 Underground Ore Blocks
+
+Embedded in the underground dirt layer beneath your tree, ore blocks unlock as you hit productivity milestones:
+
+| Ore Block | Appearance | Unlock Condition | What It Represents |
+| :--- | :---: | :--- | :--- |
+| **Diamond Ore** 💎 | Cyan crystalline flecks (left dirt layer) | • **≥ 25 total commits** in date range, *OR*<br>• **≥ 1 merged PR** | **Active Contributor** — milestone for consistent, regular contributions. |
+| **Emerald Ore** ❇️ | Bright emerald green gems (right dirt layer) | • **≥ 100 total commits** in date range, *OR*<br>• Any weekly branch reaching **Level 4** (30+ commits in a week) | **Power Contributor** — rare milestone awarded for high commit volume and intense development sprints. |
+
+---
+
+### 🍃 Canopy Leaves & Trees
+- **14 Weekly Canopy Blocks**: 14 distinct branches representing your recent contribution weeks.
+- **Commit Intensity**: Leaf colors dynamically transition across 5 levels from **Level 0** (dormant/dry) up to **Level 4** (lush emerald or vibrant sakura pink) based on weekly commit volume.
+
+### 🌸🍎🍏 Pull Request Collectibles
+- **Flowers 🌸 (Open PRs)**: Up to 4 colorful Minecraft flowers (Poppies, Dandelions, Tulips, Sakura) planted across the grass lawn.
+- **Red Apples 🍎 (Merged PRs)**: Up to 4 ripe red apples hanging beneath the canopy leaf blocks.
+- **Golden Apples 🍏✨ (Assigned PRs / Reviews)**: Up to 4 enchanted golden apples placed on the lawn.
+
+### 🪧 Wooden Stat Signpost & 🐝 Beehive
+- **Wooden Stat Signpost 🪧**: Renders your active consecutive commit streak (`⚡ 14d`) using a pure pixel font and high-contrast golden star.
+- **Beehive 🍯 & Animated Bee 🐝**: A wooden beehive appears on the trunk for active streaks (≥ 3 days) or ≥ 25 commits, while an animated Minecraft bee buzzes around the tree during fair weather.
+
+---
+
 ## Quick Start (Profile README)
 
 Add this simple workflow to your repository (e.g. your `username/username` profile README repository) at `.github/workflows/tree.yml`:
