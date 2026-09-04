@@ -1,0 +1,46 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'wiki/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Repo
+        uses: actions/checkout@v4
+
+      - name: Checkout Wiki Repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Sync Wiki Files & Push
+        run: |
+          if [ -d "wiki-repo" ]; then
+            cp -rf wiki/* wiki-repo/
+            cd wiki-repo
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            if git status --porcelain | grep -q .; then
+              git add .
+              git commit -m "docs(wiki): sync wiki documentation from main"
+              git push
+              echo "✓ Wiki successfully synced!"
+            else
+              echo "No changes to sync."
+            fi
+          else
+            echo "Wiki repo not initialized yet or not accessible. Enable Wiki under GitHub Repo Settings -> Features -> Wikis."
+          fi
