@@ -51,6 +51,12 @@ This project is empowering developers to gamify their profiles! Are you using `g
         <sub><b>Nivin</b></sub>
       </a>
     </td>
+    <td align="center">
+      <a href="https://github.com/thatsoeclipse">
+        <img src="https://github.com/thatsoeclipse.png?size=100" width="100px;" alt="Eclipse"/><br />
+        <sub><b>Eclipse</b></sub>
+      </a>
+    </td>
     <!-- You can easily add more <td> blocks here as more users join! -->
   </tr>
 </table>
