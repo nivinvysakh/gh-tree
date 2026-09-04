@@ -1,0 +1,42 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc"],
+      "label": "npm: build",
+      "detail": "Compile production bundle with @vercel/ncc"
+    },
+    {
+      "type": "npm",
+      "script": "typecheck",
+      "group": "build",
+      "problemMatcher": ["$tsc"],
+      "label": "npm: typecheck",
+      "detail": "Typecheck TypeScript code without emitting JS"
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "label": "npm: test",
+      "detail": "Run all Vitest test suites"
+    },
+    {
+      "type": "npm",
+      "script": "generate:mock",
+      "problemMatcher": [],
+      "label": "npm: generate:mock",
+      "detail": "Generate all local mock GIFs for all biomes, weathers, and events"
+    }
+  ]
+}

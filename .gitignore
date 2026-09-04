@@ -24,7 +24,6 @@ coverage/
 .LSOverride
 Thumbs.db
 .idea/
-.vscode/
 *.suo
 *.ntvs*
 *.njsproj
