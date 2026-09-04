@@ -20,7 +20,7 @@
 - **Minecraft Oak / Sakura Leaves** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink) across the 14 canopy blocks.
 - **Minecraft Bee 🐝 & Streak Beehive 🍯** — an animated buzzing bee with fluttering wings and a wooden beehive on the trunk celebrating your active commit streak.
 - **Wooden Stat Signpost 🪧** — a neat pixelated wooden signpost on the grass lawn displaying your live commit streak (`⚡ 14d`).
-- **Underground Ore Blocks 💎 (Netherite, Gold, Diamond, Emerald, Lapis, Redstone)** — embedded in the dirt layer featuring special **Netherite** for repo owners, **Lapis Lazuli** for contributors, and milestone ores.
+- **Underground Ore Blocks 💎 (Netherite, Gold, Diamond, Emerald, Lapis Lazuli, Redstone)** — embedded in the dirt layer featuring creator-exclusive **Netherite** (`@nivinvysakh`), **Lapis Lazuli** exclusively for verified `nivinvysakh/gh-tree` contributors, and productivity milestone ores.
 - **Minecraft Flowers 🌸 (Open PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the lawn.
 - **Minecraft Red Apples 🍎 (Merged PRs)** — up to 4 ripe red apples hanging beneath the canopy leaf blocks.
 - **Minecraft Golden Apples 🍏✨ (Assigned PRs / Reviews)** — up to 4 enchanted golden apples placed on the lawn.
@@ -63,7 +63,7 @@ gh-tree turns your GitHub contributions into living Minecraft collectibles and m
 
 ### 💎 Underground Ore Blocks
 
-Embedded in the underground dirt layer beneath your tree, 6 distinct ore blocks unlock as you hit maintainer, contribution, and productivity milestones:
+Embedded in the underground dirt layer beneath your tree, 6 distinct ore blocks unlock as you hit maintainer, contributor, and productivity milestones:
 
 | Ore Block | Appearance | Unlock Condition | What It Represents |
 | :--- | :---: | :--- | :--- |
@@ -71,7 +71,7 @@ Embedded in the underground dirt layer beneath your tree, 6 distinct ore blocks 
 | **Gold Ore** 🪙 | Radiant gold nuggets *(Slot 1: Mid-Left 1)* | • **Current streak ≥ 7 days**, *OR*<br>• **≥ 50 total commits** | **⚡ Streak Dedication** — milestone for sustained rhythm and week-long consistency. |
 | **Diamond Ore** 💎 | Cyan crystalline flecks *(Slot 2: Mid-Left 2)* | • **≥ 25 total commits** in date range, *OR*<br>• **≥ 1 merged PR** | **💎 Active Contributor** — milestone for regular code contributions and PR merges. |
 | **Emerald Ore** ❇️ | Bright emerald green gems *(Slot 3: Mid-Right 1)* | • **≥ 100 total commits** in date range, *OR*<br>• Any weekly branch reaching **Level 4** (30+ commits/week) | **🏆 Power Contributor** — rare milestone awarded for high commit volume and intense development sprints. |
-| **Lapis Lazuli Ore** 🔷 | Ultramarine blue crystals & gold pyrite *(Slot 4: Mid-Right 2)* | **Contributed to `nivinvysakh/gh-tree`** (or `is-contributor: true`) | **🤝 gh-tree Contributor** — special celestial blue ore celebrating awesome people who contributed to this Action! |
+| **Lapis Lazuli Ore** 🔷 | Ultramarine blue crystals & gold pyrite *(Slot 4: Mid-Right 2)* | **Contributed to `nivinvysakh/gh-tree`** (verified via GitHub API or `is-contributor: true`) | **🤝 `gh-tree` Contributor Badge** — special celestial blue ore awarded exclusively to developers who have contributed code/PRs to the [nivinvysakh/gh-tree](https://github.com/nivinvysakh/gh-tree) repository! |
 | **Redstone Ore** 🔴 | Glowing crimson Redstone *(Slot 5: Far-Right)* | • **Merged PRs ≥ 2**, *OR*<br>• **Total PR activity ≥ 3**, *OR*<br>• **Current streak ≥ 14 days** | **⚙️ Engineering & Automation** — milestone honoring pull request lifecycle, code reviews, and multi-week streaks. |
 
 ---
@@ -181,8 +181,8 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 | `tree-type`       | `oak`        | Biome tree type (`oak`, `sakura`, `spruce`, `birch`) |
 | `show-signpost`   | `true`       | Render wooden streak stat signpost on the grass  |
 | `show-bee`        | `true`       | Render animated Minecraft bee around the tree    |
-| `is-owner`        | `auto`       | Sets repo owner status (unlocks Netherite Ore)   |
-| `is-contributor`  | `auto`       | Sets contributor status (unlocks Lapis Lazuli)   |
+| `is-owner`        | `auto`       | Unlocks creator-exclusive Netherite Ore (`@nivinvysakh`) |
+| `is-contributor`  | `auto`       | Unlocks Lapis Lazuli Ore (verified for `nivinvysakh/gh-tree` contributors) |
 | `output-path`     | `tree.gif`   | Filepath where the generated GIF is written      |
 | `markdown-path`   | `README.md`  | Markdown file to update (set empty to disable)   |
 | `auto-commit`     | `true`       | Automatically commits & pushes updated files     |
