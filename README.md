@@ -4,28 +4,46 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788513707416)
+![tree](tree.gif?v=1788515413990)
 <!-- commit-tree-end -->
 
 
 <p>
-  <b>Renders your GitHub contribution graph and pull requests as an animated Minecraft Oak Tree with a transparent background.</b>
+  <b>Renders your GitHub contribution graph and pull requests as an animated Minecraft Oak, Sakura, Spruce, or Birch Tree with transparent background, live weather, and gamer collectibles.</b>
 </p>
 
 </div>
 
 ---
 
-- **Minecraft Oak Leaves** — weekly commits drive the lushness and green intensity levels (Level 0 pale/dormant to Level 4 rich emerald) across the 14 canopy blocks without deforming the tree structure.
-- **Minecraft Flowers 🌸 (Open Authored PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the grass ground (2 left / 2 right).
+- **Minecraft Tree Biomes 🌸🌲⚪🌳** — choose between **Sakura / Cherry Blossom** (with falling pink petals), **Spruce Taiga**, **Birch Forest**, or classic **Oak**.
+- **Minecraft Oak / Sakura Leaves** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink) across the 14 canopy blocks.
+- **Minecraft Bee 🐝 & Streak Beehive 🍯** — an animated buzzing bee with fluttering wings and a wooden beehive on the trunk celebrating your active commit streak.
+- **Wooden Stat Signpost 🪧** — a neat pixelated wooden signpost on the grass lawn displaying your live commit streak (`⚡ 14d`).
+- **Diamond & Emerald Ore Blocks 💎** — embedded in the ground dirt layer for high-productivity weeks and commit milestones.
+- **Minecraft Flowers 🌸 (Open PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the lawn.
 - **Minecraft Red Apples 🍎 (Merged PRs)** — up to 4 ripe red apples hanging beneath the canopy leaf blocks.
-- **Minecraft Golden Apples 🍏✨ (Assigned PRs)** — up to 4 enchanted golden apples placed side-by-side on the far-left and far-right grass ground.
-- **Live Weather & Day/Night Cycle ☀️🌕🌧️❄️☁️** — real-time weather integration (via Open-Meteo) rendering animated Minecraft Sun, Starry Night Moon & twinkling stars, Rain streaks & splashes, Snowfall & snow caps, or Drifting clouds.
+- **Minecraft Golden Apples 🍏✨ (Assigned PRs / Reviews)** — up to 4 enchanted golden apples placed on the lawn.
+- **Live Weather & Day/Night Cycle ☀️🌕🌧️❄️☁️** — real-time weather integration (via Open-Meteo) rendering animated Sun, Starry Night Moon & twinkling stars, Rain streaks & splashes, Snowfall & snow caps, or Drifting clouds.
 - **Transparent Background** — pure alpha transparency that seamlessly blends into dark and light GitHub profiles and READMEs.
 
 ---
 
-## Weather Showcase 🌦️
+## Biome & Tree Varieties Showcase 🌸🌲⚪🌳
+
+| **Classic Oak 🌳** (`tree-type: oak`) | **Sakura Cherry Blossom 🌸** (`tree-type: sakura`) |
+| :---: | :---: |
+| ![Oak](tree.gif) | ![Sakura](tree-sakura.gif) |
+| *Classic Oak, Bee, Beehive & Ore* | *Cherry blossom pinks & falling petals* |
+
+| **Taiga Spruce 🌲** (`tree-type: spruce`) | **Birch Forest ⚪** (`tree-type: birch`) |
+| :---: | :---: |
+| ![Spruce](tree-spruce.gif) | ![Birch](tree-birch.gif) |
+| *Dark coniferous needles & spruce bark* | *White notched birch bark & olive leaves* |
+
+---
+
+## Weather & Day/Night Showcase 🌦️
 
 | **Sunny ☀️** (`weather: sunny`) | **Starry Night 🌕✨** (`weather: night`) |
 | :---: | :---: |
@@ -65,9 +83,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Example with Live Weather & Recency Tuning
+### Full Configuration Example
 
-Customize your tree with live city weather (or manual override) and recent PR activity:
+Customize your tree with biomes, live weather, and recency tuning:
 
 ```yaml
 name: Generate Commit Tree
@@ -89,6 +107,8 @@ jobs:
       - uses: nivinvysakh/gh-tree@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Tree biome variety: oak | sakura | spruce | birch
+          tree-type: "sakura"
           # Live weather from Open-Meteo for your city (auto-detects sun, night, rain, snow, clouds)
           city: "Tokyo"
           # Or manually force a weather condition: auto | sunny | night | rain | snow | cloudy
@@ -97,6 +117,9 @@ jobs:
           pr-days: "14"
           # Total days of history to fetch for commit canopy leaves (~14 weekly tiers)
           days: "140"
+          # Whether to show the wooden streak signpost and animated bee
+          show-signpost: "true"
+          show-bee: "true"
 ```
 
 > [!NOTE]
@@ -107,7 +130,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788513707416)
+![tree](tree.gif?v=1788515413990)
 <!-- commit-tree-end -->
 ```
 
@@ -121,6 +144,9 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 |-------------------|--------------|--------------------------------------------------|
 | `github-token`    | *(Required)* | GitHub Token or PAT with `read:user` scope |
 | `github-login`    | `repository_owner`    | GitHub username (defaults to repo owner)   |
+| `tree-type`       | `oak`        | Biome tree type (`oak`, `sakura`, `spruce`, `birch`) |
+| `show-signpost`   | `true`       | Render wooden streak stat signpost on the grass  |
+| `show-bee`        | `true`       | Render animated Minecraft bee around the tree    |
 | `output-path`     | `tree.gif`   | Filepath where the generated GIF is written      |
 | `markdown-path`   | `README.md`  | Markdown file to update (set empty to disable)   |
 | `auto-commit`     | `true`       | Automatically commits & pushes updated files     |
@@ -140,17 +166,19 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 |-----------------|--------------------------------------------------------|
 | `gif-path`      | Absolute path to the generated GIF                     |
 | `total-commits` | Total commits counted in the date range                |
+| `current-streak`| Current consecutive active commit streak in days       |
 | `open-prs`      | Total open pull requests authored by the user          |
 | `merged-prs`    | Total merged pull requests                             |
 | `assigned-prs`  | Total open pull requests assigned to the user          |
 | `weather-type`  | Detected or active weather type (`sunny`, `night`, `rain`, etc.)|
 | `weather-desc`  | Description of current weather                         |
+| `tree-type`     | Selected biome variety (`oak`, `sakura`, `spruce`, `birch`)|
 
 ---
 
 ## Local Development & Testing
 
-Generate a local sample GIF without needing a token:
+Generate local sample GIFs for all biomes and weather conditions without needing a token:
 
 ```bash
 npm run generate:mock

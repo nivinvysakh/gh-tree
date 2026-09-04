@@ -110,5 +110,36 @@ describe("Minecraft tree module", () => {
       expect(cappedLayout.goldenApples).toHaveLength(MAX_GOLDEN_APPLES);
       expect(cappedLayout.goldenApples.length).toBeLessThanOrEqual(4);
     });
+
+    it("generates signpost, beehive, bee, and ore blocks based on activity and options", () => {
+      const activeWeeks: ContributionWeek[] = [
+        {
+          days: [
+            { date: "2026-08-20", count: 12 },
+            { date: "2026-08-21", count: 15 },
+            { date: "2026-08-22", count: 20 },
+            { date: "2026-08-23", count: 35 },
+          ],
+          total: 82,
+          openPRs: 2,
+          mergedPRs: 2,
+          assignedPRs: 1,
+        },
+      ];
+
+      const layout = buildTreeLayout(activeWeeks, undefined, {
+        treeType: "sakura",
+        showSignpost: true,
+        showBee: true,
+      });
+
+      expect(layout.treeType).toBe("sakura");
+      expect(layout.currentStreak).toBe(4);
+      expect(layout.signpost).toBeDefined();
+      expect(layout.signpost?.streak).toBe(4);
+      expect(layout.beehive).toBeDefined();
+      expect(layout.bee).toBeDefined();
+      expect(layout.oreBlocks.length).toBeGreaterThanOrEqual(1);
+    });
   });
 });

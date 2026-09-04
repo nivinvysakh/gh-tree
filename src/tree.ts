@@ -1,4 +1,4 @@
-import { ContributionWeek } from "./github";
+import { ContributionWeek, calculateStreak } from "./github";
 import { WeatherCondition } from "./weather";
 
 export const BLOCK_PIXELS = 16;
@@ -7,6 +7,8 @@ export const BLOCK_SIZE = BLOCK_PIXELS * PIXEL_SCALE; // 48px
 export const MAX_FLOWERS = 4;
 export const MAX_APPLES = 4;
 export const MAX_GOLDEN_APPLES = 4;
+
+export type TreeType = "oak" | "sakura" | "spruce" | "birch";
 
 export interface LeafBlockPos {
   gridX: number; // relative to trunk (-2, -1, 0, 1, 2)
@@ -42,20 +44,49 @@ export interface GoldenApplePos {
   side: "left" | "right";
 }
 
+export interface OreBlockPos {
+  x: number;
+  y: number;
+  type: "diamond" | "emerald";
+}
+
+export interface BeePos {
+  x: number;
+  y: number;
+}
+
+export interface BeehivePos {
+  x: number;
+  y: number;
+  side: "left" | "right";
+}
+
+export interface SignpostPos {
+  x: number;
+  y: number;
+  streak: number;
+}
+
 export interface TreeLayout {
   width: number;
   height: number;
   groundY: number;
   trunkX: number;
+  treeType: TreeType;
   trunkBlocks: { x: number; y: number; size: number }[];
   leafBlocks: LeafBlockPos[];
   flowers: FlowerPos[];
   apples: ApplePos[];
   goldenApples: GoldenApplePos[];
+  oreBlocks: OreBlockPos[];
+  bee?: BeePos;
+  beehive?: BeehivePos;
+  signpost?: SignpostPos;
   totalCommits: number;
   openPRs: number;
   mergedPRs: number;
   assignedPRs: number;
+  currentStreak: number;
   weather: WeatherCondition;
 }
 
@@ -98,11 +129,15 @@ export function buildTreeLayout(
     width?: number;
     height?: number;
     weather?: WeatherCondition;
+    treeType?: TreeType;
+    showSignpost?: boolean;
+    showBee?: boolean;
   } = {}
 ): TreeLayout {
   const width = opts.width ?? 460;
   const height = opts.height ?? 420;
   const weather = opts.weather ?? { type: "sunny", description: "Clear sky" };
+  const treeType = opts.treeType ?? "oak";
   const bs = BLOCK_SIZE; // 48px
 
   let totalCommits = 0;
@@ -116,6 +151,8 @@ export function buildTreeLayout(
     totalMergedPRs += w.mergedPRs || 0;
     totalAssignedPRs += w.assignedPRs || 0;
   }
+
+  const currentStreak = calculateStreak(weeks);
 
   const groundY = height - 50; // 370px
   const trunkX = Math.floor((width - bs) / 2); // 206px
@@ -175,12 +212,12 @@ export function buildTreeLayout(
       "sakura",
     ];
 
-    // Positioned in the middle lawn between trunk and far-edge golden apples
+    // Perfectly spaced lawn positions preventing collision with signpost, apples, and trunk
     const flowerSlots: { x: number; side: "left" | "right" }[] = [
-      { x: 156, side: "left" },
-      { x: 286, side: "right" },
-      { x: 104, side: "left" },
-      { x: 338, side: "right" },
+      { x: 120, side: "left" },
+      { x: 160, side: "left" },
+      { x: 280, side: "right" },
+      { x: 330, side: "right" },
     ];
 
     const flowerWidth = 18;
@@ -204,8 +241,8 @@ export function buildTreeLayout(
   const apples: ApplePos[] = [];
   if (totalMergedPRs > 0) {
     const appleSlots = [
-      { gridX: -1, offsetX: 14 },
-      { gridX: 1, offsetX: 14 },
+      { gridX: -1, offsetX: 10 },
+      { gridX: 1, offsetX: 20 },
       { gridX: -2, offsetX: 14 },
       { gridX: 2, offsetX: 14 },
     ];
@@ -230,10 +267,10 @@ export function buildTreeLayout(
     const goldenAppleSize = 20;
 
     const separateSlots: { x: number; side: "left" | "right" }[] = [
-      { x: 20, side: "left" },   // Far Left Outer
-      { x: 420, side: "right" }, // Far Right Outer
-      { x: 48, side: "left" },   // Far Left Inner
-      { x: 392, side: "right" }, // Far Right Inner
+      { x: 14, side: "left" },   // Far Left 1
+      { x: 38, side: "left" },   // Far Left 2
+      { x: 402, side: "right" }, // Far Right 2
+      { x: 426, side: "right" }, // Far Right 1
     ];
 
     const count = Math.min(totalAssignedPRs, MAX_GOLDEN_APPLES);
@@ -248,20 +285,50 @@ export function buildTreeLayout(
     }
   }
 
+  // 6. Ore Blocks 💎 (Embedded in the ground dirt layer)
+  const oreBlocks: OreBlockPos[] = [];
+  if (totalCommits >= 100 || leafBlocks.some((b) => b.commitLevel === 4)) {
+    oreBlocks.push({ x: 104, y: groundY + 16, type: "diamond" });
+    oreBlocks.push({ x: 312, y: groundY + 16, type: "emerald" });
+  } else if (totalCommits >= 25 || totalMergedPRs >= 1) {
+    oreBlocks.push({ x: 104, y: groundY + 16, type: "diamond" });
+  }
+
+  // 7. Wooden Stat Signpost 🪧 (Placed at x: 68 with comfortable spacing)
+  const signpost: SignpostPos | undefined =
+    opts.showSignpost !== false ? { x: 68, y: groundY - 22, streak: currentStreak } : undefined;
+
+  // 8. Minecraft Beehive 🍯 & Bee 🐝 (Positioned on the trunk lower down with zero apple overlap)
+  let beehive: BeehivePos | undefined;
+  if (currentStreak >= 3 || totalCommits >= 25) {
+    beehive = { x: trunkX + bs - 2, y: trunkStartY + bs + 28, side: "right" };
+  }
+
+  let bee: BeePos | undefined;
+  if (opts.showBee !== false && (currentStreak >= 1 || totalCommits > 0)) {
+    bee = { x: trunkX - 44, y: canopyBottomY + 28 };
+  }
+
   return {
     width,
     height,
     groundY,
     trunkX,
+    treeType,
     trunkBlocks,
     leafBlocks,
     flowers,
     apples,
     goldenApples,
+    oreBlocks,
+    bee,
+    beehive,
+    signpost,
     totalCommits,
     openPRs: totalOpenPRs,
     mergedPRs: totalMergedPRs,
     assignedPRs: totalAssignedPRs,
+    currentStreak,
     weather,
   };
 }

@@ -1,22 +1,30 @@
 import * as fs from "fs";
 import * as path from "path";
-import { buildTreeLayout } from "../src/tree";
+import { buildTreeLayout, TreeType } from "../src/tree";
 import { renderFrame } from "../src/svg";
 import { encodeGif } from "../src/gif";
 import { updateMarkdownFile } from "../src/markdown";
 import { ContributionWeek } from "../src/github";
 import { WeatherCondition } from "../src/weather";
 
-async function generateWeatherGif(
+async function generateGifVariant(
   filename: string,
   weather: WeatherCondition,
+  treeType: TreeType,
   weeks: ContributionWeek[],
   width: number,
   height: number,
   frameCount: number,
   frameDelayMs: number
 ): Promise<string> {
-  const layout = buildTreeLayout(weeks, undefined, { width, height, weather });
+  const layout = buildTreeLayout(weeks, undefined, {
+    width,
+    height,
+    weather,
+    treeType,
+    showSignpost: true,
+    showBee: true,
+  });
   const frames = Array.from({ length: frameCount }, (_, i) => ({
     svg: renderFrame(layout, i, frameCount),
   }));
@@ -24,25 +32,25 @@ async function generateWeatherGif(
   const gifBytes = await encodeGif(frames, width, height, frameDelayMs);
   const outputPath = path.resolve(__dirname, `../${filename}`);
   fs.writeFileSync(outputPath, gifBytes);
-  console.log(`✓ Generated ${filename} (${weather.type.toUpperCase()}) - ${(gifBytes.length / 1024).toFixed(1)} KB`);
+  console.log(`✓ Generated ${filename} [${treeType.toUpperCase()} | ${weather.type.toUpperCase()}] - ${(gifBytes.length / 1024).toFixed(1)} KB`);
   return outputPath;
 }
 
 async function runMockGeneration(): Promise<void> {
-  console.log("Generating local mock GIFs for all weather conditions (Sunny, Rain, Snow, Cloudy)...\n");
+  console.log("Generating local mock GIFs for all biomes and weather conditions...\n");
 
-  // 14 weeks crafted to showcase all levels: 0 (dormant), 1 (light), 2 (medium), 3 (lush), 4 (emerald)
+  // 14 weeks crafted to showcase all levels, PR flowers, apples, golden apples, and streak
   const commitCounts = [
     3,  // Tier 0 (bottom left outer) - Level 1
     18, // Tier 0 (bottom left inner) - Level 3
     42, // Tier 0 (bottom center) - Level 4
     2,  // Tier 0 (bottom right inner) - Level 1
-    0,  // Tier 0 (bottom right outer) - Level 0 (no commits)
-    0,  // Tier -1 (mid left outer) - Level 0 (no commits)
+    4,  // Tier 0 (bottom right outer)
+    8,  // Tier -1 (mid left outer)
     12, // Tier -1 (mid left inner) - Level 2
     38, // Tier -1 (mid center) - Level 4
-    8,  // Tier -1 (mid right inner) - Level 2
-    0,  // Tier -1 (mid right outer) - Level 0 (no commits)
+    14, // Tier -1 (mid right inner) - Level 2
+    6,  // Tier -1 (mid right outer)
     34, // Tier -2 (upper left) - Level 4
     25, // Tier -2 (upper center) - Level 3
     28, // Tier -2 (upper right) - Level 3
@@ -55,7 +63,10 @@ async function runMockGeneration(): Promise<void> {
     const dateStr = d.toISOString().slice(0, 10);
 
     return {
-      days: [{ date: dateStr, count }],
+      days: [
+        { date: dateStr, count: Math.ceil(count / 2) },
+        { date: new Date(d.getTime() + 86400000).toISOString().slice(0, 10), count: Math.floor(count / 2) },
+      ],
       total: count,
       openPRs: idx === 3 || idx === 10 ? 2 : 0,    // Total 4 flowers (2 left, 2 right)
       mergedPRs: idx === 2 || idx === 8 ? 2 : 0,   // Total 4 red apples in canopy
@@ -68,18 +79,26 @@ async function runMockGeneration(): Promise<void> {
   const frameCount = 14;
   const frameDelayMs = 110;
 
-  const weatherVariants: { file: string; weather: WeatherCondition }[] = [
-    { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" } },
-    { file: "tree-night.gif", weather: { type: "night", description: "Clear starry night (Moon & Clouds)", isDay: false } },
-    { file: "tree-rain.gif", weather: { type: "rain", description: "Rain showers & storm clouds" } },
-    { file: "tree-snow.gif", weather: { type: "snow", description: "Snowfall & snowy caps" } },
-    { file: "tree-cloudy.gif", weather: { type: "cloudy", description: "Overcast clouds" } },
+  const variants: { file: string; weather: WeatherCondition; treeType: TreeType }[] = [
+    { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" }, treeType: "oak" },
+    { file: "tree-sakura.gif", weather: { type: "sunny", description: "Sunny Sakura Blossom" }, treeType: "sakura" },
+    { file: "tree-sakura-rain.gif", weather: { type: "rain", description: "Sakura in Rain" }, treeType: "sakura" },
+    { file: "tree-sakura-snow.gif", weather: { type: "snow", description: "Sakura in Snow" }, treeType: "sakura" },
+    { file: "tree-spruce.gif", weather: { type: "sunny", description: "Taiga Spruce" }, treeType: "spruce" },
+    { file: "tree-spruce-snow.gif", weather: { type: "snow", description: "Taiga Spruce in Snow" }, treeType: "spruce" },
+    { file: "tree-birch.gif", weather: { type: "sunny", description: "Birch Forest" }, treeType: "birch" },
+    { file: "tree-birch-rain.gif", weather: { type: "rain", description: "Birch in Rain" }, treeType: "birch" },
+    { file: "tree-night.gif", weather: { type: "night", description: "Clear starry night (Moon & Clouds)", isDay: false }, treeType: "oak" },
+    { file: "tree-rain.gif", weather: { type: "rain", description: "Rain showers & storm clouds" }, treeType: "oak" },
+    { file: "tree-snow.gif", weather: { type: "snow", description: "Snowfall & snowy caps" }, treeType: "spruce" },
+    { file: "tree-cloudy.gif", weather: { type: "cloudy", description: "Overcast clouds" }, treeType: "oak" },
   ];
 
-  for (const variant of weatherVariants) {
-    const outputPath = await generateWeatherGif(
+  for (const variant of variants) {
+    const outputPath = await generateGifVariant(
       variant.file,
       variant.weather,
+      variant.treeType,
       weeks,
       width,
       height,

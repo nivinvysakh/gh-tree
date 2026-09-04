@@ -42,6 +42,18 @@ inputs:
     description: "Manual weather override or auto (options: auto, sunny, rain, snow, cloudy, night)"
     required: false
     default: "auto"
+  tree-type:
+    description: "Minecraft Tree Biome variety (options: oak, sakura, spruce, birch)"
+    required: false
+    default: "oak"
+  show-signpost:
+    description: "Whether to render the wooden commit streak stat signpost on the grass"
+    required: false
+    default: "true"
+  show-bee:
+    description: "Whether to render the animated Minecraft bee hovering around the tree"
+    required: false
+    default: "true"
   frames:
     description: "Number of animation frames in the loop"
     required: false
@@ -61,6 +73,8 @@ outputs:
     description: "Absolute path to the generated GIF"
   total-commits:
     description: "Total contributions counted in the date range"
+  current-streak:
+    description: "Current consecutive active commit streak in days"
   open-prs:
     description: "Total open pull requests authored by user"
   merged-prs:
@@ -71,6 +85,8 @@ outputs:
     description: "Current weather condition type (sunny, rain, snow, cloudy, night)"
   weather-desc:
     description: "Text description of current weather"
+  tree-type:
+    description: "Selected Minecraft tree biome type (oak, sakura, spruce, birch)"
 runs:
   using: "node20"
   main: "dist/index.js"

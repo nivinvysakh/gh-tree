@@ -1,6 +1,14 @@
-import { TreeLayout, LeafBlockPos, FlowerPos, ApplePos, GoldenApplePos } from "./tree";
+import {
+  TreeLayout,
+  TreeType,
+  LeafBlockPos,
+  FlowerPos,
+  ApplePos,
+  GoldenApplePos,
+  OreBlockPos,
+} from "./tree";
 
-// Seamless 16x16 Minecraft Oak Log texture
+// Seamless 16x16 Minecraft Log texture
 const LOG_16X16 = [
   "2011003011003002",
   "2001103001103002",
@@ -20,14 +28,34 @@ const LOG_16X16 = [
   "2011003011003002",
 ];
 
-const LOG_PALETTE = [
-  "#6d4934", // 0: Base wood brown
-  "#4a3020", // 1: Dark bark fissure
-  "#352015", // 2: Outer side bark edge
-  "#8a5f43", // 3: Light bark vertical highlight
-];
+const LOG_PALETTES: Record<TreeType, string[]> = {
+  oak: [
+    "#6d4934", // 0: Base wood brown
+    "#4a3020", // 1: Dark bark fissure
+    "#352015", // 2: Outer side bark edge
+    "#8a5f43", // 3: Light bark vertical highlight
+  ],
+  sakura: [
+    "#422927", // 0: Dark cherry wood
+    "#2e1a19", // 1: Dark fissure
+    "#201211", // 2: Bark edge
+    "#593936", // 3: Cherry bark highlight
+  ],
+  spruce: [
+    "#3b2716", // 0: Dark taiga wood
+    "#26180c", // 1: Dark taiga fissure
+    "#180f07", // 2: Outer edge
+    "#4e3520", // 3: Light highlight
+  ],
+  birch: [
+    "#e5e5e5", // 0: White birch bark
+    "#303030", // 1: Dark horizontal notch
+    "#1e1e1e", // 2: Dark notch edge
+    "#ffffff", // 3: Bright white highlight
+  ],
+};
 
-// Authentic 16x16 Minecraft Oak Leaf texture
+// Authentic 16x16 Minecraft Leaf texture
 const LEAF_16X16 = [
   "2222222222222222",
   "2001100330011002",
@@ -47,19 +75,56 @@ const LEAF_16X16 = [
   "2222222222222222",
 ];
 
-// 5 Commit-driven leaf palettes (from Level 0 dormant to Level 4 rich emerald)
-const LEAF_LEVEL_PALETTES = [
-  // Level 0: 0 commits (pale / dry dormant foliage)
-  ["#8d7b68", "#6e5d4d", "#524437", "#a69581"],
-  // Level 1: 1-4 commits (light lime yellow-green)
-  ["#7ea349", "#648434", "#486221", "#9ec75a"],
-  // Level 2: 5-14 commits (vibrant medium green)
-  ["#489e3b", "#357e2b", "#235f1c", "#60ba52"],
-  // Level 3: 15-29 commits (deep forest green)
-  ["#2e7d32", "#1e5c22", "#134216", "#43a047"],
-  // Level 4: 30+ commits (rich dark emerald green)
-  ["#1a6b24", "#0f4e17", "#08350e", "#35b349"],
-];
+const LEAF_PALETTES: Record<TreeType, string[][]> = {
+  oak: [
+    // Level 0: 0 commits (pale / dry dormant foliage)
+    ["#8d7b68", "#6e5d4d", "#524437", "#a69581"],
+    // Level 1: 1-4 commits (light lime yellow-green)
+    ["#7ea349", "#648434", "#486221", "#9ec75a"],
+    // Level 2: 5-14 commits (vibrant medium green)
+    ["#489e3b", "#357e2b", "#235f1c", "#60ba52"],
+    // Level 3: 15-29 commits (deep forest green)
+    ["#2e7d32", "#1e5c22", "#134216", "#43a047"],
+    // Level 4: 30+ commits (rich dark emerald green)
+    ["#1a6b24", "#0f4e17", "#08350e", "#35b349"],
+  ],
+  sakura: [
+    // Level 0: pale blossom bud
+    ["#cbb5b0", "#a8908b", "#86706c", "#ded0cc"],
+    // Level 1: soft pastel pink
+    ["#ffb7c5", "#e598a8", "#b86b7c", "#ffd1dc"],
+    // Level 2: vibrant cherry pink
+    ["#ff758f", "#e6506d", "#b8304d", "#ff9ebb"],
+    // Level 3: rich magenta sakura
+    ["#ff4d6d", "#d92b4d", "#a81333", "#ff758f"],
+    // Level 4: deep radiant blossom
+    ["#c9184a", "#a00f36", "#700522", "#ff4d6d"],
+  ],
+  spruce: [
+    // Level 0: dry taiga foliage
+    ["#5e6856", "#454d3e", "#2f3629", "#788570"],
+    // Level 1: spruce pine green
+    ["#4f6e3c", "#3a542a", "#263c19", "#688c52"],
+    // Level 2: deep evergreen
+    ["#3d5e2e", "#2c461f", "#1b3012", "#527a3f"],
+    // Level 3: dense taiga needles
+    ["#2d4a22", "#1e3814", "#13260c", "#3f6331"],
+    // Level 4: dark emerald taiga
+    ["#1c3813", "#11260a", "#091705", "#2a4d1d"],
+  ],
+  birch: [
+    // Level 0: dry birch
+    ["#8f8668", "#6e664c", "#524b35", "#a89e80"],
+    // Level 1: bright birch lime
+    ["#9ec75a", "#7ea340", "#5b7a2b", "#b8de76"],
+    // Level 2: lush birch yellow-green
+    ["#7ca836", "#5d8225", "#425e17", "#97c449"],
+    // Level 3: dense birch foliage
+    ["#618a28", "#45661b", "#2d470e", "#7ca836"],
+    // Level 4: rich emerald birch
+    ["#476b1c", "#324f11", "#1e3308", "#5e8a26"],
+  ],
+};
 
 function renderMinecraftSun(
   x: number,
@@ -166,6 +231,31 @@ function renderMinecraftCloud(
   `;
 }
 
+function renderSakuraPetals(
+  width: number,
+  groundY: number,
+  frameIndex: number,
+  totalFrames: number
+): string {
+  let rects = "";
+  const petalCount = 18;
+  const speed = 7;
+
+  for (let i = 0; i < petalCount; i++) {
+    const seedX = (i * 47 + 19) % width;
+    const initialY = (i * 27) % (groundY - 15);
+    const petalY = (initialY + frameIndex * speed) % (groundY - 5);
+    const flutter = Math.sin((frameIndex + i) * 0.5) * 6;
+    const petalX = (seedX + flutter + width) % width;
+    const size = (i % 2 === 0) ? 3 : 2;
+    const color = (i % 3 === 0) ? "#ff758f" : "#ffb7c5";
+
+    rects += `<rect x="${petalX.toFixed(1)}" y="${petalY.toFixed(1)}" width="${size}" height="${size}" fill="${color}" opacity="0.85" />`;
+  }
+
+  return `<g shape-rendering="crispEdges">${rects}</g>`;
+}
+
 function renderRainStreaks(
   width: number,
   groundY: number,
@@ -226,12 +316,34 @@ function renderMinecraftGround(
   width: number,
   height: number,
   groundY: number,
-  isSnow: boolean = false
+  isSnow: boolean = false,
+  oreBlocks: OreBlockPos[] = []
 ): string {
   const grassHeight = 14;
   const grassColor = isSnow ? "#eceff1" : "#7cb342";
   const grassHighlight = isSnow ? "#ffffff" : "#8bc34a";
   const grassShadow = isSnow ? "#cfd8dc" : "#558b2f";
+
+  let oresSvg = "";
+  for (const ore of oreBlocks) {
+    const gemColor = ore.type === "diamond" ? "#00e5ff" : "#00e676";
+    const gemShine = ore.type === "diamond" ? "#e0f7fa" : "#e8f5e9";
+    const gemShadow = ore.type === "diamond" ? "#0091ea" : "#00a152";
+
+    oresSvg += `
+      <!-- ${ore.type.toUpperCase()} ORE BLOCK -->
+      <g shape-rendering="crispEdges">
+        <rect x="${ore.x}" y="${ore.y}" width="24" height="20" fill="#616161" />
+        <rect x="${ore.x + 2}" y="${ore.y + 2}" width="20" height="16" fill="#757575" />
+        <rect x="${ore.x + 4}" y="${ore.y + 4}" width="4" height="4" fill="${gemColor}" />
+        <rect x="${ore.x + 5}" y="${ore.y + 5}" width="2" height="2" fill="${gemShine}" />
+        <rect x="${ore.x + 14}" y="${ore.y + 6}" width="4" height="4" fill="${gemColor}" />
+        <rect x="${ore.x + 15}" y="${ore.y + 7}" width="2" height="2" fill="${gemShadow}" />
+        <rect x="${ore.x + 8}" y="${ore.y + 12}" width="5" height="4" fill="${gemColor}" />
+        <rect x="${ore.x + 9}" y="${ore.y + 13}" width="2" height="2" fill="${gemShine}" />
+      </g>
+    `;
+  }
 
   return `
     <g shape-rendering="crispEdges">
@@ -241,19 +353,26 @@ function renderMinecraftGround(
       
       <rect x="0" y="${groundY + grassHeight}" width="${width}" height="${height - groundY - grassHeight}" fill="#5d4037" />
       <rect x="0" y="${groundY + grassHeight}" width="${width}" height="2" fill="#4e342e" />
+      ${oresSvg}
     </g>
   `;
 }
 
-function renderMinecraftLog(x: number, y: number, size: number): string {
+function renderMinecraftLog(
+  x: number,
+  y: number,
+  size: number,
+  treeType: TreeType = "oak"
+): string {
   const pixelSize = size / 16;
+  const palette = LOG_PALETTES[treeType] || LOG_PALETTES.oak;
   let rects = "";
 
   for (let r = 0; r < 16; r++) {
     const row = LOG_16X16[r];
     for (let c = 0; c < 16; c++) {
       const colorIndex = parseInt(row[c], 10);
-      const color = LOG_PALETTE[colorIndex];
+      const color = palette[colorIndex];
       const px = x + c * pixelSize;
       const py = y + r * pixelSize;
       rects += `<rect x="${px.toFixed(1)}" y="${py.toFixed(1)}" width="${pixelSize.toFixed(1)}" height="${pixelSize.toFixed(1)}" fill="${color}" />`;
@@ -267,11 +386,13 @@ function renderMinecraftLeaf(
   leaf: LeafBlockPos,
   frameIndex: number,
   totalFrames: number,
-  isSnow: boolean = false
+  isSnow: boolean = false,
+  treeType: TreeType = "oak"
 ): string {
   const { x, y, size, commitLevel, gridY } = leaf;
   const pixelSize = size / 16;
-  const palette = LEAF_LEVEL_PALETTES[Math.min(4, Math.max(0, commitLevel))];
+  const biomePalettes = LEAF_PALETTES[treeType] || LEAF_PALETTES.oak;
+  const palette = biomePalettes[Math.min(4, Math.max(0, commitLevel))];
 
   const shimmer = (frameIndex + leaf.weekIndex) % Math.max(1, totalFrames) < totalFrames / 2 ? 0 : 1;
 
@@ -383,12 +504,180 @@ function renderGoldenAppleOnGrass(apple: GoldenApplePos, frameIndex: number): st
   `;
 }
 
+function renderMinecraftBee(
+  baseX: number,
+  baseY: number,
+  frameIndex: number,
+  totalFrames: number
+): string {
+  const t = totalFrames > 0 ? (frameIndex % totalFrames) / totalFrames : 0;
+  // Sinusoidal flight path hovering around canopy & flowers
+  const bx = baseX + Math.sin(t * Math.PI * 2) * 16;
+  const by = baseY + Math.cos(t * Math.PI * 4) * 4;
+  const wingFlap = frameIndex % 2 === 0;
+
+  return `
+    <!-- Minecraft Bee -->
+    <g shape-rendering="crispEdges">
+      <!-- Bee Body: Yellow & Black stripes -->
+      <rect x="${bx.toFixed(1)}" y="${(by + 3).toFixed(1)}" width="14" height="10" fill="#fbc02d" />
+      <rect x="${(bx + 4).toFixed(1)}" y="${(by + 3).toFixed(1)}" width="3" height="10" fill="#212121" />
+      <rect x="${(bx + 10).toFixed(1)}" y="${(by + 3).toFixed(1)}" width="3" height="10" fill="#212121" />
+      <!-- Stinger -->
+      <rect x="${(bx + 13).toFixed(1)}" y="${(by + 7).toFixed(1)}" width="2" height="2" fill="#212121" />
+      <!-- Cute Cyan Eyes & Antennae -->
+      <rect x="${bx.toFixed(1)}" y="${(by + 5).toFixed(1)}" width="2" height="3" fill="#40c4ff" />
+      <rect x="${(bx + 2).toFixed(1)}" y="${(by + 1).toFixed(1)}" width="1.5" height="2" fill="#212121" />
+      <rect x="${(bx + 5).toFixed(1)}" y="${(by + 1).toFixed(1)}" width="1.5" height="2" fill="#212121" />
+      <!-- Little legs -->
+      <rect x="${(bx + 3).toFixed(1)}" y="${(by + 13).toFixed(1)}" width="2" height="2" fill="#212121" />
+      <rect x="${(bx + 8).toFixed(1)}" y="${(by + 13).toFixed(1)}" width="2" height="2" fill="#212121" />
+      <!-- Fluttering translucent wings -->
+      <rect x="${(bx + 3).toFixed(1)}" y="${(by - (wingFlap ? 3 : 1)).toFixed(1)}" width="6" height="${wingFlap ? 3 : 2}" fill="#ffffff" opacity="0.8" />
+      <rect x="${(bx + 7).toFixed(1)}" y="${(by - (wingFlap ? 2 : 0)).toFixed(1)}" width="5" height="${wingFlap ? 2 : 1}" fill="#e1f5fe" opacity="0.7" />
+    </g>
+  `;
+}
+
+function renderMinecraftBeehive(
+  x: number,
+  y: number,
+  _side: "left" | "right" = "right"
+): string {
+  return `
+    <!-- Minecraft Beehive -->
+    <g shape-rendering="crispEdges">
+      <rect x="${x}" y="${y}" width="22" height="18" fill="#d7a15c" />
+      <rect x="${x}" y="${y}" width="22" height="3" fill="#bf8640" />
+      <rect x="${x}" y="${y + 7}" width="22" height="2" fill="#946328" />
+      <rect x="${x}" y="${y + 14}" width="22" height="2" fill="#946328" />
+      <!-- Hive entrance slit -->
+      <rect x="${x + 4}" y="${y + 10}" width="14" height="3" fill="#2b180a" />
+      <!-- Dripping honey -->
+      <rect x="${x + 6}" y="${y + 13}" width="3" height="3" fill="#ffb300" />
+      <rect x="${x + 13}" y="${y + 13}" width="2" height="4" fill="#ffd54f" />
+    </g>
+  `;
+}
+
+// 3x5 Pixel Font for Minecraft Signpost digits and 'd'
+const PIXEL_FONT_3X5: Record<string, string[]> = {
+  "0": ["111", "101", "101", "101", "111"],
+  "1": ["010", "110", "010", "010", "111"],
+  "2": ["111", "001", "111", "100", "111"],
+  "3": ["111", "001", "111", "001", "111"],
+  "4": ["101", "101", "111", "001", "001"],
+  "5": ["111", "100", "111", "001", "111"],
+  "6": ["111", "100", "111", "101", "111"],
+  "7": ["111", "001", "010", "010", "010"],
+  "8": ["111", "101", "111", "101", "111"],
+  "9": ["111", "101", "111", "001", "111"],
+  "d": ["001", "001", "111", "101", "111"],
+};
+
+// 5x5 Star with dark outline and bright gold/white core (visible from far)
+const STAR_5X5 = [
+  "00100",
+  "01210",
+  "12321",
+  "01210",
+  "00100",
+];
+const STAR_PALETTE = [
+  "",
+  "#2d1b0d", // 1: Dark carved outline
+  "#ffd600", // 2: Vibrant gold
+  "#ffffff", // 3: Bright white sparkle
+];
+
+function renderMinecraftSignpost(
+  x: number,
+  y: number,
+  streak: number
+): string {
+  const streakText = streak > 0 ? `${streak}d` : "0d";
+  const boardWidth = 44;
+  const boardHeight = 18;
+  const ps = 1.6; // pixel size for glyphs
+
+  // Compute total content width to center perfectly on the signboard
+  const starWidth = 5 * ps;
+  const gap = 3;
+  const textWidth = streakText.length * (3 * ps + 1.5) - 1.5;
+  const totalContentWidth = starWidth + gap + textWidth;
+  const startX = Math.floor(x + (boardWidth - totalContentWidth) / 2);
+  const textY = y + 5;
+
+  let glyphsSvg = "";
+
+  // 1. Render High-Contrast Star Icon
+  let curX = startX;
+  for (let r = 0; r < 5; r++) {
+    const row = STAR_5X5[r];
+    for (let c = 0; c < 5; c++) {
+      const val = parseInt(row[c], 10);
+      if (val > 0) {
+        const color = STAR_PALETTE[val];
+        glyphsSvg += `<rect x="${(curX + c * ps).toFixed(1)}" y="${(textY + r * ps).toFixed(1)}" width="${ps.toFixed(1)}" height="${ps.toFixed(1)}" fill="${color}" />`;
+      }
+    }
+  }
+
+  curX += starWidth + gap;
+
+  // 2. Render digits + 'd' in dark carved wood brown
+  for (let i = 0; i < streakText.length; i++) {
+    const char = streakText[i];
+    const matrix = PIXEL_FONT_3X5[char] || PIXEL_FONT_3X5["0"];
+    for (let r = 0; r < 5; r++) {
+      const row = matrix[r];
+      for (let c = 0; c < 3; c++) {
+        if (row[c] === "1") {
+          glyphsSvg += `<rect x="${(curX + c * ps).toFixed(1)}" y="${(textY + r * ps).toFixed(1)}" width="${ps.toFixed(1)}" height="${ps.toFixed(1)}" fill="#2d1b0d" />`;
+        }
+      }
+    }
+    curX += 3 * ps + 1.5; // character spacing
+  }
+
+  return `
+    <!-- Minecraft Wooden Stat Signpost -->
+    <g shape-rendering="crispEdges">
+      <!-- Wooden Post -->
+      <rect x="${x + 20}" y="${y + boardHeight}" width="4" height="8" fill="#6d4934" />
+      <!-- Wooden Signboard Frame -->
+      <rect x="${x}" y="${y}" width="${boardWidth}" height="${boardHeight}" fill="#4a3020" />
+      <rect x="${x + 1.5}" y="${y + 1.5}" width="${boardWidth - 3}" height="${boardHeight - 3}" fill="#c8963e" />
+      <rect x="${x + 2.5}" y="${y + 2.5}" width="${boardWidth - 5}" height="1.5" fill="#dfad58" />
+      <rect x="${x + 2.5}" y="${y + boardHeight - 3.5}" width="${boardWidth - 5}" height="1.5" fill="#9e6e22" />
+      <!-- Carved Pixel Art Glyphs -->
+      ${glyphsSvg}
+    </g>
+  `;
+}
+
 export function renderFrame(
   layout: TreeLayout,
   frameIndex: number,
   totalFrames: number
 ): string {
-  const { width, height, groundY, trunkBlocks, leafBlocks, flowers, apples, goldenApples, weather } = layout;
+  const {
+    width,
+    height,
+    groundY,
+    treeType,
+    trunkBlocks,
+    leafBlocks,
+    flowers,
+    apples,
+    goldenApples,
+    oreBlocks,
+    bee,
+    beehive,
+    signpost,
+    weather,
+  } = layout;
+
   const weatherType = weather?.type || "sunny";
   const isNight = weatherType === "night" || weather?.isDay === false;
   const isRain = weatherType === "rain";
@@ -441,42 +730,65 @@ export function renderFrame(
     skySvg += renderMinecraftCloud(snowCloud2X, 30, 0.9, 0.85);
   }
 
-  // 2. Grass & Dirt Ground Layer
-  const groundSvg = renderMinecraftGround(width, height, groundY, isSnow);
+  // 2. Grass & Dirt Ground Layer (with embedded Diamond & Emerald Ore)
+  const groundSvg = renderMinecraftGround(width, height, groundY, isSnow, oreBlocks || []);
 
-  // 3. Oak Trunk
-  const trunkSvg = trunkBlocks.map((b) => renderMinecraftLog(b.x, b.y, b.size)).join("\n");
+  // 3. Wooden Stat Signpost
+  let signpostSvg = "";
+  if (signpost) {
+    signpostSvg = renderMinecraftSignpost(signpost.x, signpost.y, signpost.streak);
+  }
 
-  // 4. 14 Canopy Leaf Blocks
+  // 4. Trunk
+  const trunkSvg = trunkBlocks.map((b) => renderMinecraftLog(b.x, b.y, b.size, treeType)).join("\n");
+
+  // 5. Beehive on Trunk
+  let beehiveSvg = "";
+  if (beehive) {
+    beehiveSvg = renderMinecraftBeehive(beehive.x, beehive.y, beehive.side);
+  }
+
+  // 6. 14 Canopy Leaf Blocks
   const leavesSvg = leafBlocks
-    .map((l) => renderMinecraftLeaf(l, frameIndex, totalFrames, isSnow))
+    .map((l) => renderMinecraftLeaf(l, frameIndex, totalFrames, isSnow, treeType))
     .join("\n");
 
-  // 5. Red Apples
+  // 7. Red Apples
   const applesSvg = apples.map((a) => renderApple(a, frameIndex)).join("\n");
 
-  // 6. Flowers on Grass
+  // 8. Flowers on Grass
   const flowersSvg = flowers.map((f) => renderFlowerOnGrass(f, frameIndex)).join("\n");
 
-  // 7. Golden Apples on Grass
+  // 9. Golden Apples on Grass
   const goldenApplesSvg = (goldenApples || []).map((g) => renderGoldenAppleOnGrass(g, frameIndex)).join("\n");
 
-  // 8. Foreground Weather Precipitation (Rain or Snow)
+  // 10. Flying Minecraft Bee (flies outside during fair weather, rests in hive during rain/snow)
+  let beeSvg = "";
+  if (bee && !isRain && !isSnow) {
+    beeSvg = renderMinecraftBee(bee.x, bee.y, frameIndex, totalFrames);
+  }
+
+  // 11. Foreground Weather Precipitation or Sakura Petals (mutually exclusive to prevent particle overlap)
   let precipSvg = "";
   if (isRain) {
     precipSvg = renderRainStreaks(width, groundY, frameIndex, totalFrames);
   } else if (isSnow) {
     precipSvg = renderSnowflakes(width, groundY, frameIndex, totalFrames);
+  } else if (treeType === "sakura") {
+    precipSvg = renderSakuraPetals(width, groundY, frameIndex, totalFrames);
   }
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
   ${skySvg}
   ${groundSvg}
+  ${signpostSvg}
   ${trunkSvg}
+  ${beehiveSvg}
   ${leavesSvg}
   ${applesSvg}
   ${goldenApplesSvg}
   ${flowersSvg}
+  ${beeSvg}
   ${precipSvg}
 </svg>`;
 }

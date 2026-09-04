@@ -224,4 +224,57 @@ describe("github module", () => {
       "GitHub GraphQL errors"
     );
   });
+
+  describe("calculateStreak", () => {
+    it("calculates active consecutive contribution streak correctly", async () => {
+      const { calculateStreak } = await import("../src/github");
+
+      const weeks = [
+        {
+          days: [
+            { date: "2026-08-20", count: 0 },
+            { date: "2026-08-21", count: 2 },
+            { date: "2026-08-22", count: 4 },
+          ],
+          total: 6,
+          openPRs: 0,
+          mergedPRs: 0,
+          assignedPRs: 0,
+        },
+        {
+          days: [
+            { date: "2026-08-23", count: 1 },
+            { date: "2026-08-24", count: 3 },
+            { date: "2026-08-25", count: 0 }, // Today with 0 commits yet, but yesterday had 3
+          ],
+          total: 4,
+          openPRs: 0,
+          mergedPRs: 0,
+          assignedPRs: 0,
+        },
+      ];
+
+      // Streak from Aug 21, 22, 23, 24 = 4 days
+      expect(calculateStreak(weeks)).toBe(4);
+    });
+
+    it("returns 0 if no active streak exists", async () => {
+      const { calculateStreak } = await import("../src/github");
+      const weeks = [
+        {
+          days: [
+            { date: "2026-08-20", count: 2 },
+            { date: "2026-08-21", count: 0 },
+            { date: "2026-08-22", count: 0 },
+          ],
+          total: 2,
+          openPRs: 0,
+          mergedPRs: 0,
+          assignedPRs: 0,
+        },
+      ];
+
+      expect(calculateStreak(weeks)).toBe(0);
+    });
+  });
 });

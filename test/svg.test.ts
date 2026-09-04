@@ -8,6 +8,7 @@ describe("Minecraft SVG module", () => {
     height: 420,
     groundY: 370,
     trunkX: 206,
+    treeType: "oak",
     trunkBlocks: [
       { x: 206, y: 226, size: 48 },
       { x: 206, y: 274, size: 48 },
@@ -27,7 +28,15 @@ describe("Minecraft SVG module", () => {
     goldenApples: [
       { x: 163, y: 352, size: 20, side: "left" },
     ],
+    oreBlocks: [
+      { x: 104, y: 386, type: "diamond" },
+      { x: 312, y: 386, type: "emerald" },
+    ],
+    bee: { x: 162, y: 254 },
+    beehive: { x: 252, y: 280, side: "right" },
+    signpost: { x: 62, y: 344, streak: 12 },
     totalCommits: 40,
+    currentStreak: 12,
     openPRs: 1,
     mergedPRs: 1,
     assignedPRs: 1,
@@ -66,6 +75,48 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain('fill="#d90429"');
     // Golden Apple color
     expect(svg).toContain('fill="#ffb703"');
+  });
+
+  it("renders Minecraft bee, beehive, signpost, and diamond/emerald ore blocks", () => {
+    const svg = renderFrame(mockLayout, 0, 20);
+
+    // Bee Cyan eye & yellow body
+    expect(svg).toContain('fill="#40c4ff"');
+    expect(svg).toContain('fill="#fbc02d"');
+
+    // Wooden Stat Signpost with star and carved pixels
+    expect(svg).toContain("<!-- Minecraft Wooden Stat Signpost -->");
+    expect(svg).toContain('fill="#ffd600"');
+
+    // Diamond Ore (#00e5ff) & Emerald Ore (#00e676)
+    expect(svg).toContain('fill="#00e5ff"');
+    expect(svg).toContain('fill="#00e676"');
+  });
+
+  it("renders sakura biome with pink cherry leaves, dark log, and falling petals", () => {
+    const sakuraLayout: TreeLayout = {
+      ...mockLayout,
+      treeType: "sakura",
+    };
+
+    const svg = renderFrame(sakuraLayout, 0, 20);
+
+    // Vibrant pink sakura leaf
+    expect(svg).toContain('fill="#c9184a"');
+    // Dark cherry bark
+    expect(svg).toContain('fill="#422927"');
+    // Falling petals
+    expect(svg).toContain('fill="#ff758f"');
+  });
+
+  it("renders spruce biome and birch biome correctly", () => {
+    const spruceLayout: TreeLayout = { ...mockLayout, treeType: "spruce" };
+    const spruceSvg = renderFrame(spruceLayout, 0, 20);
+    expect(spruceSvg).toContain('fill="#3b2716"'); // Dark spruce log
+
+    const birchLayout: TreeLayout = { ...mockLayout, treeType: "birch" };
+    const birchSvg = renderFrame(birchLayout, 0, 20);
+    expect(birchSvg).toContain('fill="#e5e5e5"'); // White birch bark
   });
 
   it("renders rain streaks and storm clouds in rain weather", () => {
@@ -108,7 +159,64 @@ describe("Minecraft SVG module", () => {
     // Twinkling stars
     expect(svg).toContain('fill="#fff9c4"');
     // Sun should NOT be present in night mode
-    expect(svg).not.toContain('fill="#fbc02d"');
+    expect(svg).not.toContain("<!-- Minecraft Sun -->");
+    expect(svg).toContain("<!-- Minecraft Moon -->");
+  });
+
+  it("prioritizes rain and snow precipitation without particle overlapping during sakura biome", () => {
+    const sakuraRainLayout: TreeLayout = {
+      ...mockLayout,
+      treeType: "sakura",
+      weather: { type: "rain", description: "Rain showers" },
+    };
+
+    const svg = renderFrame(sakuraRainLayout, 0, 20);
+
+    // Rain streaks are rendered
+    expect(svg).toContain('fill="#64b5f6"');
+    // Bee and sakura falling petals are hidden to prevent particle collision
+    expect(svg).not.toContain("<!-- Minecraft Bee -->");
+  });
+
+  describe("Skin & Weather Combinations Matrix", () => {
+    const biomes: ("oak" | "sakura" | "spruce" | "birch")[] = ["oak", "sakura", "spruce", "birch"];
+    const weathers: { type: "sunny" | "rain" | "snow" | "night" | "cloudy"; isDay?: boolean }[] = [
+      { type: "sunny", isDay: true },
+      { type: "rain", isDay: true },
+      { type: "snow", isDay: true },
+      { type: "night", isDay: false },
+      { type: "cloudy", isDay: true },
+    ];
+
+    for (const biome of biomes) {
+      for (const w of weathers) {
+        it(`renders ${biome} tree in ${w.type} weather correctly`, () => {
+          const layout: TreeLayout = {
+            ...mockLayout,
+            treeType: biome,
+            weather: { type: w.type, description: `${w.type} weather`, isDay: w.isDay },
+          };
+
+          const svg = renderFrame(layout, 0, 10);
+          expect(svg).toContain('<svg width="460" height="420"');
+          expect(svg).toContain("</svg>");
+
+          // Weather-specific checks
+          if (w.type === "rain") {
+            expect(svg).toContain('fill="#64b5f6"'); // Rain streaks
+            expect(svg).not.toContain("<!-- Minecraft Bee -->"); // Bee rests in hive
+          } else if (w.type === "snow") {
+            expect(svg).toContain('fill="#eceff1"'); // Snow ground
+            expect(svg).not.toContain("<!-- Minecraft Bee -->"); // Bee rests in hive
+          } else if (w.type === "night") {
+            expect(svg).toContain("<!-- Minecraft Moon -->");
+            expect(svg).not.toContain("<!-- Minecraft Sun -->");
+          } else if (w.type === "sunny") {
+            expect(svg).toContain("<!-- Minecraft Sun -->");
+          }
+        });
+      }
+    }
   });
 
   it("animates across frames", () => {

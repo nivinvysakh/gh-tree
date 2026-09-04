@@ -74,13 +74,19 @@ async function run(): Promise<void> {
     const height = parseInt(core.getInput("height") || "420", 10);
     const city = core.getInput("city") || "";
     const weatherOverride = core.getInput("weather") || "";
+    const rawTreeType = (core.getInput("tree-type") || "oak").toLowerCase().trim();
+    const treeType = (["oak", "sakura", "spruce", "birch"].includes(rawTreeType)
+      ? rawTreeType
+      : "oak") as "oak" | "sakura" | "spruce" | "birch";
+    const showSignpost = core.getInput("show-signpost") !== "false";
+    const showBee = core.getInput("show-bee") !== "false";
 
     core.info(
       `Fetching contribution calendar (${days} days) and recent PRs/reviews (${prDays} days) for @${login}...`
     );
     const contributions = await fetchContributions(token, login, days, prDays);
     core.info(
-      `Activity in range: ${contributions.totalCommits} commits (14-week canopy), ` +
+      `Activity in range: ${contributions.totalCommits} commits, ${contributions.currentStreak}d streak, ` +
         `${contributions.totalOpenPRs} open PRs (flowers, last ${prDays}d), ` +
         `${contributions.totalMergedPRs} merged PRs (red apples, last ${prDays}d), ` +
         `${contributions.totalAssignedPRs} reviews/assigned (golden apples, last ${prDays}d).`
@@ -91,10 +97,17 @@ async function run(): Promise<void> {
       `Live Weather: ${weather.type.toUpperCase()} (${weather.description}` +
         (weather.temperatureC !== undefined ? `, ${weather.temperatureC}°C` : "") +
         (weather.locationName ? ` in ${weather.locationName}` : "") +
-        `)`
+        `) | Biome: ${treeType.toUpperCase()}`
     );
 
-    const layout = buildTreeLayout(contributions.weeks, undefined, { width, height, weather });
+    const layout = buildTreeLayout(contributions.weeks, undefined, {
+      width,
+      height,
+      weather,
+      treeType,
+      showSignpost,
+      showBee,
+    });
 
     core.info(`Rendering ${frameCount} frames...`);
     const frames = Array.from({ length: frameCount }, (_, i) => ({
@@ -123,11 +136,13 @@ async function run(): Promise<void> {
 
     core.setOutput("gif-path", resolvedPath);
     core.setOutput("total-commits", String(contributions.totalCommits));
+    core.setOutput("current-streak", String(contributions.currentStreak));
     core.setOutput("open-prs", String(contributions.totalOpenPRs));
     core.setOutput("merged-prs", String(contributions.totalMergedPRs));
     core.setOutput("assigned-prs", String(contributions.totalAssignedPRs));
     core.setOutput("weather-type", weather.type);
     core.setOutput("weather-desc", weather.description);
+    core.setOutput("tree-type", treeType);
   } catch (err) {
     core.setFailed(err instanceof Error ? err.message : String(err));
   }

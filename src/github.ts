@@ -16,6 +16,7 @@ export interface ContributionData {
   totalOpenPRs: number;
   totalMergedPRs: number;
   totalAssignedPRs: number;
+  currentStreak: number;
   weeks: ContributionWeek[];
 }
 
@@ -259,13 +260,49 @@ export async function fetchContributions(
     }
   }
 
+  const currentStreak = calculateStreak(weeks);
+
   return {
     totalCommits: calendar.totalContributions || 0,
     totalOpenPRs: countedOpenPRs.size,
     totalMergedPRs: countedMergedPRs.size,
     totalAssignedPRs: countedAssignedPRs.size,
+    currentStreak,
     weeks,
   };
+}
+
+/**
+ * Computes the consecutive active contribution day streak from weekly contribution data.
+ * Checks up to today/yesterday so ongoing days don't prematurely break active streaks.
+ */
+export function calculateStreak(weeks: ContributionWeek[]): number {
+  const allDays: ContributionDay[] = [];
+  for (const w of weeks) {
+    for (const d of w.days) {
+      allDays.push(d);
+    }
+  }
+
+  if (allDays.length === 0) return 0;
+
+  // Sort ascending by date
+  allDays.sort((a, b) => a.date.localeCompare(b.date));
+
+  let streak = 0;
+  let idx = allDays.length - 1;
+
+  // If the last day (today) has 0 contributions, check if yesterday had contributions
+  if (allDays[idx].count === 0) {
+    idx--;
+  }
+
+  while (idx >= 0 && allDays[idx].count > 0) {
+    streak++;
+    idx--;
+  }
+
+  return streak;
 }
 
 function assignPRToWeek(
