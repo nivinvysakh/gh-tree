@@ -52,6 +52,43 @@ export interface OreBlockPos {
   type: OreType;
 }
 
+export type PetType = "wolf" | "fox" | "cat";
+
+export interface PetPos {
+  x: number;
+  y: number;
+  type: PetType;
+  state: "sitting" | "sleeping" | "standing";
+}
+
+export interface CampfirePos {
+  x: number;
+  y: number;
+}
+
+export type ChestType = "wood" | "iron" | "gold" | "diamond" | "ender";
+
+export interface ChestPos {
+  x: number;
+  y: number;
+  type: ChestType;
+}
+
+export type SeasonalEvent = "halloween" | "holiday" | "fireworks" | "none";
+
+export interface HolidayGiftPos {
+  x: number;
+  y: number;
+  size: number;
+  boxColor: string;
+  ribbonColor: string;
+}
+
+export interface JackOLanternPos {
+  x: number;
+  y: number;
+}
+
 export interface BeePos {
   x: number;
   y: number;
@@ -84,6 +121,12 @@ export interface TreeLayout {
   bee?: BeePos;
   beehive?: BeehivePos;
   signpost?: SignpostPos;
+  pet?: PetPos;
+  campfire?: CampfirePos;
+  chest?: ChestPos;
+  seasonalEvent?: SeasonalEvent;
+  holidayGifts?: HolidayGiftPos[];
+  jackOLantern?: JackOLanternPos;
   totalCommits: number;
   openPRs: number;
   mergedPRs: number;
@@ -138,6 +181,12 @@ export function buildTreeLayout(
     showBee?: boolean;
     isOwner?: boolean;
     isContributor?: boolean;
+    pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+    showCampfire?: boolean | "auto";
+    showChest?: boolean | "auto";
+    event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
+    currentDate?: Date;
+    streak?: number;
   } = {}
 ): TreeLayout {
   const width = opts.width ?? 460;
@@ -158,7 +207,7 @@ export function buildTreeLayout(
     totalAssignedPRs += w.assignedPRs || 0;
   }
 
-  const currentStreak = calculateStreak(weeks);
+  const currentStreak = opts.streak !== undefined ? opts.streak : calculateStreak(weeks);
 
   const groundY = height - 50; // 370px
   const trunkX = Math.floor((width - bs) / 2); // 206px
@@ -208,42 +257,7 @@ export function buildTreeLayout(
     };
   });
 
-  // 3. Flowers 🌸 for Open PRs: Planted on Grass Ground (Max 4: up to 2 left, 2 right)
-  const flowers: FlowerPos[] = [];
-  if (totalOpenPRs > 0) {
-    const flowerTypes: ("poppy" | "dandelion" | "tulip" | "sakura")[] = [
-      "poppy",
-      "dandelion",
-      "tulip",
-      "sakura",
-    ];
-
-    // Perfectly spaced lawn positions preventing collision with signpost, apples, and trunk
-    const flowerSlots: { x: number; side: "left" | "right" }[] = [
-      { x: 120, side: "left" },
-      { x: 160, side: "left" },
-      { x: 280, side: "right" },
-      { x: 330, side: "right" },
-    ];
-
-    const flowerWidth = 18;
-    const flowerHeight = 24;
-    const count = Math.min(totalOpenPRs, MAX_FLOWERS);
-
-    for (let f = 0; f < count; f++) {
-      const slot = flowerSlots[f];
-      flowers.push({
-        x: slot.x,
-        y: groundY - flowerHeight + 3,
-        width: flowerWidth,
-        height: flowerHeight,
-        type: flowerTypes[f % flowerTypes.length],
-        side: slot.side,
-      });
-    }
-  }
-
-  // 4. Red Apples 🍎 for Merged PRs: Hanging under canopy leaves (Max 4)
+  // 3. Red Apples 🍎 for Merged PRs: Hanging under canopy leaves (Max 4)
   const apples: ApplePos[] = [];
   if (totalMergedPRs > 0) {
     const appleSlots = [
@@ -267,16 +281,15 @@ export function buildTreeLayout(
     }
   }
 
-  // 5. Golden Apples 🍏✨ for PR Reviews & Assigned PRs: Separate individual items on grass (Max 4)
+  // 4. Golden Apples 🍏✨ for PR Reviews & Assigned PRs: Outermost corners of grass lawn (Max 4)
   const goldenApples: GoldenApplePos[] = [];
   if (totalAssignedPRs > 0) {
-    const goldenAppleSize = 20;
-
+    const goldenAppleSize = 18;
     const separateSlots: { x: number; side: "left" | "right" }[] = [
-      { x: 14, side: "left" },   // Far Left 1
-      { x: 38, side: "left" },   // Far Left 2
-      { x: 402, side: "right" }, // Far Right 2
-      { x: 426, side: "right" }, // Far Right 1
+      { x: 12, side: "left" },   // Far Left 1
+      { x: 34, side: "left" },   // Far Left 2
+      { x: 412, side: "right" }, // Far Right 2
+      { x: 434, side: "right" }, // Far Right 1
     ];
 
     const count = Math.min(totalAssignedPRs, MAX_GOLDEN_APPLES);
@@ -284,51 +297,40 @@ export function buildTreeLayout(
       const slot = separateSlots[g];
       goldenApples.push({
         x: slot.x,
-        y: groundY - goldenAppleSize + 2, // All sitting directly on grass
+        y: groundY - goldenAppleSize + 2,
         size: goldenAppleSize,
         side: slot.side,
       });
     }
   }
 
-  // 6. Ore Blocks 💎 (Embedded in underground dirt layer: 6 slots across width 460)
+  // 5. Underground Ore Blocks 💎 (Embedded in dirt layer: 6 slots across width 460)
   const oreBlocks: OreBlockPos[] = [];
   
-  // [Slot 0 - x:20] Netherite Ore 🪨 (Special Repo Owner Ore)
   if (opts.isOwner === true) {
     oreBlocks.push({ x: 20, y: groundY + 16, type: "netherite" });
   }
-
-  // [Slot 1 - x:76] Gold Ore 🪙 (Streak Dedication: streak >= 7 or totalCommits >= 50)
   if (currentStreak >= 7 || totalCommits >= 50) {
     oreBlocks.push({ x: 76, y: groundY + 16, type: "gold" });
   }
-
-  // [Slot 2 - x:132] Diamond Ore 💎 (Active Contributor: totalCommits >= 25 or mergedPRs >= 1)
   if (totalCommits >= 25 || totalMergedPRs >= 1) {
     oreBlocks.push({ x: 132, y: groundY + 16, type: "diamond" });
   }
-
-  // [Slot 3 - x:280] Emerald Ore ❇️ (Power Contributor: totalCommits >= 100 or level 4 leaves)
   if (totalCommits >= 100 || leafBlocks.some((b) => b.commitLevel === 4)) {
     oreBlocks.push({ x: 280, y: groundY + 16, type: "emerald" });
   }
-
-  // [Slot 4 - x:336] Lapis Lazuli Ore 🔷 (Special gh-tree Action Contributor Ore)
   if (opts.isContributor === true) {
     oreBlocks.push({ x: 336, y: groundY + 16, type: "lapis" });
   }
-
-  // [Slot 5 - x:392] Redstone Ore 🔴 (Engineering & Automation: mergedPRs >= 2 or total PRs >= 3 or streak >= 14)
   if (totalMergedPRs >= 2 || (totalOpenPRs + totalMergedPRs + totalAssignedPRs) >= 3 || currentStreak >= 14) {
     oreBlocks.push({ x: 392, y: groundY + 16, type: "redstone" });
   }
 
-  // 7. Wooden Stat Signpost 🪧 (Placed at x: 68 with comfortable spacing)
+  // 6. Wooden Stat Signpost 🪧 (Placed at x: 62 with comfortable spacing)
   const signpost: SignpostPos | undefined =
-    opts.showSignpost !== false ? { x: 68, y: groundY - 22, streak: currentStreak } : undefined;
+    opts.showSignpost !== false ? { x: 62, y: groundY - 22, streak: currentStreak } : undefined;
 
-  // 8. Minecraft Beehive 🍯 & Bee 🐝 (Positioned on the trunk lower down with zero apple overlap)
+  // 7. Minecraft Beehive 🍯 & Bee 🐝
   let beehive: BeehivePos | undefined;
   if (currentStreak >= 3 || totalCommits >= 25) {
     beehive = { x: trunkX + bs - 2, y: trunkStartY + bs + 28, side: "right" };
@@ -337,6 +339,166 @@ export function buildTreeLayout(
   let bee: BeePos | undefined;
   if (opts.showBee !== false && (currentStreak >= 1 || totalCommits > 0)) {
     bee = { x: trunkX - 44, y: canopyBottomY + 28 };
+  }
+
+  // 8. Minecraft Pet Companion 🐾 (Wolf 🐺, Fox 🦊, Cat 🐱)
+  let pet: PetPos | undefined;
+  const rawPetOpt = opts.pet ?? "auto";
+  const isNight = weather.type === "night" || weather.isDay === false;
+
+  if (rawPetOpt !== "none") {
+    let chosenType: PetType | undefined;
+    if (rawPetOpt === "wolf" || rawPetOpt === "fox" || rawPetOpt === "cat") {
+      chosenType = rawPetOpt;
+    } else if (rawPetOpt === "auto") {
+      if (currentStreak >= 14) {
+        chosenType = "wolf";
+      } else if (currentStreak >= 7) {
+        chosenType = "fox";
+      } else if (currentStreak >= 3 || totalCommits >= 25) {
+        chosenType = "cat";
+      } else if (totalCommits > 0) {
+        chosenType = "fox";
+      }
+    }
+
+    if (chosenType) {
+      const petState =
+        chosenType === "fox"
+          ? isNight
+            ? "standing"
+            : "sleeping"
+          : "sitting";
+      pet = {
+        x: 176, // Sits comfortably in Slot L3 next to trunk
+        y: groundY - (chosenType === "fox" && petState === "sleeping" ? 12 : 18),
+        type: chosenType,
+        state: petState,
+      };
+    }
+  }
+
+  // 9. Milestone Treasure Chest 📦
+  let chest: ChestPos | undefined;
+  const showChestOpt = opts.showChest ?? "auto";
+  if (showChestOpt !== false) {
+    let chestType: ChestType | undefined;
+    if (totalCommits >= 500) {
+      chestType = "ender";
+    } else if (totalCommits >= 300) {
+      chestType = "diamond";
+    } else if (totalCommits >= 150) {
+      chestType = "gold";
+    } else if (totalCommits >= 50) {
+      chestType = "iron";
+    } else if (totalCommits >= 15 || showChestOpt === true) {
+      chestType = "wood";
+    }
+
+    if (chestType) {
+      chest = { x: 258, y: groundY - 16, type: chestType };
+    }
+  }
+
+  // 10. Roasting Campfire 🔥 (Active sprint mode)
+  let campfire: CampfirePos | undefined;
+  const recent2WeeksCommits = recentWeeks.slice(-2).reduce((acc, w) => acc + (w ? w.total : 0), 0);
+  const showCampfireOpt = opts.showCampfire ?? "auto";
+  const shouldShowCampfire =
+    showCampfireOpt === true ||
+    (showCampfireOpt === "auto" && (recent2WeeksCommits >= 12 || currentStreak >= 10 || totalCommits >= 60));
+
+  if (shouldShowCampfire) {
+    campfire = { x: 336, y: groundY - 16 };
+  }
+
+  // 11. Seasonal Holiday / Event Modes 🎃🎄🎆
+  const curDate = opts.currentDate ?? new Date();
+  const curMonth = curDate.getMonth(); // 0 = Jan, 9 = Oct, 11 = Dec
+  const eventOpt = opts.event ?? "auto";
+
+  let seasonalEvent: SeasonalEvent = "none";
+  if (eventOpt === "halloween" || eventOpt === "holiday" || eventOpt === "fireworks" || eventOpt === "none") {
+    seasonalEvent = eventOpt;
+  } else if (eventOpt === "auto") {
+    if (curMonth === 9) {
+      seasonalEvent = "halloween";
+    } else if (curMonth === 11) {
+      seasonalEvent = "holiday";
+    } else if (curMonth === 0) {
+      seasonalEvent = "fireworks";
+    }
+  }
+
+  let jackOLantern: JackOLanternPos | undefined;
+  let holidayGifts: HolidayGiftPos[] | undefined;
+
+  if (seasonalEvent === "halloween") {
+    jackOLantern = { x: campfire ? 112 : 374, y: groundY - 16 };
+  } else if (seasonalEvent === "holiday") {
+    const giftBaseX = chest ? 296 : 258;
+    holidayGifts = [
+      { x: giftBaseX, y: groundY - 12, size: 12, boxColor: "#d32f2f", ribbonColor: "#388e3c" },
+      { x: giftBaseX + 13, y: groundY - 10, size: 10, boxColor: "#fbc02d", ribbonColor: "#d32f2f" },
+    ];
+  }
+
+  // 12. Dynamic Non-Overlapping Flower Placement 🌸
+  const leftSlots: number[] = [];
+  if (!jackOLantern || jackOLantern.x !== 112) leftSlots.push(112);
+  leftSlots.push(144);
+  if (!pet) leftSlots.push(176);
+
+  const rightSlots: number[] = [];
+  if (!chest && (!holidayGifts || holidayGifts[0].x !== 258)) rightSlots.push(258);
+  if (!holidayGifts || holidayGifts[0].x !== 296) rightSlots.push(296);
+  if (!campfire && (!jackOLantern || jackOLantern.x !== 336)) rightSlots.push(336);
+  if (!jackOLantern || jackOLantern.x !== 374) rightSlots.push(374);
+
+  const flowers: FlowerPos[] = [];
+  if (totalOpenPRs > 0) {
+    const flowerTypes: ("poppy" | "dandelion" | "tulip" | "sakura")[] = [
+      "poppy",
+      "dandelion",
+      "tulip",
+      "sakura",
+    ];
+    const flowerWidth = 16;
+    const flowerHeight = 22;
+    const count = Math.min(totalOpenPRs, MAX_FLOWERS);
+
+    let lIdx = 0;
+    let rIdx = 0;
+
+    for (let f = 0; f < count; f++) {
+      let chosenX: number | undefined;
+      let side: "left" | "right" = "left";
+
+      if (f % 2 === 0 && lIdx < leftSlots.length) {
+        chosenX = leftSlots[lIdx++];
+        side = "left";
+      } else if (rIdx < rightSlots.length) {
+        chosenX = rightSlots[rIdx++];
+        side = "right";
+      } else if (lIdx < leftSlots.length) {
+        chosenX = leftSlots[lIdx++];
+        side = "left";
+      } else if (rIdx < rightSlots.length) {
+        chosenX = rightSlots[rIdx++];
+        side = "right";
+      }
+
+      if (chosenX !== undefined) {
+        flowers.push({
+          x: chosenX,
+          y: groundY - flowerHeight + 3,
+          width: flowerWidth,
+          height: flowerHeight,
+          type: flowerTypes[f % flowerTypes.length],
+          side,
+        });
+      }
+    }
   }
 
   return {
@@ -354,6 +516,12 @@ export function buildTreeLayout(
     bee,
     beehive,
     signpost,
+    pet,
+    campfire,
+    chest,
+    seasonalEvent,
+    holidayGifts,
+    jackOLantern,
     totalCommits,
     openPRs: totalOpenPRs,
     mergedPRs: totalMergedPRs,

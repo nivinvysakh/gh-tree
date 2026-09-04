@@ -6,6 +6,11 @@ import {
   ApplePos,
   GoldenApplePos,
   OreBlockPos,
+  PetPos,
+  CampfirePos,
+  ChestPos,
+  HolidayGiftPos,
+  JackOLanternPos,
 } from "./tree";
 
 // Seamless 16x16 Minecraft Log texture
@@ -616,7 +621,7 @@ function renderMinecraftBeehive(
   `;
 }
 
-// 3x5 Pixel Font for Minecraft Signpost digits and 'd'
+// 3x5 Pixel Font for Minecraft Signpost digits, 'd', 'k', and '.'
 const PIXEL_FONT_3X5: Record<string, string[]> = {
   "0": ["111", "101", "101", "101", "111"],
   "1": ["010", "110", "010", "010", "111"],
@@ -629,21 +634,33 @@ const PIXEL_FONT_3X5: Record<string, string[]> = {
   "8": ["111", "101", "111", "101", "111"],
   "9": ["111", "101", "111", "001", "111"],
   "d": ["001", "001", "111", "101", "111"],
+  "k": ["101", "110", "110", "101", "101"],
+  ".": ["000", "000", "000", "000", "010"],
+  "+": ["000", "010", "111", "010", "000"],
 };
 
-// 5x5 Star with dark outline and bright gold/white core (visible from far)
+// 5x5 Star with vibrant gold arms and sparkling white core
 const STAR_5X5 = [
-  "00100",
-  "01210",
-  "12321",
-  "01210",
-  "00100",
+  "00200",
+  "02320",
+  "23332",
+  "02320",
+  "00200",
 ];
 const STAR_PALETTE = [
   "",
-  "#2d1b0d", // 1: Dark carved outline
+  "#2d1b0d", // 1: Dark outline
   "#ffd600", // 2: Vibrant gold
   "#ffffff", // 3: Bright white sparkle
+];
+
+// 5x5 Royal Crown for 100+ and 365+ Day Streak Milestones
+const CROWN_5X5 = [
+  "30303", // 3 Sparkling jewel tips
+  "20202", // 3 distinct peaks
+  "22222", // Solid crown body band
+  "23232", // Band with 2 embedded diamond jewels
+  "12221", // Contoured base
 ];
 
 function renderMinecraftSignpost(
@@ -651,37 +668,71 @@ function renderMinecraftSignpost(
   y: number,
   streak: number
 ): string {
-  const streakText = streak > 0 ? `${streak}d` : "0d";
+  // Option 2: Smart Compact Streak Notation
+  let streakText = "0d";
+  if (streak >= 10000) {
+    streakText = `${Math.floor(streak / 1000)}k`;
+  } else if (streak >= 1000) {
+    streakText = `${(streak / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+  } else if (streak > 0) {
+    streakText = `${streak}d`;
+  }
+
   const boardWidth = 44;
   const boardHeight = 18;
-  const ps = 1.6; // pixel size for glyphs
 
-  // Compute total content width to center perfectly on the signboard
-  const starWidth = 5 * ps;
-  const gap = 3;
-  const textWidth = streakText.length * (3 * ps + 1.5) - 1.5;
-  const totalContentWidth = starWidth + gap + textWidth;
+  // Auto-scale pixel size and gaps so any text length fits centered with generous margin
+  let ps = 1.6;
+  let charGap = 1.5;
+  let iconGap = 3;
+
+  if (streakText.length >= 5) {
+    ps = 1.15;
+    charGap = 1.0;
+    iconGap = 2;
+  } else if (streakText.length === 4) {
+    ps = 1.35;
+    charGap = 1.2;
+    iconGap = 2.5;
+  }
+
+  const isDiamond = streak >= 365;
+  const isGold = streak >= 100 && !isDiamond;
+
+  // Option 1: Upgraded Milestone Signpost Themes & Glyphs
+  const iconMatrix = isDiamond || isGold ? CROWN_5X5 : STAR_5X5;
+  const iconPalette = isDiamond
+    ? ["", "#0091ea", "#00e5ff", "#ffffff"]
+    : isGold
+    ? ["", "#ff8f00", "#ffd600", "#ffffff"]
+    : STAR_PALETTE;
+
+  const textColor = isDiamond ? "#e0f7fa" : isGold ? "#fff9c4" : "#2d1b0d";
+
+  const iconWidth = 5 * ps;
+  const textWidth = streakText.length * (3 * ps + charGap) - charGap;
+  const totalContentWidth = iconWidth + iconGap + textWidth;
   const startX = Math.floor(x + (boardWidth - totalContentWidth) / 2);
-  const textY = y + 5;
+  const textY = y + (boardHeight - 5 * ps) / 2;
 
   let glyphsSvg = "";
 
-  // 1. Render High-Contrast Star Icon
+  // 1. Render Icon (Star or Royal Crown)
   let curX = startX;
   for (let r = 0; r < 5; r++) {
-    const row = STAR_5X5[r];
+    const row = iconMatrix[r];
     for (let c = 0; c < 5; c++) {
       const val = parseInt(row[c], 10);
       if (val > 0) {
-        const color = STAR_PALETTE[val];
+        const color = iconPalette[val];
         glyphsSvg += `<rect x="${(curX + c * ps).toFixed(1)}" y="${(textY + r * ps).toFixed(1)}" width="${ps.toFixed(1)}" height="${ps.toFixed(1)}" fill="${color}" />`;
       }
     }
   }
 
-  curX += starWidth + gap;
+  curX += iconWidth + iconGap;
 
-  // 2. Render digits + 'd' in dark carved wood brown
+  // 2. Render Digits & Suffix
   for (let i = 0; i < streakText.length; i++) {
     const char = streakText[i];
     const matrix = PIXEL_FONT_3X5[char] || PIXEL_FONT_3X5["0"];
@@ -689,16 +740,40 @@ function renderMinecraftSignpost(
       const row = matrix[r];
       for (let c = 0; c < 3; c++) {
         if (row[c] === "1") {
-          glyphsSvg += `<rect x="${(curX + c * ps).toFixed(1)}" y="${(textY + r * ps).toFixed(1)}" width="${ps.toFixed(1)}" height="${ps.toFixed(1)}" fill="#2d1b0d" />`;
+          glyphsSvg += `<rect x="${(curX + c * ps).toFixed(1)}" y="${(textY + r * ps).toFixed(1)}" width="${ps.toFixed(1)}" height="${ps.toFixed(1)}" fill="${textColor}" />`;
         }
       }
     }
-    curX += 3 * ps + 1.5; // character spacing
+    curX += 3 * ps + charGap;
   }
 
-  return `
-    <!-- Minecraft Wooden Stat Signpost -->
-    <g shape-rendering="crispEdges">
+  // Board frames
+  let boardSvg = "";
+  if (isDiamond) {
+    // 365+ Days: Diamond Prismatic Milestone Signboard
+    boardSvg = `
+      <!-- Diamond Post -->
+      <rect x="${x + 20}" y="${y + boardHeight}" width="4" height="8" fill="#004d40" />
+      <!-- Diamond Frame -->
+      <rect x="${x}" y="${y}" width="${boardWidth}" height="${boardHeight}" fill="#00251a" />
+      <rect x="${x + 1.5}" y="${y + 1.5}" width="${boardWidth - 3}" height="${boardHeight - 3}" fill="#004d40" />
+      <rect x="${x + 2.5}" y="${y + 2.5}" width="${boardWidth - 5}" height="1.5" fill="#00e5ff" />
+      <rect x="${x + 2.5}" y="${y + boardHeight - 3.5}" width="${boardWidth - 5}" height="1.5" fill="#0091ea" />
+    `;
+  } else if (isGold) {
+    // 100+ Days: Golden Inlay Milestone Signboard
+    boardSvg = `
+      <!-- Golden Inlay Post -->
+      <rect x="${x + 20}" y="${y + boardHeight}" width="4" height="8" fill="#5d4037" />
+      <!-- Golden Frame -->
+      <rect x="${x}" y="${y}" width="${boardWidth}" height="${boardHeight}" fill="#3e2723" />
+      <rect x="${x + 1.5}" y="${y + 1.5}" width="${boardWidth - 3}" height="${boardHeight - 3}" fill="#c68642" />
+      <rect x="${x + 2.5}" y="${y + 2.5}" width="${boardWidth - 5}" height="1.5" fill="#ffd54f" />
+      <rect x="${x + 2.5}" y="${y + boardHeight - 3.5}" width="${boardWidth - 5}" height="1.5" fill="#ff8f00" />
+    `;
+  } else {
+    // Standard Classic Oak Wooden Signboard
+    boardSvg = `
       <!-- Wooden Post -->
       <rect x="${x + 20}" y="${y + boardHeight}" width="4" height="8" fill="#6d4934" />
       <!-- Wooden Signboard Frame -->
@@ -706,10 +781,434 @@ function renderMinecraftSignpost(
       <rect x="${x + 1.5}" y="${y + 1.5}" width="${boardWidth - 3}" height="${boardHeight - 3}" fill="#c8963e" />
       <rect x="${x + 2.5}" y="${y + 2.5}" width="${boardWidth - 5}" height="1.5" fill="#dfad58" />
       <rect x="${x + 2.5}" y="${y + boardHeight - 3.5}" width="${boardWidth - 5}" height="1.5" fill="#9e6e22" />
-      <!-- Carved Pixel Art Glyphs -->
+    `;
+  }
+
+  const signTitle = isDiamond
+    ? "Minecraft Diamond Milestone Signpost (365+ Streak)"
+    : isGold
+    ? "Minecraft Golden Milestone Signpost (100+ Streak)"
+    : "Minecraft Wooden Stat Signpost";
+
+  return `
+    <!-- ${signTitle} -->
+    <g shape-rendering="crispEdges">
+      ${boardSvg}
+      <!-- Carved & Glowing Pixel Art Glyphs -->
       ${glyphsSvg}
     </g>
   `;
+}
+
+function renderMinecraftWolf(pet: PetPos, frameIndex: number): string {
+  const { x, y } = pet;
+  const ps = 1.3;
+  const wag = frameIndex % 4 < 2;
+  const tailX = wag ? x - 3 * ps : x - 1.5 * ps;
+  const tailY = wag ? y + 4 * ps : y + 6 * ps;
+
+  return `
+    <!-- Minecraft Tamed Wolf -->
+    <g shape-rendering="crispEdges">
+      <!-- Tail wagging -->
+      <rect x="${tailX.toFixed(1)}" y="${tailY.toFixed(1)}" width="${2.5 * ps}" height="${6 * ps}" fill="#b0bec5" />
+      <rect x="${tailX.toFixed(1)}" y="${(tailY + 4 * ps).toFixed(1)}" width="${2.5 * ps}" height="${2 * ps}" fill="#78909c" />
+
+      <!-- Back haunches (sitting) -->
+      <rect x="${x}" y="${y + 5 * ps}" width="${6 * ps}" height="${8 * ps}" fill="#b0bec5" />
+      <rect x="${x + 1 * ps}" y="${y + 11 * ps}" width="${4 * ps}" height="${2 * ps}" fill="#90a4ae" />
+
+      <!-- Body -->
+      <rect x="${x + 4 * ps}" y="${y + 3 * ps}" width="${7 * ps}" height="${9 * ps}" fill="#cfd8dc" />
+      <rect x="${x + 4 * ps}" y="${y + 7 * ps}" width="${7 * ps}" height="${4 * ps}" fill="#eceff1" />
+
+      <!-- Front sitting legs & paws -->
+      <rect x="${x + 7 * ps}" y="${y + 8 * ps}" width="${2.5 * ps}" height="${5 * ps}" fill="#cfd8dc" />
+      <rect x="${x + 10 * ps}" y="${y + 8 * ps}" width="${2.5 * ps}" height="${5 * ps}" fill="#b0bec5" />
+      <rect x="${x + 7 * ps}" y="${y + 12 * ps}" width="${2.5 * ps}" height="${1 * ps}" fill="#90a4ae" />
+      <rect x="${x + 10 * ps}" y="${y + 12 * ps}" width="${2.5 * ps}" height="${1 * ps}" fill="#78909c" />
+
+      <!-- Tamed Red Collar + Gold Tag -->
+      <rect x="${x + 6 * ps}" y="${y + 2 * ps}" width="${6 * ps}" height="${1.5 * ps}" fill="#d32f2f" />
+      <rect x="${x + 8.5 * ps}" y="${y + 3 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#ffd54f" />
+
+      <!-- Wolf Head & Ears -->
+      <rect x="${x + 5 * ps}" y="${y - 4 * ps}" width="${8 * ps}" height="${6 * ps}" fill="#cfd8dc" />
+      <!-- Left & Right Ears -->
+      <rect x="${x + 5 * ps}" y="${y - 7 * ps}" width="${2.5 * ps}" height="${3 * ps}" fill="#90a4ae" />
+      <rect x="${x + 10.5 * ps}" y="${y - 7 * ps}" width="${2.5 * ps}" height="${3 * ps}" fill="#90a4ae" />
+      <rect x="${x + 5.5 * ps}" y="${y - 6 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#cfd8dc" />
+      <rect x="${x + 11 * ps}" y="${y - 6 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#cfd8dc" />
+
+      <!-- Cute Snout & Nose -->
+      <rect x="${x + 10 * ps}" y="${y - 1 * ps}" width="${4 * ps}" height="${3 * ps}" fill="#ffffff" />
+      <rect x="${x + 12.5 * ps}" y="${y - 1 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#212121" />
+
+      <!-- Eyes (Black with specular white dot) -->
+      <rect x="${x + 7.5 * ps}" y="${y - 3 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#212121" />
+      <rect x="${x + 7.5 * ps}" y="${y - 3 * ps}" width="${0.8 * ps}" height="${0.8 * ps}" fill="#ffffff" />
+    </g>
+  `;
+}
+
+function renderMinecraftFox(pet: PetPos, frameIndex: number, isNight: boolean): string {
+  const { x, y, state } = pet;
+  const ps = 1.3;
+
+  if (state === "sleeping" && !isNight) {
+    // Curled round sleeping fox on lawn
+    const breath = frameIndex % 6 < 3 ? 0 : 0.6;
+    return `
+      <!-- Minecraft Sleeping Fox -->
+      <g shape-rendering="crispEdges">
+        <!-- Curled Body -->
+        <rect x="${x + 2 * ps}" y="${y + (2 * ps - breath)}" width="${11 * ps}" height="${7 * ps + breath}" fill="#e65100" />
+        <rect x="${x + 3 * ps}" y="${y + (1 * ps - breath)}" width="${9 * ps}" height="${2 * ps}" fill="#ff9800" />
+        
+        <!-- White belly patch -->
+        <rect x="${x + 5 * ps}" y="${y + 4 * ps}" width="${5 * ps}" height="${4 * ps}" fill="#ffffff" />
+        
+        <!-- Curled fluffy tail with white tip -->
+        <rect x="${x}" y="${y + 3 * ps}" width="${4 * ps}" height="${5 * ps}" fill="#e65100" />
+        <rect x="${x}" y="${y + 1 * ps}" width="${3 * ps}" height="${3 * ps}" fill="#ffffff" />
+        <rect x="${x + 2.5 * ps}" y="${y + 2 * ps}" width="${1 * ps}" height="${2 * ps}" fill="#212121" />
+
+        <!-- Sleeping Head tucked in -->
+        <rect x="${x + 8 * ps}" y="${y + (3 * ps - breath)}" width="${6 * ps}" height="${5 * ps}" fill="#e65100" />
+        <rect x="${x + 11 * ps}" y="${y + (5 * ps - breath)}" width="${3 * ps}" height="${3 * ps}" fill="#ffffff" />
+        <rect x="${x + 13 * ps}" y="${y + (5 * ps - breath)}" width="${1 * ps}" height="${1 * ps}" fill="#212121" />
+
+        <!-- Closed sleeping eyes (slit) -->
+        <rect x="${x + 9.5 * ps}" y="${y + (4 * ps - breath)}" width="${2 * ps}" height="${0.8 * ps}" fill="#5d4037" />
+
+        <!-- Fox ears -->
+        <rect x="${x + 8 * ps}" y="${y + (1 * ps - breath)}" width="${2 * ps}" height="${2 * ps}" fill="#212121" />
+        <rect x="${x + 12 * ps}" y="${y + (1 * ps - breath)}" width="${2 * ps}" height="${2 * ps}" fill="#212121" />
+        <rect x="${x + 8.5 * ps}" y="${y + (1.5 * ps - breath)}" width="${1 * ps}" height="${1 * ps}" fill="#ffffff" />
+      </g>
+    `;
+  }
+
+  // Alert awake fox (night / active)
+  const tailSway = frameIndex % 4 < 2 ? 0 : 1;
+  return `
+    <!-- Minecraft Alert Fox -->
+    <g shape-rendering="crispEdges">
+      <!-- Tail with white tip -->
+      <rect x="${x - (2 + tailSway) * ps}" y="${y + 2 * ps}" width="${4 * ps}" height="${7 * ps}" fill="#e65100" />
+      <rect x="${x - (3 + tailSway) * ps}" y="${y + 6 * ps}" width="${3 * ps}" height="${4 * ps}" fill="#ffffff" />
+      <rect x="${x - (1 + tailSway) * ps}" y="${y + 5 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#212121" />
+
+      <!-- Fox Body -->
+      <rect x="${x + 2 * ps}" y="${y + 3 * ps}" width="${8 * ps}" height="${6 * ps}" fill="#e65100" />
+      <rect x="${x + 3 * ps}" y="${y + 2 * ps}" width="${6 * ps}" height="${2 * ps}" fill="#ff9800" />
+      <rect x="${x + 4 * ps}" y="${y + 6 * ps}" width="${4 * ps}" height="${3 * ps}" fill="#ffffff" />
+
+      <!-- Legs & dark paws -->
+      <rect x="${x + 2 * ps}" y="${y + 8 * ps}" width="${2 * ps}" height="${4 * ps}" fill="#e65100" />
+      <rect x="${x + 7 * ps}" y="${y + 8 * ps}" width="${2 * ps}" height="${4 * ps}" fill="#e65100" />
+      <rect x="${x + 2 * ps}" y="${y + 11 * ps}" width="${2 * ps}" height="${1 * ps}" fill="#212121" />
+      <rect x="${x + 7 * ps}" y="${y + 11 * ps}" width="${2 * ps}" height="${1 * ps}" fill="#212121" />
+
+      <!-- Fox Head & Big Ears -->
+      <rect x="${x + 7 * ps}" y="${y - 3 * ps}" width="${6 * ps}" height="${6 * ps}" fill="#e65100" />
+      <rect x="${x + 7 * ps}" y="${y - 6 * ps}" width="${2 * ps}" height="${3 * ps}" fill="#212121" />
+      <rect x="${x + 11 * ps}" y="${y - 6 * ps}" width="${2 * ps}" height="${3 * ps}" fill="#212121" />
+      <rect x="${x + 7.5 * ps}" y="${y - 5 * ps}" width="${1 * ps}" height="${1.5 * ps}" fill="#ffffff" />
+      <rect x="${x + 11.5 * ps}" y="${y - 5 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#ffffff" />
+
+      <!-- Snout & Nose -->
+      <rect x="${x + 11 * ps}" y="${y}" width="${3 * ps}" height="${3 * ps}" fill="#ffffff" />
+      <rect x="${x + 13 * ps}" y="${y}" width="${1 * ps}" height="${1 * ps}" fill="#212121" />
+
+      <!-- Eyes -->
+      <rect x="${x + 9 * ps}" y="${y - 1 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#212121" />
+      <rect x="${x + 9 * ps}" y="${y - 1 * ps}" width="${0.8 * ps}" height="${0.8 * ps}" fill="#ffffff" />
+    </g>
+  `;
+}
+
+function renderMinecraftCat(pet: PetPos, frameIndex: number): string {
+  const { x, y } = pet;
+  const ps = 1.2;
+  const swish = frameIndex % 4 < 2;
+  const tailX = swish ? x - 2 * ps : x - 1 * ps;
+
+  return `
+    <!-- Minecraft Tuxedo Cat -->
+    <g shape-rendering="crispEdges">
+      <!-- Tail swishing -->
+      <rect x="${tailX.toFixed(1)}" y="${(y + 4 * ps).toFixed(1)}" width="${2 * ps}" height="${7 * ps}" fill="#212121" />
+      <rect x="${tailX.toFixed(1)}" y="${(y + 2 * ps).toFixed(1)}" width="${2 * ps}" height="${3 * ps}" fill="#ffffff" />
+
+      <!-- Sitting body -->
+      <rect x="${x + 2 * ps}" y="${y + 4 * ps}" width="${7 * ps}" height="${9 * ps}" fill="#212121" />
+      <rect x="${x + 3 * ps}" y="${y + 5 * ps}" width="${4 * ps}" height="${7 * ps}" fill="#ffffff" />
+
+      <!-- Sitting front paws -->
+      <rect x="${x + 3 * ps}" y="${y + 12 * ps}" width="${2.5 * ps}" height="${3 * ps}" fill="#ffffff" />
+      <rect x="${x + 6.5 * ps}" y="${y + 12 * ps}" width="${2.5 * ps}" height="${3 * ps}" fill="#ffffff" />
+
+      <!-- Cyan Collar -->
+      <rect x="${x + 2.5 * ps}" y="${y + 3 * ps}" width="${6 * ps}" height="${1.5 * ps}" fill="#00e5ff" />
+
+      <!-- Head & Pointy Ears -->
+      <rect x="${x + 2 * ps}" y="${y - 4 * ps}" width="${7 * ps}" height="${7 * ps}" fill="#212121" />
+      <rect x="${x + 2 * ps}" y="${y - 7 * ps}" width="${2.5 * ps}" height="${3 * ps}" fill="#212121" />
+      <rect x="${x + 6.5 * ps}" y="${y - 7 * ps}" width="${2.5 * ps}" height="${3 * ps}" fill="#212121" />
+      <rect x="${x + 2.5 * ps}" y="${y - 6 * ps}" width="${1.5 * ps}" height="${2 * ps}" fill="#ff80ab" />
+      <rect x="${x + 7 * ps}" y="${y - 6 * ps}" width="${1.5 * ps}" height="${2 * ps}" fill="#ff80ab" />
+
+      <!-- White Muzzle & Pink Nose -->
+      <rect x="${x + 3.5 * ps}" y="${y}" width="${4 * ps}" height="${3 * ps}" fill="#ffffff" />
+      <rect x="${x + 5 * ps}" y="${y}" width="${1 * ps}" height="${1 * ps}" fill="#ff80ab" />
+
+      <!-- Emerald Green Eyes with Vertical Slits -->
+      <rect x="${x + 3 * ps}" y="${y - 2 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#00e676" />
+      <rect x="${x + 6 * ps}" y="${y - 2 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#00e676" />
+      <rect x="${x + 3.5 * ps}" y="${y - 2 * ps}" width="${1 * ps}" height="${2 * ps}" fill="#1b5e20" />
+      <rect x="${x + 6.5 * ps}" y="${y - 2 * ps}" width="${1 * ps}" height="${2 * ps}" fill="#1b5e20" />
+    </g>
+  `;
+}
+
+function renderMinecraftCampfire(
+  campfire: CampfirePos,
+  frameIndex: number,
+  totalFrames: number
+): string {
+  const { x, y } = campfire;
+
+  // Staggered animated flickering flame heights
+  const fMod = frameIndex % 4;
+  const leftH = fMod === 0 ? 7 : fMod === 1 ? 5 : fMod === 2 ? 8 : 6;
+  const midH = fMod === 0 ? 11 : fMod === 1 ? 13 : fMod === 2 ? 10 : 12;
+  const rightH = fMod === 0 ? 6 : fMod === 1 ? 8 : fMod === 2 ? 5 : 7;
+
+  // Rising organic smoke puffs
+  let smokeSvg = "";
+  for (let s = 0; s < 3; s++) {
+    const cycle = totalFrames > 0 ? (frameIndex + s * 5) % totalFrames : 0;
+    const progress = cycle / Math.max(1, totalFrames);
+    const sY = y - 4 - progress * 28;
+    const sX = x + 10 + Math.sin(progress * Math.PI * 2 + s * 1.5) * 4;
+    const sSize = 2 + progress * 3;
+    const sOpacity = (1 - progress) * 0.6;
+    const sColor = s % 2 === 0 ? "#cfd8dc" : "#eceff1";
+
+    smokeSvg += `<rect x="${sX.toFixed(1)}" y="${sY.toFixed(1)}" width="${sSize.toFixed(1)}" height="${sSize.toFixed(1)}" fill="${sColor}" opacity="${sOpacity.toFixed(2)}" />`;
+  }
+
+  // Floating spark embers
+  const spark1Y = y - 4 - ((frameIndex * 2.5) % 16);
+  const spark1X = x + 8 + ((frameIndex * 1.5) % 8);
+  const spark2Y = y - 6 - (((frameIndex + 3) * 2) % 14);
+  const spark2X = x + 13 - ((frameIndex * 1.2) % 6);
+
+  return `
+    <!-- Minecraft Roasting Campfire -->
+    <g shape-rendering="crispEdges">
+      <!-- Smoke Puffs -->
+      ${smokeSvg}
+
+      <!-- Crossed Oak Base Logs -->
+      <!-- Bottom horizontal log -->
+      <rect x="${x + 2}" y="${y + 12}" width="18" height="4" fill="#3e2723" />
+      <rect x="${x + 3}" y="${y + 12}" width="16" height="2" fill="#5d4037" />
+      <rect x="${x + 4}" y="${y + 12}" width="14" height="1" fill="#795548" />
+
+      <!-- Cross angle logs -->
+      <rect x="${x + 1}" y="${y + 8}" width="4" height="7" fill="#4e342e" />
+      <rect x="${x + 17}" y="${y + 8}" width="4" height="7" fill="#4e342e" />
+      <rect x="${x + 2}" y="${y + 9}" width="2" height="5" fill="#6d4934" />
+      <rect x="${x + 18}" y="${y + 9}" width="2" height="5" fill="#6d4934" />
+
+      <!-- Glowing Coals & Ash Core -->
+      <rect x="${x + 5}" y="${y + 11}" width="12" height="4" fill="#1b120c" />
+      <rect x="${x + 6}" y="${y + 11}" width="10" height="3" fill="#bf360c" />
+      <rect x="${x + 8}" y="${y + 12}" width="6" height="2" fill="#ff3d00" />
+
+      <!-- Left Flame Tongue -->
+      <rect x="${x + 5}" y="${y + 12 - leftH}" width="3" height="${leftH}" fill="#ff3d00" />
+      <rect x="${x + 5.5}" y="${y + 13 - leftH}" width="2" height="${leftH - 2}" fill="#ff9100" />
+      <rect x="${x + 6}" y="${y + 14 - leftH}" width="1" height="${Math.max(1, leftH - 4)}" fill="#ffd600" />
+
+      <!-- Center Main Flame Tongue (Tallest) -->
+      <rect x="${x + 9}" y="${y + 12 - midH}" width="4" height="${midH}" fill="#ff3d00" />
+      <rect x="${x + 9.5}" y="${y + 13 - midH}" width="3" height="${midH - 2}" fill="#ff9100" />
+      <rect x="${x + 10}" y="${y + 14 - midH}" width="2" height="${midH - 4}" fill="#ffd600" />
+      <rect x="${x + 10.5}" y="${y + 16 - midH}" width="1" height="${Math.max(1, midH - 7)}" fill="#ffffff" />
+
+      <!-- Right Flame Tongue -->
+      <rect x="${x + 14}" y="${y + 12 - rightH}" width="3" height="${rightH}" fill="#ff3d00" />
+      <rect x="${x + 14.5}" y="${y + 13 - rightH}" width="2" height="${rightH - 2}" fill="#ff9100" />
+      <rect x="${x + 15}" y="${y + 14 - rightH}" width="1" height="${Math.max(1, rightH - 4)}" fill="#ffd600" />
+
+      <!-- Flying Spark Embers -->
+      <rect x="${spark1X.toFixed(1)}" y="${spark1Y.toFixed(1)}" width="1.5" height="1.5" fill="#ffd600" opacity="0.85" />
+      <rect x="${spark2X.toFixed(1)}" y="${spark2Y.toFixed(1)}" width="1.5" height="1.5" fill="#ffab00" opacity="0.75" />
+    </g>
+  `;
+}
+
+function renderMinecraftChest(chest: ChestPos, frameIndex: number): string {
+  const { x, y, type } = chest;
+  const ps = 1.2;
+
+  const CHEST_PALETTES: Record<string, { body: string; shadow: string; highlight: string; latch: string; latchH: string }> = {
+    wood: { body: "#a66a38", shadow: "#533112", highlight: "#c68642", latch: "#212121", latchH: "#e0e0e0" },
+    iron: { body: "#cfd8dc", shadow: "#607d8b", highlight: "#eceff1", latch: "#37474f", latchH: "#ffffff" },
+    gold: { body: "#ffd54f", shadow: "#ff8f00", highlight: "#fff9c4", latch: "#c67c00", latchH: "#ffffff" },
+    diamond: { body: "#40c4ff", shadow: "#01579b", highlight: "#e0f7fa", latch: "#0091ea", latchH: "#ffffff" },
+    ender: { body: "#004d40", shadow: "#00251a", highlight: "#00796b", latch: "#00e5ff", latchH: "#b388ff" },
+  };
+
+  const p = CHEST_PALETTES[type] || CHEST_PALETTES.wood;
+  const glint = (type === "diamond" || type === "gold" || type === "ender") && frameIndex % 4 === 0;
+
+  return `
+    <!-- Minecraft ${type.toUpperCase()} Chest -->
+    <g shape-rendering="crispEdges">
+      <!-- Chest Outer Shadow/Trim -->
+      <rect x="${x}" y="${y}" width="${15 * ps}" height="${13 * ps}" fill="${p.shadow}" />
+      <!-- Lid & Body -->
+      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${13 * ps}" height="${4 * ps}" fill="${p.body}" />
+      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${13 * ps}" height="${1 * ps}" fill="${p.highlight}" />
+      <rect x="${x + 1 * ps}" y="${y + 5 * ps}" width="${13 * ps}" height="${1 * ps}" fill="${p.shadow}" />
+      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${13 * ps}" height="${6 * ps}" fill="${p.body}" />
+      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${13 * ps}" height="${1 * ps}" fill="${p.highlight}" />
+
+      <!-- Center Lock Latch -->
+      <rect x="${x + 6 * ps}" y="${y + 3.5 * ps}" width="${3 * ps}" height="${4 * ps}" fill="${p.latch}" />
+      <rect x="${x + 6.5 * ps}" y="${y + 4.5 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.latchH}" />
+
+      ${glint ? `<rect x="${x + 2 * ps}" y="${y + 2 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#ffffff" opacity="0.9" />` : ""}
+    </g>
+  `;
+}
+
+function renderSeasonalJackOLantern(jack: JackOLanternPos, frameIndex: number): string {
+  const { x, y } = jack;
+  const ps = 1.3;
+  const flicker = frameIndex % 3 === 0;
+  const flameColor = flicker ? "#fff176" : "#ffd54f";
+
+  return `
+    <!-- Seasonal Halloween Jack-o'-Lantern -->
+    <g shape-rendering="crispEdges">
+      <!-- Green Stem -->
+      <rect x="${x + 6 * ps}" y="${y - 2 * ps}" width="${2 * ps}" height="${3 * ps}" fill="#558b2f" />
+
+      <!-- Pumpkin Body -->
+      <rect x="${x}" y="${y}" width="${14 * ps}" height="${12 * ps}" fill="#e65100" />
+      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${12 * ps}" height="${10 * ps}" fill="#f57c00" />
+      <!-- Ribs -->
+      <rect x="${x + 4 * ps}" y="${y}" width="${1 * ps}" height="${12 * ps}" fill="#e65100" />
+      <rect x="${x + 9 * ps}" y="${y}" width="${1 * ps}" height="${12 * ps}" fill="#e65100" />
+
+      <!-- Carved Glowing Eyes -->
+      <rect x="${x + 2.5 * ps}" y="${y + 3 * ps}" width="${2.5 * ps}" height="${2.5 * ps}" fill="#212121" />
+      <rect x="${x + 3 * ps}" y="${y + 3.5 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
+
+      <rect x="${x + 9 * ps}" y="${y + 3 * ps}" width="${2.5 * ps}" height="${2.5 * ps}" fill="#212121" />
+      <rect x="${x + 9.5 * ps}" y="${y + 3.5 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
+
+      <!-- Carved Nose -->
+      <rect x="${x + 6 * ps}" y="${y + 5.5 * ps}" width="${2 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
+
+      <!-- Carved Grinning Tooth Mouth -->
+      <rect x="${x + 3 * ps}" y="${y + 8 * ps}" width="${8 * ps}" height="${2.5 * ps}" fill="#212121" />
+      <rect x="${x + 3.5 * ps}" y="${y + 8.5 * ps}" width="${7 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
+      <rect x="${x + 5 * ps}" y="${y + 8 * ps}" width="${1 * ps}" height="${1 * ps}" fill="#f57c00" />
+      <rect x="${x + 8 * ps}" y="${y + 9 * ps}" width="${1 * ps}" height="${1 * ps}" fill="#f57c00" />
+    </g>
+  `;
+}
+
+function renderSeasonalHolidayGifts(gifts: HolidayGiftPos[], _frameIndex: number): string {
+  let res = "";
+  for (const gift of gifts) {
+    const { x, y, size, boxColor, ribbonColor } = gift;
+    res += `
+      <!-- Wrapped Gift Box -->
+      <g shape-rendering="crispEdges">
+        <rect x="${x}" y="${y}" width="${size}" height="${size}" fill="${boxColor}" />
+        <!-- Vertical Ribbon -->
+        <rect x="${x + Math.floor(size / 2) - 1}" y="${y}" width="2" height="${size}" fill="${ribbonColor}" />
+        <!-- Horizontal Ribbon -->
+        <rect x="${x}" y="${y + Math.floor(size / 2) - 1}" width="${size}" height="2" fill="${ribbonColor}" />
+        <!-- Bow on top -->
+        <rect x="${x + Math.floor(size / 2) - 2}" y="${y - 2}" width="4" height="2" fill="${ribbonColor}" />
+      </g>
+    `;
+  }
+  return res;
+}
+
+function renderSeasonalFairyLights(leafBlocks: LeafBlockPos[], frameIndex: number): string {
+  const lightColors = ["#f44336", "#4caf50", "#ffd600", "#00e5ff", "#e91e63", "#ff9800"];
+  let res = "";
+
+  leafBlocks.forEach((leaf, idx) => {
+    // Place lights on outer edges of leaves
+    if (leaf.gridY === -3 || leaf.gridX === -2 || leaf.gridX === 2 || leaf.gridY === 0) {
+      const color = lightColors[(idx + frameIndex) % lightColors.length];
+      const isLit = (frameIndex + idx) % 3 !== 0;
+      if (isLit) {
+        const lx = leaf.x + ((idx * 13) % (leaf.size - 6)) + 2;
+        const ly = leaf.y + leaf.size - 4;
+        res += `<rect x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" width="4" height="4" fill="${color}" opacity="0.95" />`;
+        res += `<rect x="${(lx + 1).toFixed(1)}" y="${(ly + 1).toFixed(1)}" width="2" height="2" fill="#ffffff" />`;
+      }
+    }
+  });
+
+  return `<!-- Holiday Fairy String Lights --><g shape-rendering="crispEdges">${res}</g>`;
+}
+
+function renderSeasonalFireworks(
+  width: number,
+  height: number,
+  frameIndex: number,
+  totalFrames: number
+): string {
+  const bursts = [
+    { cx: 85, cy: 55, color: "#00e5ff", core: "#ffffff", phase: 0 },
+    { cx: 230, cy: 38, color: "#ffd600", core: "#fff9c4", phase: 6 },
+    { cx: 375, cy: 62, color: "#ff4081", core: "#ffffff", phase: 12 },
+  ];
+
+  let res = "";
+  for (const b of bursts) {
+    const cycle = totalFrames > 0 ? (frameIndex + b.phase) % totalFrames : 0;
+    const progress = cycle / Math.max(1, totalFrames);
+
+    if (progress < 0.7) {
+      const radius = progress * 24;
+      const opacity = 1 - progress / 0.7;
+
+      // Starburst sparks in 8 directions
+      const sparkDirs = [
+        { dx: 0, dy: -1 },
+        { dx: 1, dy: -1 },
+        { dx: 1, dy: 0 },
+        { dx: 1, dy: 1 },
+        { dx: 0, dy: 1 },
+        { dx: -1, dy: 1 },
+        { dx: -1, dy: 0 },
+        { dx: -1, dy: -1 },
+      ];
+
+      for (const d of sparkDirs) {
+        const sx = b.cx + d.dx * radius;
+        const sy = b.cy + d.dy * radius + progress * progress * 6; // slight gravity drop
+        res += `<rect x="${sx.toFixed(1)}" y="${sy.toFixed(1)}" width="2.5" height="2.5" fill="${b.color}" opacity="${opacity.toFixed(2)}" />`;
+      }
+      res += `<rect x="${b.cx - 1}" y="${b.cy - 1}" width="3" height="3" fill="${b.core}" opacity="${opacity.toFixed(2)}" />`;
+    }
+  }
+
+  return `<!-- New Year Fireworks --><g shape-rendering="crispEdges">${res}</g>`;
 }
 
 export function renderFrame(
@@ -731,6 +1230,12 @@ export function renderFrame(
     bee,
     beehive,
     signpost,
+    pet,
+    campfire,
+    chest,
+    seasonalEvent,
+    holidayGifts,
+    jackOLantern,
     weather,
   } = layout;
 
@@ -786,6 +1291,11 @@ export function renderFrame(
     skySvg += renderMinecraftCloud(snowCloud2X, 30, 0.9, 0.85);
   }
 
+  // Fireworks in Sky (New Year Event)
+  if (seasonalEvent === "fireworks") {
+    skySvg += renderSeasonalFireworks(width, height, frameIndex, totalFrames);
+  }
+
   // 2. Grass & Dirt Ground Layer (with embedded Diamond & Emerald Ore)
   const groundSvg = renderMinecraftGround(width, height, groundY, isSnow, oreBlocks || []);
 
@@ -795,36 +1305,78 @@ export function renderFrame(
     signpostSvg = renderMinecraftSignpost(signpost.x, signpost.y, signpost.streak);
   }
 
-  // 4. Trunk
+  // 4. Milestone Treasure Chest
+  let chestSvg = "";
+  if (chest) {
+    chestSvg = renderMinecraftChest(chest, frameIndex);
+  }
+
+  // 5. Trunk
   const trunkSvg = trunkBlocks.map((b) => renderMinecraftLog(b.x, b.y, b.size, treeType)).join("\n");
 
-  // 5. Beehive on Trunk
+  // 6. Beehive on Trunk
   let beehiveSvg = "";
   if (beehive) {
     beehiveSvg = renderMinecraftBeehive(beehive.x, beehive.y, beehive.side);
   }
 
-  // 6. 14 Canopy Leaf Blocks
+  // 7. 14 Canopy Leaf Blocks
   const leavesSvg = leafBlocks
     .map((l) => renderMinecraftLeaf(l, frameIndex, totalFrames, isSnow, treeType))
     .join("\n");
 
-  // 7. Red Apples
+  // 8. Holiday Fairy Lights (Canopy Overlay)
+  let fairyLightsSvg = "";
+  if (seasonalEvent === "holiday") {
+    fairyLightsSvg = renderSeasonalFairyLights(leafBlocks, frameIndex);
+  }
+
+  // 9. Red Apples
   const applesSvg = apples.map((a) => renderApple(a, frameIndex)).join("\n");
 
-  // 8. Flowers on Grass
+  // 10. Flowers on Grass
   const flowersSvg = flowers.map((f) => renderFlowerOnGrass(f, frameIndex)).join("\n");
 
-  // 9. Golden Apples on Grass
+  // 11. Golden Apples on Grass
   const goldenApplesSvg = (goldenApples || []).map((g) => renderGoldenAppleOnGrass(g, frameIndex)).join("\n");
 
-  // 10. Flying Minecraft Bee (flies outside during fair weather, rests in hive during rain/snow)
+  // 12. Pet Companion (Wolf / Fox / Cat)
+  let petSvg = "";
+  if (pet) {
+    if (pet.type === "wolf") {
+      petSvg = renderMinecraftWolf(pet, frameIndex);
+    } else if (pet.type === "fox") {
+      petSvg = renderMinecraftFox(pet, frameIndex, isNight);
+    } else if (pet.type === "cat") {
+      petSvg = renderMinecraftCat(pet, frameIndex);
+    }
+  }
+
+  // 13. Roasting Campfire
+  let campfireSvg = "";
+  if (campfire) {
+    campfireSvg = renderMinecraftCampfire(campfire, frameIndex, totalFrames);
+  }
+
+  // 14. Halloween Jack-o'-Lantern
+  let jackOLanternSvg = "";
+  if (jackOLantern) {
+    jackOLanternSvg = renderSeasonalJackOLantern(jackOLantern, frameIndex);
+  }
+
+  // 15. Holiday Gift Boxes
+  let holidayGiftsSvg = "";
+  if (holidayGifts && holidayGifts.length > 0) {
+    holidayGiftsSvg = renderSeasonalHolidayGifts(holidayGifts, frameIndex);
+  }
+
+  // 16. Flying Minecraft Bee
   let beeSvg = "";
   if (bee && !isRain && !isSnow) {
     beeSvg = renderMinecraftBee(bee.x, bee.y, frameIndex, totalFrames);
   }
 
-  // 11. Foreground Weather Precipitation or Sakura Petals (mutually exclusive to prevent particle overlap)
+  // 17. Foreground Weather Precipitation or Sakura Petals
   let precipSvg = "";
   if (isRain) {
     precipSvg = renderRainStreaks(width, groundY, frameIndex, totalFrames);
@@ -838,12 +1390,18 @@ export function renderFrame(
   ${skySvg}
   ${groundSvg}
   ${signpostSvg}
+  ${chestSvg}
   ${trunkSvg}
   ${beehiveSvg}
   ${leavesSvg}
+  ${fairyLightsSvg}
   ${applesSvg}
   ${goldenApplesSvg}
   ${flowersSvg}
+  ${petSvg}
+  ${campfireSvg}
+  ${jackOLanternSvg}
+  ${holidayGiftsSvg}
   ${beeSvg}
   ${precipSvg}
 </svg>`;

@@ -4,7 +4,7 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788519466428)
+![tree](tree.gif?v=1788538187161)
 <!-- commit-tree-end -->
 
 
@@ -18,8 +18,12 @@
 
 - **Minecraft Tree Biomes 🌸🌲⚪🌳** — choose between **Sakura / Cherry Blossom** (with falling pink petals), **Spruce Taiga**, **Birch Forest**, or classic **Oak**.
 - **Minecraft Oak / Sakura Leaves** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink) across the 14 canopy blocks.
+- **Minecraft Pet Companions 🐾 (Wolf 🐺, Fox 🦊, Cat 🐱)** — tamed red-collared **Wolf** (tail-wagging with active streaks $\ge 14\text{d}$), sleeping/waking orange **Fox** (curled up during day, alert at night for streak $\ge 7\text{d}$), and cute **Tuxedo Cat**.
+- **Roasting Campfire 🔥** — crackling campfire with rising smoke particles and flying ember sparks during high-velocity sprint periods.
+- **Milestone Treasure Chests 📦 (Wood, Iron, Gold, Diamond, Ender)** — treasure chests sitting on the lawn leveling up as your total commit milestones grow!
+- **Seasonal Holiday Modes 🎃🎄🎆** — auto-detects or manual **Halloween** (glowing Jack-o'-Lantern), **Holiday Christmas** (twinkling canopy fairy lights & wrapped gifts), and **New Year Fireworks** (colorful sky starbursts).
+- **Wooden & Milestone Stat Signposts 🪧 (Wood, Gold 🪙, Diamond 💎)** — a pixelated signpost displaying your live streak with smart auto-scaling (`14d`, `100d`, `1.2k`), leveling up with glowing ink & royal crowns for Century Club ($\ge 100\text{d}$) and 1-Year ($\ge 365\text{d}$) streaks!
 - **Minecraft Bee 🐝 & Streak Beehive 🍯** — an animated buzzing bee with fluttering wings and a wooden beehive on the trunk celebrating your active commit streak.
-- **Wooden Stat Signpost 🪧** — a neat pixelated wooden signpost on the grass lawn displaying your live commit streak (`⚡ 14d`).
 - **Underground Ore Blocks 💎 (Netherite, Gold, Diamond, Emerald, Lapis Lazuli, Redstone)** — embedded in the dirt layer featuring creator-exclusive **Netherite** (`@nivinvysakh`), **Lapis Lazuli** exclusively for verified `nivinvysakh/gh-tree` contributors, and productivity milestone ores.
 - **Minecraft Flowers 🌸 (Open PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the lawn.
 - **Minecraft Red Apples 🍎 (Merged PRs)** — up to 4 ripe red apples hanging beneath the canopy leaf blocks.
@@ -34,32 +38,54 @@
 | **Classic Oak 🌳** (`tree-type: oak`) | **Sakura Cherry Blossom 🌸** (`tree-type: sakura`) |
 | :---: | :---: |
 | ![Oak](tree.gif) | ![Sakura](assets/tree-sakura.gif) |
-| *Classic Oak, Bee, Beehive & Ore* | *Cherry blossom pinks & falling petals* |
+| *Classic Oak, Wolf Pet, Campfire & Chest* | *Cherry blossom pinks, Cat Pet & falling petals* |
 
 | **Taiga Spruce 🌲** (`tree-type: spruce`) | **Birch Forest ⚪** (`tree-type: birch`) |
 | :---: | :---: |
 | ![Spruce](assets/tree-spruce.gif) | ![Birch](assets/tree-birch.gif) |
-| *Dark coniferous needles & spruce bark* | *White notched birch bark & olive leaves* |
+| *Dark coniferous needles, Fox & spruce bark* | *White notched birch bark & Wolf pet* |
 
 ---
 
-## Weather & Day/Night Showcase 🌦️
+## Seasonal Holiday Events Showcase 🎃🎄🎆
 
-| **Sunny ☀️** (`weather: sunny`) | **Starry Night 🌕✨** (`weather: night`) |
-| :---: | :---: |
-| ![Sunny](tree.gif) | ![Night](assets/tree-night.gif) |
-| *Glowing Minecraft Sun & solar flares* | *Minecraft Moon, craters & twinkling stars* |
-
-| **Rainy 🌧️** (`weather: rain`) | **Snowy ❄️** (`weather: snow`) | **Cloudy ☁️** (`weather: cloudy`) |
+| **Spooky Halloween 🎃** (`event: halloween`) | **Winter Holiday Christmas 🎄** (`event: holiday`) | **New Year Fireworks 🎆** (`event: fireworks`) |
 | :---: | :---: | :---: |
-| ![Rain](assets/tree-rain.gif) | ![Snow](assets/tree-snow.gif) | ![Cloudy](assets/tree-cloudy.gif) |
-| *Slanted rain streaks & splashes* | *Fluttering snow & snow-capped leaves* | *Multi-layered drifting overcast clouds* |
+| ![Halloween](assets/tree-halloween.gif) | ![Holiday](assets/tree-holiday.gif) | ![Fireworks](assets/tree-fireworks.gif) |
+| *Carved Jack-o'-Lantern & Cat Pet* | *Twinkling fairy lights, gifts & snow* | *Sky starburst fireworks, Campfire & Fox* |
+
+---
+
+## Live Weather & Day/Night Showcase 🌦️🐾
+
+| **Starry Night 🌕✨** (`weather: night`) | **Rainy 🌧️** (`weather: rain`) |
+| :---: | :---: |
+| ![Night](assets/tree-night.gif) | ![Rain](assets/tree-rain.gif) |
+| *Starry night sky, alert Fox & Moon* | *Slanted rain streaks & splashes* |
+
+| **Snowy ❄️** (`weather: snow`) | **Cloudy ☁️** (`weather: cloudy`) |
+| :---: | :---: |
+| ![Snow](assets/tree-snow.gif) | ![Cloudy](assets/tree-cloudy.gif) |
+| *Fluttering snow & snow-capped leaves* | *Multi-layered drifting overcast clouds & Fox* |
 
 ---
 
 ## 🎮 Minecraft Collectibles & Game Mechanics
 
 gh-tree turns your GitHub contributions into living Minecraft collectibles and milestones:
+
+### 🐾 Minecraft Pet Companions & Campfire
+
+| Companion / Prop | Appearance & Behavior | Unlock Condition |
+| :--- | :--- | :--- |
+| **Tamed Wolf 🐺** | Sits loyally on the lawn with a red collar and wagging tail. | **Current streak ≥ 14 days** (or `pet: wolf`) |
+| **Sleeping / Alert Fox 🦊** | Curls up sleeping during the day; wakes up and stays alert at night. | **Current streak ≥ 7 days** or active commits (or `pet: fox`) |
+| **Tuxedo Cat 🐱** | Sits peacefully under the tree canopy with glowing emerald eyes. | **Current streak ≥ 3 days** or ≥ 25 commits (or `pet: cat`) |
+| **Roasting Campfire 🔥** | Crackling campfire with crossed logs, flickering flame tongues, and rising smoke. | **Sprint mode**: ≥ 12 commits in recent 2 weeks, streak ≥ 10d, or ≥ 60 total commits (or `show-campfire: true`) |
+| **Milestone Chests 📦** | Leveling treasure chests: **Wood** (≥ 15 commits) 🪵 $\rightarrow$ **Iron** (≥ 50) ⚙️ $\rightarrow$ **Gold** (≥ 150) 🪙 $\rightarrow$ **Diamond** (≥ 300) 💎 $\rightarrow$ **Ender Chest** (≥ 500) 🌌 | Total commits in date range (or `show-chest: true`) |
+| **Seasonal Events 🎃🎄🎆** | **Halloween** (Jack-o'-Lantern), **Holiday** (Fairy lights & gift boxes), **New Year** (Fireworks) | Auto-detected by month (Oct, Dec, Jan) or `event: halloween \| holiday \| fireworks` |
+
+---
 
 ### 💎 Underground Ore Blocks
 
@@ -85,9 +111,17 @@ Embedded in the underground dirt layer beneath your tree, 6 distinct ore blocks 
 - **Red Apples 🍎 (Merged PRs)**: Up to 4 ripe red apples hanging beneath the canopy leaf blocks.
 - **Golden Apples 🍏✨ (Assigned PRs / Reviews)**: Up to 4 enchanted golden apples placed on the lawn.
 
-### 🪧 Wooden Stat Signpost & 🐝 Beehive
-- **Wooden Stat Signpost 🪧**: Renders your active consecutive commit streak (`⚡ 14d`) using a pure pixel font and high-contrast golden star.
+### 🪧 Wooden & Milestone Stat Signposts & 🐝 Beehive
+- **Wooden & Milestone Stat Signposts 🪧**: Renders your active consecutive commit streak using a crisp pixel font and smart auto-scaling (`14d`, `100d`, `365d`, `1.2k`). Features progressive milestone tiers:
+  - 🪵 **Classic Oak Signpost** (`< 100` days): Warm carved wooden board with high-contrast golden star.
+  - 🪙 **Golden Milestone Signpost** ($\ge 100$ days): Golden inlay frame, glowing warm gold ink, and a royal gold crown 👑 for the Century Club!
+  - 💎 **Diamond Milestone Signpost** ($\ge 365$ days): Prismatic diamond teal frame, glowing diamond-cyan ink, and an illuminated diamond crown 👑 for 1+ year streaks!
 - **Beehive 🍯 & Animated Bee 🐝**: A wooden beehive appears on the trunk for active streaks (≥ 3 days) or ≥ 25 commits, while an animated Minecraft bee buzzes around the tree during fair weather.
+
+| **Classic Oak Signpost 🪵** (`< 100` days) | **Century Club Gold Signpost 🪙👑** (`≥ 100` days) | **Diamond 1-Year Signpost 💎👑** (`≥ 365` days) |
+| :---: | :---: | :---: |
+| ![Classic Oak Signpost](assets/tree-streak-14.gif) | ![Golden Signpost](assets/tree-streak-100.gif) | ![Diamond Signpost](assets/tree-streak-365.gif) |
+| *Standard carved wood board & Star* | *Golden frame, glowing gold text & Crown* | *Prismatic teal frame, glowing cyan text & Crown* |
 
 ---
 
@@ -119,7 +153,7 @@ jobs:
 
 ### Full Configuration Example
 
-Customize your tree with biomes, live weather, and recency tuning:
+Customize your tree with biomes, pet companions, campfire, milestone chests, seasonal events, and live weather:
 
 ```yaml
 name: Generate Commit Tree
@@ -143,6 +177,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # Tree biome variety: oak | sakura | spruce | birch
           tree-type: "sakura"
+          # Companion pet companion: auto | wolf | fox | cat | none
+          pet: "auto"
+          # Roasting campfire & milestone treasure chest: auto | true | false
+          show-campfire: "auto"
+          show-chest: "auto"
+          # Seasonal holiday event: auto | halloween | holiday | fireworks | none
+          event: "auto"
           # Live weather from Open-Meteo for your city (auto-detects sun, night, rain, snow, clouds)
           city: "Tokyo"
           # Or manually force a weather condition: auto | sunny | night | rain | snow | cloudy
@@ -164,7 +205,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788519466428)
+![tree](tree.gif?v=1788538187161)
 <!-- commit-tree-end -->
 ```
 
@@ -179,6 +220,10 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 | `github-token`    | *(Required)* | GitHub Token or PAT with `read:user` scope |
 | `github-login`    | `repository_owner`    | GitHub username (defaults to repo owner)   |
 | `tree-type`       | `oak`        | Biome tree type (`oak`, `sakura`, `spruce`, `birch`) |
+| `pet`             | `auto`       | Minecraft pet companion (`auto`, `wolf`, `fox`, `cat`, `none`) |
+| `show-campfire`   | `auto`       | Render roasting campfire during active sprints (`auto`, `true`, `false`) |
+| `show-chest`      | `auto`       | Render milestone treasure chest (`auto`, `true`, `false`) |
+| `event`           | `auto`       | Seasonal holiday event (`auto`, `halloween`, `holiday`, `fireworks`, `none`) |
 | `show-signpost`   | `true`       | Render wooden streak stat signpost on the grass  |
 | `show-bee`        | `true`       | Render animated Minecraft bee around the tree    |
 | `is-owner`        | `auto`       | Unlocks creator-exclusive Netherite Ore (`@nivinvysakh`) |
@@ -206,7 +251,7 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 | `open-prs`      | Total open pull requests authored by the user          |
 | `merged-prs`    | Total merged pull requests                             |
 | `assigned-prs`  | Total open pull requests assigned to the user          |
-| `weather-type`  | Detected or active weather type (`sunny`, `night`, `rain`, etc.)|
+| `weather-type`  | Detected or active weather type (`sunny`, `night`, `rain`, `snow`, `cloudy`)|
 | `weather-desc`  | Description of current weather                         |
 | `tree-type`     | Selected biome variety (`oak`, `sakura`, `spruce`, `birch`)|
 

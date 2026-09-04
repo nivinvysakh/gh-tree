@@ -240,6 +240,143 @@ describe("Minecraft SVG module", () => {
     }
   });
 
+  it("renders Minecraft Pet Companions (Wolf, Fox, Cat) with animations", () => {
+    // Wolf
+    const wolfLayout: TreeLayout = {
+      ...mockLayout,
+      pet: { x: 172, y: 350, type: "wolf", state: "sitting" },
+    };
+    const wolfSvg = renderFrame(wolfLayout, 0, 20);
+    expect(wolfSvg).toContain("<!-- Minecraft Tamed Wolf -->");
+    expect(wolfSvg).toContain('fill="#d32f2f"'); // Red collar
+
+    // Fox (Sleeping)
+    const foxSleepLayout: TreeLayout = {
+      ...mockLayout,
+      pet: { x: 172, y: 350, type: "fox", state: "sleeping" },
+      weather: { type: "sunny", description: "Sunny" },
+    };
+    const foxSleepSvg = renderFrame(foxSleepLayout, 0, 20);
+    expect(foxSleepSvg).toContain("<!-- Minecraft Sleeping Fox -->");
+    expect(foxSleepSvg).toContain('fill="#e65100"'); // Orange fur
+
+    // Fox (Alert at night)
+    const foxNightLayout: TreeLayout = {
+      ...mockLayout,
+      pet: { x: 172, y: 350, type: "fox", state: "standing" },
+      weather: { type: "night", description: "Night", isDay: false },
+    };
+    const foxNightSvg = renderFrame(foxNightLayout, 0, 20);
+    expect(foxNightSvg).toContain("<!-- Minecraft Alert Fox -->");
+
+    // Cat
+    const catLayout: TreeLayout = {
+      ...mockLayout,
+      pet: { x: 172, y: 350, type: "cat", state: "sitting" },
+    };
+    const catSvg = renderFrame(catLayout, 0, 20);
+    expect(catSvg).toContain("<!-- Minecraft Tuxedo Cat -->");
+    expect(catSvg).toContain('fill="#00e676"'); // Emerald green cat eyes
+  });
+
+  it("renders roasting campfire with crackling flames and rising smoke", () => {
+    const campfireLayout: TreeLayout = {
+      ...mockLayout,
+      campfire: { x: 362, y: 352 },
+    };
+    const svg = renderFrame(campfireLayout, 0, 20);
+    expect(svg).toContain("<!-- Minecraft Roasting Campfire -->");
+    expect(svg).toContain('fill="#ff3d00"'); // Outer flame
+    expect(svg).toContain('fill="#ffd600"'); // Mid flame
+  });
+
+
+
+  it("renders milestone treasure chests across wood, iron, gold, diamond, and ender tiers", () => {
+    const enderChestLayout: TreeLayout = {
+      ...mockLayout,
+      chest: { x: 260, y: 350, type: "ender" },
+    };
+    const enderSvg = renderFrame(enderChestLayout, 0, 20);
+    expect(enderSvg).toContain("<!-- Minecraft ENDER Chest -->");
+    expect(enderSvg).toContain('fill="#004d40"');
+    expect(enderSvg).toContain('fill="#00e5ff"'); // Eye of ender latch
+
+    const diamondChestLayout: TreeLayout = {
+      ...mockLayout,
+      chest: { x: 260, y: 350, type: "diamond" },
+    };
+    const diamondSvg = renderFrame(diamondChestLayout, 0, 20);
+    expect(diamondSvg).toContain("<!-- Minecraft DIAMOND Chest -->");
+    expect(diamondSvg).toContain('fill="#40c4ff"');
+  });
+
+  it("renders Halloween Jack-o'-Lantern with glowing carved face", () => {
+    const halloweenLayout: TreeLayout = {
+      ...mockLayout,
+      seasonalEvent: "halloween",
+      jackOLantern: { x: 362, y: 352 },
+    };
+    const svg = renderFrame(halloweenLayout, 0, 20);
+    expect(svg).toContain("<!-- Seasonal Halloween Jack-o'-Lantern -->");
+    expect(svg).toContain('fill="#e65100"');
+    expect(svg).toContain('fill="#558b2f"'); // Stem
+  });
+
+  it("renders Holiday Christmas fairy lights and wrapped gift boxes", () => {
+    const holidayLayout: TreeLayout = {
+      ...mockLayout,
+      seasonalEvent: "holiday",
+      holidayGifts: [
+        { x: 260, y: 358, size: 12, boxColor: "#d32f2f", ribbonColor: "#388e3c" },
+      ],
+    };
+    const svg = renderFrame(holidayLayout, 0, 20);
+    expect(svg).toContain("<!-- Holiday Fairy String Lights -->");
+    expect(svg).toContain("<!-- Wrapped Gift Box -->");
+    expect(svg).toContain('fill="#d32f2f"');
+    expect(svg).toContain('fill="#388e3c"');
+  });
+
+  it("renders New Year fireworks starbursts exploding in sky", () => {
+    const fireworksLayout: TreeLayout = {
+      ...mockLayout,
+      seasonalEvent: "fireworks",
+    };
+    const svg = renderFrame(fireworksLayout, 0, 20);
+    expect(svg).toContain("<!-- New Year Fireworks -->");
+  });
+
+  it("renders upgraded milestone signposts for 100+ and 365+ day streaks with royal crown and glowing ink", () => {
+    // 100+ Days: Golden Milestone Signboard with glowing gold text & crown
+    const goldSignLayout: TreeLayout = {
+      ...mockLayout,
+      signpost: { x: 62, y: 344, streak: 120 },
+    };
+    const goldSvg = renderFrame(goldSignLayout, 0, 20);
+    expect(goldSvg).toContain("<!-- Minecraft Golden Milestone Signpost (100+ Streak) -->");
+    expect(goldSvg).toContain('fill="#fff9c4"'); // Glowing gold text
+    expect(goldSvg).toContain('fill="#ffd54f"'); // Golden trim
+
+    // 365+ Days: Diamond Milestone Signboard with glowing diamond cyan text & crown
+    const diamondSignLayout: TreeLayout = {
+      ...mockLayout,
+      signpost: { x: 62, y: 344, streak: 365 },
+    };
+    const diamondSvg = renderFrame(diamondSignLayout, 0, 20);
+    expect(diamondSvg).toContain("<!-- Minecraft Diamond Milestone Signpost (365+ Streak) -->");
+    expect(diamondSvg).toContain('fill="#e0f7fa"'); // Glowing cyan text
+    expect(diamondSvg).toContain('fill="#00e5ff"'); // Diamond trim
+
+    // 1000+ Days: Compact notation scaling
+    const kSignLayout: TreeLayout = {
+      ...mockLayout,
+      signpost: { x: 62, y: 344, streak: 1250 },
+    };
+    const kSvg = renderFrame(kSignLayout, 0, 20);
+    expect(kSvg).toContain("<!-- Minecraft Diamond Milestone Signpost (365+ Streak) -->");
+  });
+
   it("animates across frames", () => {
     const frame0 = renderFrame(mockLayout, 0, 20);
     const frame5 = renderFrame(mockLayout, 5, 20);

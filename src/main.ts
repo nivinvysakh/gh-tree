@@ -135,6 +135,26 @@ async function run(): Promise<void> {
         ? false
         : isActionContributor;
 
+    const rawPet = (core.getInput("pet") || "auto").trim().toLowerCase();
+    const pet = (["auto", "wolf", "fox", "cat", "none"].includes(rawPet)
+      ? rawPet
+      : "auto") as "auto" | "wolf" | "fox" | "cat" | "none";
+
+    const parseAutoBool = (val: string): boolean | "auto" => {
+      const v = (val || "auto").trim().toLowerCase();
+      if (v === "true") return true;
+      if (v === "false") return false;
+      return "auto";
+    };
+
+    const showCampfire = parseAutoBool(core.getInput("show-campfire"));
+    const showChest = parseAutoBool(core.getInput("show-chest"));
+
+    const rawEvent = (core.getInput("event") || "auto").trim().toLowerCase();
+    const event = (["auto", "halloween", "holiday", "fireworks", "none"].includes(rawEvent)
+      ? rawEvent
+      : "auto") as "auto" | "halloween" | "holiday" | "fireworks" | "none";
+
     const layout = buildTreeLayout(contributions.weeks, undefined, {
       width,
       height,
@@ -144,6 +164,10 @@ async function run(): Promise<void> {
       showBee,
       isOwner,
       isContributor,
+      pet,
+      showCampfire,
+      showChest,
+      event,
     });
 
     core.info(`Rendering ${frameCount} frames...`);

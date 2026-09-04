@@ -15,7 +15,14 @@ async function generateGifVariant(
   width: number,
   height: number,
   frameCount: number,
-  frameDelayMs: number
+  frameDelayMs: number,
+  customOpts: {
+    pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+    showCampfire?: boolean | "auto";
+    showChest?: boolean | "auto";
+    event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
+    streak?: number;
+  } = {}
 ): Promise<string> {
   const layout = buildTreeLayout(weeks, undefined, {
     width,
@@ -26,6 +33,7 @@ async function generateGifVariant(
     showBee: true,
     isOwner: true,
     isContributor: true,
+    ...customOpts,
   });
   const frames = Array.from({ length: frameCount }, (_, i) => ({
     svg: renderFrame(layout, i, frameCount),
@@ -40,7 +48,7 @@ async function generateGifVariant(
 }
 
 async function runMockGeneration(): Promise<void> {
-  console.log("Generating local mock GIFs for all biomes and weather conditions...\n");
+  console.log("Generating local mock GIFs for all biomes, weather conditions, pets, and seasonal events...\n");
 
   // 14 weeks crafted to showcase all levels, PR flowers, apples, golden apples, and streak
   const commitCounts = [
@@ -82,19 +90,36 @@ async function runMockGeneration(): Promise<void> {
   const frameCount = 14;
   const frameDelayMs = 110;
 
-  const variants: { file: string; weather: WeatherCondition; treeType: TreeType }[] = [
-    { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" }, treeType: "oak" },
-    { file: "assets/tree-sakura.gif", weather: { type: "sunny", description: "Sunny Sakura Blossom" }, treeType: "sakura" },
+  const variants: {
+    file: string;
+    weather: WeatherCondition;
+    treeType: TreeType;
+    opts?: {
+      pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+      showCampfire?: boolean | "auto";
+      showChest?: boolean | "auto";
+      event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
+      streak?: number;
+    };
+  }[] = [
+    { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" }, treeType: "oak", opts: { pet: "wolf", showCampfire: true, showChest: true } },
+    { file: "assets/tree-sakura.gif", weather: { type: "sunny", description: "Sunny Sakura Blossom" }, treeType: "sakura", opts: { pet: "cat", showChest: true } },
     { file: "assets/tree-sakura-rain.gif", weather: { type: "rain", description: "Sakura in Rain" }, treeType: "sakura" },
     { file: "assets/tree-sakura-snow.gif", weather: { type: "snow", description: "Sakura in Snow" }, treeType: "sakura" },
-    { file: "assets/tree-spruce.gif", weather: { type: "sunny", description: "Taiga Spruce" }, treeType: "spruce" },
+    { file: "assets/tree-spruce.gif", weather: { type: "sunny", description: "Taiga Spruce" }, treeType: "spruce", opts: { pet: "fox", showCampfire: true } },
     { file: "assets/tree-spruce-snow.gif", weather: { type: "snow", description: "Taiga Spruce in Snow" }, treeType: "spruce" },
-    { file: "assets/tree-birch.gif", weather: { type: "sunny", description: "Birch Forest" }, treeType: "birch" },
+    { file: "assets/tree-birch.gif", weather: { type: "sunny", description: "Birch Forest" }, treeType: "birch", opts: { pet: "wolf" } },
     { file: "assets/tree-birch-rain.gif", weather: { type: "rain", description: "Birch in Rain" }, treeType: "birch" },
-    { file: "assets/tree-night.gif", weather: { type: "night", description: "Clear starry night (Moon & Clouds)", isDay: false }, treeType: "oak" },
+    { file: "assets/tree-night.gif", weather: { type: "night", description: "Clear starry night (Moon & Clouds)", isDay: false }, treeType: "oak", opts: { pet: "fox", showCampfire: true } },
     { file: "assets/tree-rain.gif", weather: { type: "rain", description: "Rain showers & storm clouds" }, treeType: "oak" },
     { file: "assets/tree-snow.gif", weather: { type: "snow", description: "Snowfall & snowy caps" }, treeType: "spruce" },
-    { file: "assets/tree-cloudy.gif", weather: { type: "cloudy", description: "Overcast clouds" }, treeType: "oak" },
+    { file: "assets/tree-cloudy.gif", weather: { type: "cloudy", description: "Overcast clouds" }, treeType: "oak", opts: { pet: "fox" } },
+    { file: "assets/tree-halloween.gif", weather: { type: "night", description: "Spooky Halloween Night", isDay: false }, treeType: "oak", opts: { event: "halloween", pet: "cat" } },
+    { file: "assets/tree-holiday.gif", weather: { type: "snow", description: "Winter Holiday Christmas", isDay: true }, treeType: "spruce", opts: { event: "holiday", pet: "wolf", showChest: true } },
+    { file: "assets/tree-fireworks.gif", weather: { type: "night", description: "New Year Fireworks Celebration", isDay: false }, treeType: "oak", opts: { event: "fireworks", pet: "fox", showCampfire: true } },
+    { file: "assets/tree-streak-14.gif", weather: { type: "sunny", description: "Standard Streak (<100 Days)" }, treeType: "oak", opts: { streak: 14, pet: "wolf" } },
+    { file: "assets/tree-streak-100.gif", weather: { type: "sunny", description: "100+ Day Golden Milestone Streak" }, treeType: "oak", opts: { streak: 100, pet: "wolf", showCampfire: true, showChest: true } },
+    { file: "assets/tree-streak-365.gif", weather: { type: "night", description: "365+ Day Diamond Milestone Streak", isDay: false }, treeType: "sakura", opts: { streak: 365, pet: "fox", showCampfire: true, showChest: true } },
   ];
 
   for (const variant of variants) {
@@ -106,7 +131,8 @@ async function runMockGeneration(): Promise<void> {
       width,
       height,
       frameCount,
-      frameDelayMs
+      frameDelayMs,
+      variant.opts || {}
     );
 
     if (variant.file === "tree.gif") {

@@ -54,12 +54,28 @@ inputs:
     description: "Whether to render the animated Minecraft bee hovering around the tree"
     required: false
     default: "true"
+  pet:
+    description: "Minecraft companion pet sitting/sleeping under the tree (options: auto, wolf, fox, cat, none)"
+    required: false
+    default: "auto"
+  show-campfire:
+    description: "Whether to render the roasting campfire during sprint periods (options: auto, true, false)"
+    required: false
+    default: "auto"
+  show-chest:
+    description: "Whether to render the milestone treasure chest (options: auto, true, false)"
+    required: false
+    default: "auto"
+  event:
+    description: "Seasonal holiday event mode (options: auto, halloween, holiday, fireworks, none)"
+    required: false
+    default: "auto"
   is-owner:
-    description: "Whether the user is the repository owner (auto-detected by default; unlocks Netherite Ore)"
+    description: "Whether the user is the action creator (auto-detected for @nivinvysakh; unlocks Netherite Ore)"
     required: false
     default: "auto"
   is-contributor:
-    description: "Whether the user is a contributor (auto-detected by default; unlocks Lapis Lazuli Ore)"
+    description: "Whether the user is a contributor to nivinvysakh/gh-tree (auto-detected via GitHub API; unlocks Lapis Lazuli Ore)"
     required: false
     default: "auto"
   frames:
