@@ -77,8 +77,17 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain('fill="#ffb703"');
   });
 
-  it("renders Minecraft bee, beehive, signpost, and diamond/emerald ore blocks", () => {
-    const svg = renderFrame(mockLayout, 0, 20);
+  it("renders Minecraft bee, beehive, signpost, and diamond, emerald, gold, redstone ore blocks", () => {
+    const layoutWithAllOres: TreeLayout = {
+      ...mockLayout,
+      oreBlocks: [
+        { x: 32, y: 386, type: "gold" },
+        { x: 114, y: 386, type: "diamond" },
+        { x: 298, y: 386, type: "emerald" },
+        { x: 380, y: 386, type: "redstone" },
+      ],
+    };
+    const svg = renderFrame(layoutWithAllOres, 0, 20);
 
     // Bee Cyan eye & yellow body
     expect(svg).toContain('fill="#40c4ff"');
@@ -88,9 +97,11 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain("<!-- Minecraft Wooden Stat Signpost -->");
     expect(svg).toContain('fill="#ffd600"');
 
-    // Diamond Ore (#00e5ff) & Emerald Ore (#00e676)
+    // Diamond Ore (#00e5ff), Emerald Ore (#00e676), Gold Ore (#ffd600), Redstone Ore (#ff1744)
     expect(svg).toContain('fill="#00e5ff"');
     expect(svg).toContain('fill="#00e676"');
+    expect(svg).toContain('fill="#ffd600"');
+    expect(svg).toContain('fill="#ff1744"');
   });
 
   it("renders sakura biome with pink cherry leaves, dark log, and falling petals", () => {

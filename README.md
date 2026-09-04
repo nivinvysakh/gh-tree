@@ -4,7 +4,7 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788515867041)
+![tree](tree.gif?v=1788516093075)
 <!-- commit-tree-end -->
 
 
@@ -20,7 +20,7 @@
 - **Minecraft Oak / Sakura Leaves** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink) across the 14 canopy blocks.
 - **Minecraft Bee 🐝 & Streak Beehive 🍯** — an animated buzzing bee with fluttering wings and a wooden beehive on the trunk celebrating your active commit streak.
 - **Wooden Stat Signpost 🪧** — a neat pixelated wooden signpost on the grass lawn displaying your live commit streak (`⚡ 14d`).
-- **Diamond & Emerald Ore Blocks 💎** — embedded in the ground dirt layer for high-productivity weeks and commit milestones.
+- **Underground Ore Blocks 💎 (Gold, Diamond, Emerald, Redstone)** — embedded in the dirt ground layer unlocking for commit streaks, pull requests, and volume milestones.
 - **Minecraft Flowers 🌸 (Open PRs)** — up to 4 colorful flowers (Poppies, Dandelions, Tulips, Sakura) planted on the lawn.
 - **Minecraft Red Apples 🍎 (Merged PRs)** — up to 4 ripe red apples hanging beneath the canopy leaf blocks.
 - **Minecraft Golden Apples 🍏✨ (Assigned PRs / Reviews)** — up to 4 enchanted golden apples placed on the lawn.
@@ -63,12 +63,14 @@ gh-tree turns your GitHub contributions into living Minecraft collectibles and m
 
 ### 💎 Underground Ore Blocks
 
-Embedded in the underground dirt layer beneath your tree, ore blocks unlock as you hit productivity milestones:
+Embedded in the underground dirt layer beneath your tree, ore blocks unlock as you hit productivity and collaboration milestones:
 
 | Ore Block | Appearance | Unlock Condition | What It Represents |
 | :--- | :---: | :--- | :--- |
-| **Diamond Ore** 💎 | Cyan crystalline flecks (left dirt layer) | • **≥ 25 total commits** in date range, *OR*<br>• **≥ 1 merged PR** | **Active Contributor** — milestone for consistent, regular contributions. |
-| **Emerald Ore** ❇️ | Bright emerald green gems (right dirt layer) | • **≥ 100 total commits** in date range, *OR*<br>• Any weekly branch reaching **Level 4** (30+ commits in a week) | **Power Contributor** — rare milestone awarded for high commit volume and intense development sprints. |
+| **Gold Ore** 🪙 | Radiant gold nuggets *(far-left dirt layer)* | • **Current streak ≥ 7 days**, *OR*<br>• **≥ 50 total commits** | **Streak Dedication** — milestone for sustained contribution rhythm and week-long consistency. |
+| **Diamond Ore** 💎 | Cyan crystalline flecks *(mid-left dirt layer)* | • **≥ 25 total commits** in date range, *OR*<br>• **≥ 1 merged PR** | **Active Contributor** — milestone for regular code contributions and initial PR merges. |
+| **Emerald Ore** ❇️ | Bright emerald green gems *(mid-right dirt layer)* | • **≥ 100 total commits** in date range, *OR*<br>• Any weekly branch reaching **Level 4** (30+ commits in a week) | **Power Contributor** — rare milestone awarded for high commit volume and intense development sprints. |
+| **Redstone Ore** 🔴 | Glowing crimson Redstone *(far-right dirt layer)* | • **Merged PRs ≥ 2**, *OR*<br>• **Total PR activity (open + merged + assigned) ≥ 3**, *OR*<br>• **Current streak ≥ 14 days** | **Engineering & Automation** — milestone honoring pull request lifecycle, code reviews, and multi-week streaks. |
 
 ---
 
@@ -160,7 +162,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788515867041)
+![tree](tree.gif?v=1788516093075)
 <!-- commit-tree-end -->
 ```
 

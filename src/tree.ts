@@ -47,7 +47,7 @@ export interface GoldenApplePos {
 export interface OreBlockPos {
   x: number;
   y: number;
-  type: "diamond" | "emerald";
+  type: "diamond" | "emerald" | "gold" | "redstone";
 }
 
 export interface BeePos {
@@ -285,13 +285,27 @@ export function buildTreeLayout(
     }
   }
 
-  // 6. Ore Blocks 💎 (Embedded in the ground dirt layer)
+  // 6. Ore Blocks 💎 (Embedded in the ground dirt layer: Gold, Diamond, Emerald, Redstone)
   const oreBlocks: OreBlockPos[] = [];
+  
+  // Gold Ore 🪙 (Left Outer: streak >= 7 or totalCommits >= 50)
+  if (currentStreak >= 7 || totalCommits >= 50) {
+    oreBlocks.push({ x: 32, y: groundY + 16, type: "gold" });
+  }
+
+  // Diamond Ore 💎 (Left Inner: totalCommits >= 25 or mergedPRs >= 1)
+  if (totalCommits >= 25 || totalMergedPRs >= 1) {
+    oreBlocks.push({ x: 114, y: groundY + 16, type: "diamond" });
+  }
+
+  // Emerald Ore ❇️ (Right Inner: totalCommits >= 100 or level 4 leaves)
   if (totalCommits >= 100 || leafBlocks.some((b) => b.commitLevel === 4)) {
-    oreBlocks.push({ x: 104, y: groundY + 16, type: "diamond" });
-    oreBlocks.push({ x: 312, y: groundY + 16, type: "emerald" });
-  } else if (totalCommits >= 25 || totalMergedPRs >= 1) {
-    oreBlocks.push({ x: 104, y: groundY + 16, type: "diamond" });
+    oreBlocks.push({ x: 298, y: groundY + 16, type: "emerald" });
+  }
+
+  // Redstone Ore 🔴 (Right Outer: mergedPRs >= 2 or total PR activity >= 3 or streak >= 14)
+  if (totalMergedPRs >= 2 || (totalOpenPRs + totalMergedPRs + totalAssignedPRs) >= 3 || currentStreak >= 14) {
+    oreBlocks.push({ x: 380, y: groundY + 16, type: "redstone" });
   }
 
   // 7. Wooden Stat Signpost 🪧 (Placed at x: 68 with comfortable spacing)

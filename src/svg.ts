@@ -324,11 +324,17 @@ function renderMinecraftGround(
   const grassHighlight = isSnow ? "#ffffff" : "#8bc34a";
   const grassShadow = isSnow ? "#cfd8dc" : "#558b2f";
 
+  const ORE_PALETTES: Record<string, { gemColor: string; gemShine: string; gemShadow: string }> = {
+    diamond: { gemColor: "#00e5ff", gemShine: "#e0f7fa", gemShadow: "#0091ea" },
+    emerald: { gemColor: "#00e676", gemShine: "#e8f5e9", gemShadow: "#00a152" },
+    gold: { gemColor: "#ffd600", gemShine: "#fff9c4", gemShadow: "#ff8f00" },
+    redstone: { gemColor: "#ff1744", gemShine: "#ff8a80", gemShadow: "#b71c1c" },
+  };
+
   let oresSvg = "";
   for (const ore of oreBlocks) {
-    const gemColor = ore.type === "diamond" ? "#00e5ff" : "#00e676";
-    const gemShine = ore.type === "diamond" ? "#e0f7fa" : "#e8f5e9";
-    const gemShadow = ore.type === "diamond" ? "#0091ea" : "#00a152";
+    const palette = ORE_PALETTES[ore.type] || ORE_PALETTES.diamond;
+    const { gemColor, gemShine, gemShadow } = palette;
 
     oresSvg += `
       <!-- ${ore.type.toUpperCase()} ORE BLOCK -->
