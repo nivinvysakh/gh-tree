@@ -4,7 +4,7 @@
 
 
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788516584598)
+![tree](tree.gif?v=1788517581986)
 <!-- commit-tree-end -->
 
 
@@ -67,11 +67,11 @@ Embedded in the underground dirt layer beneath your tree, 6 distinct ore blocks 
 
 | Ore Block | Appearance | Unlock Condition | What It Represents |
 | :--- | :---: | :--- | :--- |
-| **Netherite / Ancient Debris** 🪨 | Dark obsidian with metallic bronze & gold veins *(Slot 0: Far-Left)* | **Repository Owner / Maintainer** (`is-owner: true` or auto-detected) | **👑 Project Maintainer & Creator** — the rarest Minecraft material, awarded exclusively to the repository owner! |
+| **Netherite / Ancient Debris** 🪨 | Dark obsidian with metallic bronze & gold veins *(Slot 0: Far-Left)* | **Action Creator Exclusive** (`@nivinvysakh` or `is-owner: true`) | **👑 gh-tree Creator & Maintainer** — Minecraft's rarest material, awarded exclusively to the author of the action! |
 | **Gold Ore** 🪙 | Radiant gold nuggets *(Slot 1: Mid-Left 1)* | • **Current streak ≥ 7 days**, *OR*<br>• **≥ 50 total commits** | **⚡ Streak Dedication** — milestone for sustained rhythm and week-long consistency. |
 | **Diamond Ore** 💎 | Cyan crystalline flecks *(Slot 2: Mid-Left 2)* | • **≥ 25 total commits** in date range, *OR*<br>• **≥ 1 merged PR** | **💎 Active Contributor** — milestone for regular code contributions and PR merges. |
 | **Emerald Ore** ❇️ | Bright emerald green gems *(Slot 3: Mid-Right 1)* | • **≥ 100 total commits** in date range, *OR*<br>• Any weekly branch reaching **Level 4** (30+ commits/week) | **🏆 Power Contributor** — rare milestone awarded for high commit volume and intense development sprints. |
-| **Lapis Lazuli Ore** 🔷 | Ultramarine blue crystals & gold pyrite *(Slot 4: Mid-Right 2)* | • **Open source contributor** (`is-contributor: true`), *OR*<br>• Any PR authored, merged, or reviewed | **🤝 Open Source Contributor** — special celestial blue ore celebrating community contributors and reviewers! |
+| **Lapis Lazuli Ore** 🔷 | Ultramarine blue crystals & gold pyrite *(Slot 4: Mid-Right 2)* | **Contributed to `nivinvysakh/gh-tree`** (or `is-contributor: true`) | **🤝 gh-tree Contributor** — special celestial blue ore celebrating awesome people who contributed to this Action! |
 | **Redstone Ore** 🔴 | Glowing crimson Redstone *(Slot 5: Far-Right)* | • **Merged PRs ≥ 2**, *OR*<br>• **Total PR activity ≥ 3**, *OR*<br>• **Current streak ≥ 14 days** | **⚙️ Engineering & Automation** — milestone honoring pull request lifecycle, code reviews, and multi-week streaks. |
 
 ---
@@ -164,7 +164,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1788516584598)
+![tree](tree.gif?v=1788517581986)
 <!-- commit-tree-end -->
 ```
 

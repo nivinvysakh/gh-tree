@@ -314,8 +314,8 @@ export function buildTreeLayout(
     oreBlocks.push({ x: 280, y: groundY + 16, type: "emerald" });
   }
 
-  // [Slot 4 - x:336] Lapis Lazuli Ore 🔷 (Special Open-Source Contributor Ore)
-  if (opts.isContributor === true || totalOpenPRs >= 1 || totalMergedPRs >= 1 || totalAssignedPRs >= 1) {
+  // [Slot 4 - x:336] Lapis Lazuli Ore 🔷 (Special gh-tree Action Contributor Ore)
+  if (opts.isContributor === true) {
     oreBlocks.push({ x: 336, y: groundY + 16, type: "lapis" });
   }
 

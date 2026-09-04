@@ -100,45 +100,40 @@ async function run(): Promise<void> {
         `) | Biome: ${treeType.toUpperCase()}`
     );
 
-    const repoOwner =
-      process.env.GITHUB_REPOSITORY_OWNER ||
-      (process.env.GITHUB_REPOSITORY ? process.env.GITHUB_REPOSITORY.split("/")[0] : "");
+    const ACTION_CREATOR = "nivinvysakh";
+    const ACTION_REPO = "nivinvysakh/gh-tree";
 
-    const currentRepo = process.env.GITHUB_REPOSITORY || "";
-    let isRepoContributor = false;
-    if (currentRepo) {
+    // 1. Check if user has contributed to nivinvysakh/gh-tree
+    let isActionContributor = false;
+    if (login.toLowerCase() !== ACTION_CREATOR) {
       try {
-        const repoContributors = await fetchRepoContributors(token, currentRepo);
-        if (repoContributors.includes(login.toLowerCase())) {
-          isRepoContributor = true;
-          core.info(`✓ Verified @${login} in ${currentRepo} contributors list.`);
+        const actionContributors = await fetchRepoContributors(token, ACTION_REPO);
+        if (actionContributors.includes(login.toLowerCase())) {
+          isActionContributor = true;
+          core.info(`✓ Verified @${login} as an official contributor to ${ACTION_REPO} (Unlocked Lapis Lazuli Ore!)`);
         }
       } catch (err) {
-        core.debug(`Could not check repo contributors: ${err}`);
+        core.debug(`Could not check ${ACTION_REPO} contributors: ${err}`);
       }
     }
 
+    // 2. Netherite Ore 🪨: Exclusively for the creator (@nivinvysakh) or explicit is-owner: true
     const rawIsOwner = (core.getInput("is-owner") || "auto").trim().toLowerCase();
     const isOwner =
       rawIsOwner === "true"
         ? true
         : rawIsOwner === "false"
         ? false
-        : Boolean(repoOwner && login.toLowerCase() === repoOwner.toLowerCase());
+        : login.toLowerCase() === ACTION_CREATOR;
 
+    // 3. Lapis Lazuli Ore 🔷: Unlocked for contributors to nivinvysakh/gh-tree or explicit is-contributor: true
     const rawIsContributor = (core.getInput("is-contributor") || "auto").trim().toLowerCase();
     const isContributor =
       rawIsContributor === "true"
         ? true
         : rawIsContributor === "false"
         ? false
-        : Boolean(
-            isRepoContributor ||
-              contributions.totalOpenPRs > 0 ||
-              contributions.totalMergedPRs > 0 ||
-              contributions.totalAssignedPRs > 0 ||
-              (repoOwner && login.toLowerCase() !== repoOwner.toLowerCase())
-          );
+        : isActionContributor;
 
     const layout = buildTreeLayout(contributions.weeks, undefined, {
       width,
