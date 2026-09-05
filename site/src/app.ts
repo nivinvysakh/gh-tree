@@ -506,11 +506,12 @@ jobs:
           github-token: \${{ secrets.GITHUB_TOKEN }}
           tree-type: '${this.settings.treeType}'
           pet: '${this.settings.pet}'
+          event: '${this.settings.event}'
+          weather: '${this.settings.weatherType}'
           show-campfire: ${this.settings.showCampfire}
-          weather-type: '${this.settings.weatherType}'
+          show-chest: ${this.settings.showChest}
           show-signpost: ${this.settings.showSignpost}
-          show-bee: ${this.settings.showBee}
-          show-chest: ${this.settings.showChest}`;
+          show-bee: ${this.settings.showBee}`;
 
     this.openModal(
       "GitHub Actions Workflow (.github/workflows/gh-tree.yml)",
