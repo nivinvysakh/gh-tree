@@ -1,0 +1,85 @@
+name: "🐛 Bug Report"
+description: "Report an issue, rendering glitch, or unexpected behavior in gh-tree"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please provide as much detail as possible to help us investigate and fix it quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Bug Description"
+      description: "A clear and concise description of what the bug is."
+      placeholder: "e.g., The wolf tail animation clips behind the ground layer when rendered on dark mode..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: workflow-config
+    attributes:
+      label: "Workflow Configuration (`.github/workflows/*.yml`)"
+      description: "Paste your GitHub Action workflow step configuration if applicable."
+      placeholder: |
+        - name: Generate Minecraft Commit Tree
+          uses: nivinvysakh/gh-tree@v1.2.0
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            tree-type: oak
+            pet: wolf
+      render: yaml
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: "Expected Behavior"
+      description: "A clear and concise description of what you expected to happen."
+      placeholder: "e.g., The wolf should sit smoothly next to the signpost without clipping."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: "Actual Behavior / Error Logs"
+      description: "What actually happened? Include error logs or step outputs from GitHub Actions if relevant."
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: visual-evidence
+    attributes:
+      label: "Screenshots / Generated GIF"
+      description: "Drag and drop the generated tree.gif or screenshots showing the issue."
+      placeholder: "Drop GIF or images here..."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Action Version / Trigger Mode"
+      description: "Which version of gh-tree are you using?"
+      options:
+        - "v1.2.0 (Latest Release)"
+        - "v1.x (Earlier Release)"
+        - "main branch (@main)"
+        - "Local CLI / npm run generate:mock"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I have checked existing issues to avoid filing a duplicate."
+          required: true
+        - label: "I have provided relevant logs, workflow YAML, or GIF samples."
+          required: false
+

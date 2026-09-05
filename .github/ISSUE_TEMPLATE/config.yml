@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "📖 gh-tree Documentation & Wiki"
+    url: "https://github.com/nivinvysakh/gh-tree/wiki"
+    about: "Explore biomes, collectibles, configuration reference, and setup guides."
+  - name: "💬 GitHub Discussions & Questions"
+    url: "https://github.com/nivinvysakh/gh-tree/discussions"
+    about: "Ask questions, share your profile tree, or discuss ideas with the community."
+

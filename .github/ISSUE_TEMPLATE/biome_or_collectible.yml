@@ -1,0 +1,52 @@
+name: "🎨 New Biome / Pet / Collectible Idea"
+description: "Propose a new Minecraft tree biome, companion pet mob, ore, prop, or seasonal holiday event"
+title: "[Idea]: "
+labels: ["enhancement", "pixel-art"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        `gh-tree` brings GitHub stats alive with Minecraft pixel art! Suggest a new biome, companion pet mob, holiday event, ore block, or milestone prop.
+
+  - type: dropdown
+    id: collectible-type
+    attributes:
+      label: "Collectible Category"
+      description: "What type of Minecraft element are you proposing?"
+      options:
+        - "Tree Biome (e.g. Jungle, Acacia, Dark Oak, Mangrove, Crimson Forest)"
+        - "Companion Pet Mob (e.g. Parrot, Axolotl, Panda, Snow Golem, Allay)"
+        - "Milestone Prop / Ground Item (e.g. Anvil, Enchantment Table, Cauldron)"
+        - "Underground Ore / Mineral Block (e.g. Copper, Quartz, Amethyst, Nether Star)"
+        - "Seasonal Holiday Event (e.g. Spring Equinox, Summer Solstice, Easter)"
+        - "Stat Signpost / Banner / Trophy"
+        - "Other Pixel Art Element"
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea-description
+    attributes:
+      label: "Visual Concept & Design"
+      description: "Describe the Minecraft look, animations, particle effects, and color palette."
+      placeholder: "e.g., A pixelated Parrot sitting on the branch that flutters its wings whenever total PRs >= 10..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: unlock-condition
+    attributes:
+      label: "Unlock Condition / Trigger"
+      description: "How should this collectible be earned or triggered? (e.g. streak count, commit milestones, season, or manual input option)."
+      placeholder: "e.g., Active streak >= 30 days or manual override `pet: parrot`"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reference-links
+    attributes:
+      label: "Minecraft Texture / SVG References"
+      description: "Link to Minecraft wiki textures, hex colors, or SVG mockups if available."
+    validations:
+      required: false
+

@@ -1,0 +1,61 @@
+name: Auto Accept Dependabot PRs
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot:
+    name: Auto-Approve & Enable Auto-Merge
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot Metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-Approve Pull Request
+        run: |
+          echo "Attempting PR approval..."
+          gh pr review --approve "$PR_URL" --repo "$REPO" || echo "Note: PR approval via token skipped."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Enable Auto-Merge with Contribution Attribution
+        run: |
+          echo "Fetching PR details..."
+          PR_TITLE=$(gh pr view "$PR_URL" --json title -q .title --repo "$REPO")
+          PR_BODY=$(gh pr view "$PR_URL" --json body -q .body --repo "$REPO")
+
+          git config --global user.name "nivinvysakh"
+          git config --global user.email "nivinvysakh@icloud.com"
+
+          COMMIT_BODY="${PR_BODY}
+
+          Co-authored-by: nivin <nivinvysakh@icloud.com>"
+
+          echo "Enabling auto-merge..."
+          gh pr merge --auto --squash \
+            --subject "$PR_TITLE" \
+            --body "$COMMIT_BODY" \
+            "$PR_URL" --repo "$REPO" || \
+          GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" gh pr merge --auto --squash \
+            --subject "$PR_TITLE" \
+            --body "$COMMIT_BODY" \
+            "$PR_URL" --repo "$REPO"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_PAT || secrets.GITHUB_TOKEN }}

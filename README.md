@@ -284,6 +284,8 @@ Big thanks to all of the amazing people who have helped by contributing to this 
   <img src="https://contrib.rocks/image?repo=nivinvysakh/gh-tree" />
 </a>
 
+Interested in contributing? Check out our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) to get started and unlock your **Lapis Lazuli Ore**! 🔷
+
 ---
 
 <div align="center">

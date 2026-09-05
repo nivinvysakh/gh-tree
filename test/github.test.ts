@@ -1,14 +1,17 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchContributions } from "../src/github";
 
 describe("github module", () => {
   const originalFetch = global.fetch;
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-01T12:00:00Z"));
     vi.restoreAllMocks();
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     global.fetch = originalFetch;
   });
 
