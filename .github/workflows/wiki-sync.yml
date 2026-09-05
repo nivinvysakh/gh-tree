@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'wiki/**'
+      - 'assets/**'
   workflow_dispatch:
 
 permissions:
@@ -26,12 +27,15 @@ jobs:
           if git clone "$WIKI_URL" wiki-repo 2>/dev/null; then
             echo "✓ Wiki repository cloned successfully."
             cp -rf wiki/* wiki-repo/
+            mkdir -p wiki-repo/assets
+            cp -rf assets/* wiki-repo/assets/ 2>/dev/null || true
+            cp -f tree.gif wiki-repo/tree.gif 2>/dev/null || true
             cd wiki-repo
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             if git status --porcelain | grep -q .; then
               git add .
-              git commit -m "docs(wiki): sync wiki documentation from main"
+              git commit -m "docs(wiki): sync wiki documentation and visual assets from main"
               git push origin HEAD:master
               echo "✓ Wiki successfully synced and published to GitHub Wiki!"
             else
