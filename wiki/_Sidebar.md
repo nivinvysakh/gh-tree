@@ -2,6 +2,7 @@
 
 - **[Home](Home)**
 - **[🚀 Getting Started](Getting-Started)**
+- **[🖼️ Showcase & Visual Gallery](Showcase-&-Visual-Gallery)**
 
 ---
 
@@ -22,6 +23,12 @@
 
 ---
 
-#### ⚙️ Reference & Community
+#### 🏗️ Technical Internals
+- **[🏗️ Architecture & Engine](Architecture-&-Rendering-Engine)**
 - **[⚙️ Configuration & FAQ](Configuration-Reference-&-FAQ)**
+
+---
+
+#### 🤝 Community
 - **[🎨 Pixel Art & Contributing](Contributing-&-Pixel-Art-Guide)**
+- **[📜 Code of Conduct](Code-of-Conduct)**

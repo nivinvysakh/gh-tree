@@ -16,8 +16,11 @@ Explore our detailed documentation and game mechanics below:
 | **[💎 Underground Ores](Underground-Ores)** | All 6 underground ores, maintainer perks, and the **Lapis Lazuli Contributor Badge**! |
 | **[🌦️ Weather & Atmosphere](Weather-&-Day-Night-Cycle)** | Real-time Open-Meteo weather integration, rain streaks, snow, and moon phases. |
 | **[🎃 Seasonal Holiday Events](Seasonal-Events)** | Spooky Halloween, Winter Holiday Christmas, and New Year Fireworks. |
+| **[🖼️ Showcase & Visual Gallery](Showcase-&-Visual-Gallery)** | Visual gallery of all biomes, weather conditions, and seasonal events. |
+| **[🏗️ Architecture & Rendering Engine](Architecture-&-Rendering-Engine)** | Deep dive into SVG pixel art rendering, WASM rasterization, and streak math. |
 | **[⚙️ Configuration Reference & FAQ](Configuration-Reference-&-FAQ)** | Complete parameter list, troubleshooting, and secrets setup. |
 | **[🎨 Contributing & Pixel Art Guide](Contributing-&-Pixel-Art-Guide)** | How to design and contribute pixel art, biomes, and companion mobs. |
+| **[📜 Code of Conduct](Code-of-Conduct)** | Community standards and pledge. |
 
 ---
 
