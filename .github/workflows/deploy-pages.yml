@@ -1,3 +1,4 @@
+# Automatically builds and publishes gh-tree Studio on GitHub Pages
 name: Deploy gh-tree Studio to GitHub Pages
 
 on:
