@@ -107,20 +107,18 @@ export async function fetchUserPRStats(username: string): Promise<{ openPRs: num
 export async function checkUserStatus(username: string): Promise<{ isOwner: boolean; isContributor: boolean }> {
   const clean = username.trim().toLowerCase().replace(/^@/, "");
   const isOwner = clean === "nivinvysakh";
-  let isContributor = isOwner;
+  let isContributor = false;
 
-  if (!isContributor) {
-    try {
-      const res = await fetch("https://api.github.com/repos/nivinvysakh/gh-tree/contributors");
-      if (res.ok) {
-        const list = await res.json();
-        if (Array.isArray(list)) {
-          isContributor = list.some((c: any) => c.login?.toLowerCase() === clean);
-        }
+  try {
+    const res = await fetch("https://api.github.com/repos/nivinvysakh/gh-tree/contributors");
+    if (res.ok) {
+      const list = await res.json();
+      if (Array.isArray(list)) {
+        isContributor = list.some((c: any) => c.login?.toLowerCase() === clean);
       }
-    } catch (err) {
-      console.warn("Could not check repo contributors:", err);
     }
+  } catch (err) {
+    console.warn("Could not check repo contributors:", err);
   }
 
   return { isOwner, isContributor };

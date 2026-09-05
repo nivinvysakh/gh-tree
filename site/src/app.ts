@@ -35,7 +35,7 @@ class GhTreeApp {
       showChest: true,
       event: "none",
       isOwner: true,
-      isContributor: true,
+      isContributor: false,
       width: 480,
       height: 400,
     };
