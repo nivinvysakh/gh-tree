@@ -298,8 +298,8 @@ describe("Minecraft SVG module", () => {
       chest: { x: 260, y: 350, type: "ender" },
     };
     const enderSvg = renderFrame(enderChestLayout, 0, 20);
-    expect(enderSvg).toContain("<!-- Minecraft ENDER Chest -->");
-    expect(enderSvg).toContain('fill="#004d40"');
+    expect(enderSvg).toContain("<!-- Minecraft ENDER Milestone Chest -->");
+    expect(enderSvg).toContain('fill="#1a3636"');
     expect(enderSvg).toContain('fill="#00e5ff"'); // Eye of ender latch
 
     const diamondChestLayout: TreeLayout = {
@@ -307,8 +307,8 @@ describe("Minecraft SVG module", () => {
       chest: { x: 260, y: 350, type: "diamond" },
     };
     const diamondSvg = renderFrame(diamondChestLayout, 0, 20);
-    expect(diamondSvg).toContain("<!-- Minecraft DIAMOND Chest -->");
-    expect(diamondSvg).toContain('fill="#40c4ff"');
+    expect(diamondSvg).toContain("<!-- Minecraft DIAMOND Milestone Chest -->");
+    expect(diamondSvg).toContain('fill="#00e5ff"');
   });
 
   it("renders Halloween Jack-o'-Lantern with glowing carved face", () => {

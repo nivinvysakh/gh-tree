@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gh-tree Studio 🌴 Live Minecraft Profile Generator</title>
+    <meta
+      name="description"
+      content="Turn your GitHub contributions, commit streaks, and PRs into an animated Minecraft Tree biome with pets, campfire, ores, and live weather."
+    />
+    
+    <!-- OpenGraph Meta -->
+    <meta property="og:title" content="gh-tree Studio 🌴 Live Minecraft Profile Generator" />
+    <meta property="og:description" content="Generate custom animated Minecraft commit trees for your GitHub profile README." />
+    <meta property="og:image" content="https://raw.githubusercontent.com/nivinvysakh/gh-tree/main/assets/tree-sakura.gif" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="bg-[#06080d] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+    <!-- Header -->
+    <header class="h-16 bg-slate-950/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-4 md:px-8 sticky top-0 z-50">
+      <a href="#" class="flex items-center gap-3 no-underline">
+        <div class="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-xl shadow-lg shadow-emerald-500/20">
+          🌴
+        </div>
+        <div class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent">
+          gh-tree Studio
+        </div>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold">
+          v1.2.0
+        </span>
+      </a>
+      <div class="flex items-center gap-3">
+        <a
+          href="https://github.com/nivinvysakh/gh-tree/wiki"
+          target="_blank"
+          rel="noreferrer"
+          class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-xs font-semibold text-slate-200 transition"
+        >
+          📖 Wiki Docs
+        </a>
+        <a
+          href="https://github.com/nivinvysakh/gh-tree"
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition transform hover:-translate-y-0.5"
+        >
+          ⭐ Star on GitHub
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-[1600px] mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 w-full flex-1">
+      <!-- Left: Interactive Studio Controls -->
+      <section class="lg:col-span-5 bg-slate-900/80 border border-white/10 rounded-2xl flex flex-col backdrop-blur-xl shadow-2xl overflow-hidden h-fit">
+        <!-- User Search Header -->
+        <div class="p-5 border-b border-white/10 bg-slate-950/40 flex flex-col gap-3.5">
+          <div class="flex items-center gap-2 text-sm font-bold text-slate-200">
+            <span>👤</span> GitHub User & Contributions
+          </div>
+
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">@</span>
+              <input
+                type="text"
+                id="input-username"
+                class="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2 pl-8 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-medium transition"
+                placeholder="Enter username (e.g. nivinvysakh)"
+                value="nivinvysakh"
+                spellcheck="false"
+              />
+            </div>
+            <button
+              id="btn-fetch-user"
+              class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+            >
+              <span>Fetch</span> ⚡
+            </button>
+          </div>
+
+          <!-- User Stats Card -->
+          <div id="user-badge" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25">
+            <div class="flex items-center gap-3">
+              <img
+                id="user-avatar"
+                class="w-10 h-10 rounded-full border-2 border-emerald-500/40 object-cover flex-shrink-0"
+                src="https://github.com/nivinvysakh.png?size=200"
+                alt="Avatar"
+              />
+              <div>
+                <div id="user-display-name" class="font-bold text-sm text-white">nivinvysakh</div>
+                <div class="text-[11px] text-slate-400">Live GitHub Profile</div>
+              </div>
+            </div>
+            <div id="user-streak-badge" class="font-mono text-xs font-bold px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              🔥 23 DAYS
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <nav class="flex bg-slate-950/60 border-b border-white/10 px-2 overflow-x-auto">
+          <button class="tab-btn active px-3.5 py-3 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-white transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap" data-tab="tab-biome">
+            🌴 Biome & Pets
+          </button>
+          <button class="tab-btn px-3.5 py-3 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-white transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap" data-tab="tab-weather">
+            🌦️ Weather & Ores
+          </button>
+          <button class="tab-btn px-3.5 py-3 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-white transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap" data-tab="tab-sandbox">
+            🎛️ Stats Sandbox
+          </button>
+          <button class="tab-btn px-3.5 py-3 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-white transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap" data-tab="tab-presets">
+            🎨 Presets
+          </button>
+        </nav>
+
+        <!-- Tab Panels Container -->
+        <div class="p-5 flex flex-col gap-4 max-h-[560px] overflow-y-auto">
+          <!-- Tab 1: Biome & Pets -->
+          <div id="tab-biome" class="tab-content active flex-col gap-4">
+            <div>
+              <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Select Tree Biome</label>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div class="biome-card active p-2.5 rounded-xl bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 transition cursor-pointer flex items-center gap-2.5" data-biome="oak">
+                  <span class="text-2xl">🌳</span>
+                  <div>
+                    <div class="font-bold text-xs text-white">Classic Oak</div>
+                    <div class="text-[10px] text-slate-400">Vibrant Oak Canopy</div>
+                  </div>
+                </div>
+                <div class="biome-card p-2.5 rounded-xl bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 transition cursor-pointer flex items-center gap-2.5" data-biome="sakura">
+                  <span class="text-2xl">🌸</span>
+                  <div>
+                    <div class="font-bold text-xs text-white">Sakura Cherry</div>
+                    <div class="text-[10px] text-slate-400">Falling Pink Petals</div>
+                  </div>
+                </div>
+                <div class="biome-card p-2.5 rounded-xl bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 transition cursor-pointer flex items-center gap-2.5" data-biome="spruce">
+                  <span class="text-2xl">🌲</span>
+                  <div>
+                    <div class="font-bold text-xs text-white">Taiga Spruce</div>
+                    <div class="text-[10px] text-slate-400">Tall Snowy Pine</div>
+                  </div>
+                </div>
+                <div class="biome-card p-2.5 rounded-xl bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 transition cursor-pointer flex items-center gap-2.5" data-biome="birch">
+                  <span class="text-2xl">🍂</span>
+                  <div>
+                    <div class="font-bold text-xs text-white">Golden Birch</div>
+                    <div class="text-[10px] text-slate-400">Pale Trunk & Foliage</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Companion Pet</label>
+              <div class="grid grid-cols-5 gap-1.5" id="pet-selector">
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="auto" title="Auto-selects pet based on activity">
+                  🎲 Auto
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="wolf">
+                  🐺 Wolf
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="cat">
+                  🐱 Cat
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="fox">
+                  🦊 Fox
+                </div>
+                <div class="pill-item active p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="none">
+                  🚫 None
+                </div>
+              </div>
+            </div>
+
+            <!-- Seasonal Events Selector (maps to event param) -->
+            <div>
+              <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">🎉 Seasonal Holiday Events</label>
+              <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5" id="event-selector">
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-event="auto" title="Auto (Oct: Halloween 🎃, Dec: Holiday 🎁, Jan: Fireworks 🎆)">
+                  🎲 Auto
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-event="halloween" title="October Halloween Jack-o'-Lantern">
+                  🎃 Halloween
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-event="holiday" title="December Holiday Gift Boxes">
+                  🎁 Holiday
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-event="fireworks" title="January New Year Sky Fireworks">
+                  🎆 Fireworks
+                </div>
+                <div class="pill-item active p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-event="none" title="No event">
+                  🚫 None
+                </div>
+              </div>
+            </div>
+
+            <!-- Roasting Campfire -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/10">
+              <div>
+                <div class="text-xs font-bold text-white">🔥 Roasting Campfire</div>
+                <div class="text-[11px] text-slate-400">Sprint Mode (Auto on 10+ streak or 60+ commits)</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="toggle-campfire" /><span class="slider"></span></label>
+            </div>
+
+            <!-- Milestone Treasure Chest -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/10">
+              <div>
+                <div class="text-xs font-bold text-white">📦 Milestone Treasure Chest</div>
+                <div class="text-[11px] text-slate-400">Auto tiers: 15+ Wood, 50+ Iron, 150+ Gold, 300+ Diamond, 500+ Ender</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="toggle-chest" checked /><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <!-- Tab 2: Weather & Ores -->
+          <div id="tab-weather" class="tab-content flex-col gap-4">
+            <div>
+              <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Atmosphere & Weather</label>
+              <div class="grid grid-cols-5 gap-1.5" id="weather-selector">
+                <div class="pill-item active p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-weather="sunny">
+                  ☀️ Sun
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-weather="rain">
+                  🌧️ Rain
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-weather="snow">
+                  ❄️ Snow
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-weather="night">
+                  🌙 Night
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-weather="cloudy">
+                  ☁️ Cloud
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/10">
+              <div>
+                <div class="text-xs font-bold text-white">☀️ Daytime Sky</div>
+                <div class="text-[11px] text-slate-400">Daytime sky or starry night</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="toggle-daytime" checked /><span class="slider"></span></label>
+            </div>
+
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/10">
+              <div>
+                <div class="text-xs font-bold text-white">👑 Repository Owner Crown</div>
+                <div class="text-[11px] text-slate-400">Maintainer crown & milestone perks</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="toggle-owner" checked /><span class="slider"></span></label>
+            </div>
+
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/10">
+              <div>
+                <div class="text-xs font-bold text-white">💎 Contributor Lapis Ore</div>
+                <div class="text-[11px] text-slate-400">Underground contributor badge</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="toggle-contributor" checked /><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <!-- Tab 3: Stats Sandbox -->
+          <div id="tab-sandbox" class="tab-content flex-col gap-3.5">
+            <div class="p-3 rounded-xl bg-slate-800/40 border border-white/10 flex flex-col gap-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold">
+                <span>🔥 Commit Streak</span>
+                <span id="val-streak" class="font-mono text-amber-400 text-[11px] font-bold bg-amber-500/10 px-2 py-0.5 rounded">23 Days</span>
+              </div>
+              <input type="range" id="slider-streak" min="0" max="1000" step="1" value="23" />
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-800/40 border border-white/10 flex flex-col gap-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold">
+                <span>🌿 Total Commits (Canopy Greenery)</span>
+                <span id="val-commits" class="font-mono text-emerald-400 text-[11px] font-bold bg-emerald-500/10 px-2 py-0.5 rounded">769 Commits</span>
+              </div>
+              <input type="range" id="slider-commits" min="0" max="1000" step="5" value="769" />
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-800/40 border border-white/10 flex flex-col gap-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold">
+                <span>🌸 Open PRs (Ground Flowers)</span>
+                <span id="val-openprs" class="font-mono text-pink-400 text-[11px] font-bold bg-pink-500/10 px-2 py-0.5 rounded">2 PRs</span>
+              </div>
+              <input type="range" id="slider-openprs" min="0" max="4" step="1" value="2" />
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-800/40 border border-white/10 flex flex-col gap-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold">
+                <span>🍎 Merged PRs (Red Apples)</span>
+                <span id="val-mergedprs" class="font-mono text-red-400 text-[11px] font-bold bg-red-500/10 px-2 py-0.5 rounded">4 Merged</span>
+              </div>
+              <input type="range" id="slider-mergedprs" min="0" max="4" step="1" value="4" />
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-800/40 border border-white/10 flex flex-col gap-1.5">
+              <div class="flex justify-between items-center text-xs font-semibold">
+                <span>🍏 Assigned PRs (Golden Apples)</span>
+                <span id="val-assignedprs" class="font-mono text-amber-300 text-[11px] font-bold bg-amber-500/10 px-2 py-0.5 rounded">1 Assigned</span>
+              </div>
+              <input type="range" id="slider-assignedprs" min="0" max="4" step="1" value="1" />
+            </div>
+
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/10">
+              <div>
+                <div class="text-xs font-bold text-white">🪧 Stat Signpost</div>
+                <div class="text-[11px] text-slate-400">Shows streak on signboard</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="toggle-signpost" checked /><span class="slider"></span></label>
+            </div>
+
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/10">
+              <div>
+                <div class="text-xs font-bold text-white">🐝 Animated Bee & Hive</div>
+                <div class="text-[11px] text-slate-400">Pollinating bee & tree hive</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="toggle-bee" checked /><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <!-- Tab 4: Curated Presets -->
+          <div id="tab-presets" class="tab-content flex-col gap-2.5">
+            <div id="presets-container" class="flex flex-col gap-2.5">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Live Canvas Studio & Export Area -->
+      <section class="lg:col-span-7 flex flex-col gap-6">
+        <!-- Live Preview Card -->
+        <div class="bg-slate-900/80 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl shadow-2xl flex flex-col">
+          <!-- Toolbar -->
+          <div class="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-950/40">
+            <div class="flex items-center gap-1.5">
+              <button id="btn-play-pause" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition hover:bg-emerald-500/30 cursor-pointer">
+                ⏸️ Pause
+              </button>
+              <button id="btn-prev-frame" class="p-1.5 px-2.5 rounded-lg bg-slate-800/60 hover:bg-slate-700 border border-white/10 text-xs font-semibold transition cursor-pointer">
+                ⏮️
+              </button>
+              <button id="btn-next-frame" class="p-1.5 px-2.5 rounded-lg bg-slate-800/60 hover:bg-slate-700 border border-white/10 text-xs font-semibold transition cursor-pointer">
+                ⏭️
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button class="btn-zoom active px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition cursor-pointer" data-zoom="1">1x</button>
+              <button class="btn-zoom px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition cursor-pointer" data-zoom="1.25">1.25x</button>
+              <button class="btn-zoom px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition cursor-pointer" data-zoom="2">2x</button>
+            </div>
+          </div>
+
+          <!-- Canvas Viewport -->
+          <div id="preview-viewport" class="preview-viewport flex-1 min-h-[440px] flex items-center justify-center p-6 transition-colors duration-300 relative overflow-hidden bg-[#0d1117]">
+            <div id="tree-preview-container" class="transition-transform duration-200" style="transform: scale(1);">
+              <!-- SVG Frames injected here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Export Action Bar -->
+        <div class="bg-slate-900/80 border border-white/10 rounded-2xl p-4 flex flex-col gap-3.5 backdrop-blur-xl shadow-2xl">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            <button
+              id="btn-generate-gif"
+              class="col-span-1 sm:col-span-2 xl:col-span-1 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold rounded-xl shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5 text-xs sm:text-sm"
+            >
+              <span>⚡ Generate & Download GIF</span>
+            </button>
+            <button
+              id="btn-download-svg"
+              class="py-3 px-4 bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-white font-semibold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>🖼️ Download SVG</span>
+            </button>
+            <button
+              id="btn-copy-markdown"
+              class="py-3 px-4 bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-white font-semibold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>📋 Profile Markdown</span>
+            </button>
+            <button
+              id="btn-copy-workflow"
+              class="py-3 px-4 bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-white font-semibold rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>⚙️ Action Workflow</span>
+            </button>
+          </div>
+
+          <!-- Live Progress Bar -->
+          <div id="gif-progress-container" class="hidden flex-col gap-1.5">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span id="progress-text">Rasterizing frames...</span>
+              <span id="progress-pct" class="font-mono text-emerald-400">0%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-white/10">
+              <div id="progress-fill" class="h-full w-0 bg-gradient-to-r from-emerald-500 to-cyan-400 transition-all duration-150"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal Window -->
+    <div id="app-modal" class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] items-center justify-center p-4">
+      <div class="modal-window bg-slate-900 border border-white/15 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
+        <div class="p-4 px-6 border-b border-white/10 flex items-center justify-between">
+          <div id="modal-title" class="font-bold text-base text-white">Export Code</div>
+          <button id="modal-close" class="text-slate-400 hover:text-white text-2xl cursor-pointer">&times;</button>
+        </div>
+        <div class="p-6 flex flex-col gap-4">
+          <p id="modal-desc" class="text-xs text-slate-300">
+            Paste this snippet into your GitHub Profile README.md:
+          </p>
+          <pre id="modal-code-box" class="p-4 rounded-xl bg-slate-950 border border-white/10 text-emerald-300 font-mono text-xs max-h-72 overflow-y-auto whitespace-pre-wrap break-all"></pre>
+          <button
+            id="btn-modal-copy"
+            class="py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20 transition"
+          >
+            <span>📋 Copy to Clipboard</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Hub -->
+    <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-2.5 z-[9999]"></div>
+
+    <script type="module" src="./src/app.ts"></script>
+  </body>
+</html>

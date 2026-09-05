@@ -633,8 +633,10 @@ const PIXEL_FONT_3X5: Record<string, string[]> = {
   "7": ["111", "001", "010", "010", "010"],
   "8": ["111", "101", "111", "101", "111"],
   "9": ["111", "101", "111", "001", "111"],
-  "d": ["001", "001", "111", "101", "111"],
-  "k": ["101", "110", "110", "101", "101"],
+  "D": ["110", "101", "101", "101", "110"],
+  "d": ["110", "101", "101", "101", "110"],
+  "K": ["101", "110", "100", "110", "101"],
+  "k": ["101", "110", "100", "110", "101"],
   ".": ["000", "000", "000", "000", "010"],
   "+": ["000", "010", "111", "010", "000"],
 };
@@ -669,13 +671,13 @@ function renderMinecraftSignpost(
   streak: number
 ): string {
   // Option 2: Smart Compact Streak Notation
-  let streakText = "0d";
+  let streakText = "0D";
   if (streak >= 10000) {
-    streakText = `${Math.floor(streak / 1000)}k`;
+    streakText = `${Math.floor(streak / 1000)}K`;
   } else if (streak >= 1000) {
-    streakText = `${(streak / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+    streakText = `${(streak / 1000).toFixed(1).replace(/\.0$/, "")}K`;
   } else if (streak > 0) {
-    streakText = `${streak}d`;
+    streakText = `${streak}D`;
   }
 
   const boardWidth = 44;
@@ -1053,36 +1055,46 @@ function renderMinecraftCampfire(
 
 function renderMinecraftChest(chest: ChestPos, frameIndex: number): string {
   const { x, y, type } = chest;
-  const ps = 1.2;
+  const ps = 1.35;
 
   const CHEST_PALETTES: Record<string, { body: string; shadow: string; highlight: string; latch: string; latchH: string }> = {
-    wood: { body: "#a66a38", shadow: "#533112", highlight: "#c68642", latch: "#212121", latchH: "#e0e0e0" },
-    iron: { body: "#cfd8dc", shadow: "#607d8b", highlight: "#eceff1", latch: "#37474f", latchH: "#ffffff" },
-    gold: { body: "#ffd54f", shadow: "#ff8f00", highlight: "#fff9c4", latch: "#c67c00", latchH: "#ffffff" },
-    diamond: { body: "#40c4ff", shadow: "#01579b", highlight: "#e0f7fa", latch: "#0091ea", latchH: "#ffffff" },
-    ender: { body: "#004d40", shadow: "#00251a", highlight: "#00796b", latch: "#00e5ff", latchH: "#b388ff" },
+    wood: { body: "#a66a38", shadow: "#422814", highlight: "#c68642", latch: "#ffd54f", latchH: "#ffffff" },
+    iron: { body: "#b0bec5", shadow: "#37474f", highlight: "#eceff1", latch: "#78909c", latchH: "#ffffff" },
+    gold: { body: "#ffd54f", shadow: "#ff8f00", highlight: "#fff9c4", latch: "#ff6f00", latchH: "#ffffff" },
+    diamond: { body: "#00e5ff", shadow: "#0091ea", highlight: "#e0f7fa", latch: "#00b0ff", latchH: "#ffffff" },
+    ender: { body: "#1a3636", shadow: "#091c1c", highlight: "#2d5a5a", latch: "#00e5ff", latchH: "#b388ff" },
   };
 
   const p = CHEST_PALETTES[type] || CHEST_PALETTES.wood;
   const glint = (type === "diamond" || type === "gold" || type === "ender") && frameIndex % 4 === 0;
 
   return `
-    <!-- Minecraft ${type.toUpperCase()} Chest -->
+    <!-- Minecraft ${type.toUpperCase()} Milestone Chest -->
     <g shape-rendering="crispEdges">
-      <!-- Chest Outer Shadow/Trim -->
-      <rect x="${x}" y="${y}" width="${15 * ps}" height="${13 * ps}" fill="${p.shadow}" />
-      <!-- Lid & Body -->
-      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${13 * ps}" height="${4 * ps}" fill="${p.body}" />
-      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${13 * ps}" height="${1 * ps}" fill="${p.highlight}" />
-      <rect x="${x + 1 * ps}" y="${y + 5 * ps}" width="${13 * ps}" height="${1 * ps}" fill="${p.shadow}" />
-      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${13 * ps}" height="${6 * ps}" fill="${p.body}" />
-      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${13 * ps}" height="${1 * ps}" fill="${p.highlight}" />
+      <!-- Chest Outer Shadow/Dark Iron Border -->
+      <rect x="${x}" y="${y}" width="${14 * ps}" height="${12 * ps}" fill="${p.shadow}" />
+      
+      <!-- Lid -->
+      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${12 * ps}" height="${4 * ps}" fill="${p.body}" />
+      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${12 * ps}" height="${1 * ps}" fill="${p.highlight}" />
+      <!-- Lid Seam -->
+      <rect x="${x}" y="${y + 5 * ps}" width="${14 * ps}" height="${1 * ps}" fill="${p.shadow}" />
+      
+      <!-- Body -->
+      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${12 * ps}" height="${5 * ps}" fill="${p.body}" />
+      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${12 * ps}" height="${1 * ps}" fill="${p.highlight}" />
+      
+      <!-- Metal Corner Brackets -->
+      <rect x="${x}" y="${y}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
+      <rect x="${x + 12 * ps}" y="${y}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
+      <rect x="${x}" y="${y + 10 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
+      <rect x="${x + 12 * ps}" y="${y + 10 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
 
       <!-- Center Lock Latch -->
-      <rect x="${x + 6 * ps}" y="${y + 3.5 * ps}" width="${3 * ps}" height="${4 * ps}" fill="${p.latch}" />
-      <rect x="${x + 6.5 * ps}" y="${y + 4.5 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.latchH}" />
+      <rect x="${x + 5.5 * ps}" y="${y + 3.5 * ps}" width="${3 * ps}" height="${4 * ps}" fill="${p.latch}" />
+      <rect x="${x + 6 * ps}" y="${y + 4.5 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.latchH}" />
 
-      ${glint ? `<rect x="${x + 2 * ps}" y="${y + 2 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#ffffff" opacity="0.9" />` : ""}
+      ${glint ? `<rect x="${x + 2 * ps}" y="${y + 2 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#ffffff" opacity="0.95" />` : ""}
     </g>
   `;
 }

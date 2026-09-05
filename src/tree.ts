@@ -171,7 +171,7 @@ export function getCommitLevel(commits: number): number {
 
 export function buildTreeLayout(
   weeks: ContributionWeek[],
-  _todayLabel?: string,
+  totalCommitsArg?: number,
   opts: {
     width?: number;
     height?: number;
@@ -187,6 +187,9 @@ export function buildTreeLayout(
     event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
     currentDate?: Date;
     streak?: number;
+    openPRs?: number;
+    mergedPRs?: number;
+    assignedPRs?: number;
   } = {}
 ): TreeLayout {
   const width = opts.width ?? 460;
@@ -195,18 +198,22 @@ export function buildTreeLayout(
   const treeType = opts.treeType ?? "oak";
   const bs = BLOCK_SIZE; // 48px
 
-  let totalCommits = 0;
-  let totalOpenPRs = 0;
-  let totalMergedPRs = 0;
-  let totalAssignedPRs = 0;
+  let computedCommits = 0;
+  let computedOpenPRs = 0;
+  let computedMergedPRs = 0;
+  let computedAssignedPRs = 0;
 
   for (const w of weeks) {
-    totalCommits += w.total || 0;
-    totalOpenPRs += w.openPRs || 0;
-    totalMergedPRs += w.mergedPRs || 0;
-    totalAssignedPRs += w.assignedPRs || 0;
+    computedCommits += w.total || 0;
+    computedOpenPRs += w.openPRs || 0;
+    computedMergedPRs += w.mergedPRs || 0;
+    computedAssignedPRs += w.assignedPRs || 0;
   }
 
+  const totalCommits = totalCommitsArg !== undefined ? totalCommitsArg : computedCommits;
+  const totalOpenPRs = opts.openPRs !== undefined ? opts.openPRs : computedOpenPRs;
+  const totalMergedPRs = opts.mergedPRs !== undefined ? opts.mergedPRs : computedMergedPRs;
+  const totalAssignedPRs = opts.assignedPRs !== undefined ? opts.assignedPRs : computedAssignedPRs;
   const currentStreak = opts.streak !== undefined ? opts.streak : calculateStreak(weeks);
 
   const groundY = height - 50; // 370px
@@ -396,7 +403,7 @@ export function buildTreeLayout(
     }
 
     if (chestType) {
-      chest = { x: 258, y: groundY - 16, type: chestType };
+      chest = { x: 274, y: groundY - 18, type: chestType };
     }
   }
 
@@ -409,7 +416,7 @@ export function buildTreeLayout(
     (showCampfireOpt === "auto" && (recent2WeeksCommits >= 12 || currentStreak >= 10 || totalCommits >= 60));
 
   if (shouldShowCampfire) {
-    campfire = { x: 336, y: groundY - 16 };
+    campfire = { x: 346, y: groundY - 16 };
   }
 
   // 11. Seasonal Holiday / Event Modes 🎃🎄🎆
@@ -434,9 +441,9 @@ export function buildTreeLayout(
   let holidayGifts: HolidayGiftPos[] | undefined;
 
   if (seasonalEvent === "halloween") {
-    jackOLantern = { x: campfire ? 112 : 374, y: groundY - 16 };
+    jackOLantern = { x: campfire ? 112 : 382, y: groundY - 16 };
   } else if (seasonalEvent === "holiday") {
-    const giftBaseX = chest ? 296 : 258;
+    const giftBaseX = chest ? 310 : 274;
     holidayGifts = [
       { x: giftBaseX, y: groundY - 12, size: 12, boxColor: "#d32f2f", ribbonColor: "#388e3c" },
       { x: giftBaseX + 13, y: groundY - 10, size: 10, boxColor: "#fbc02d", ribbonColor: "#d32f2f" },
@@ -450,10 +457,10 @@ export function buildTreeLayout(
   if (!pet) leftSlots.push(176);
 
   const rightSlots: number[] = [];
-  if (!chest && (!holidayGifts || holidayGifts[0].x !== 258)) rightSlots.push(258);
-  if (!holidayGifts || holidayGifts[0].x !== 296) rightSlots.push(296);
-  if (!campfire && (!jackOLantern || jackOLantern.x !== 336)) rightSlots.push(336);
-  if (!jackOLantern || jackOLantern.x !== 374) rightSlots.push(374);
+  if (!chest && (!holidayGifts || holidayGifts[0].x !== 274)) rightSlots.push(274);
+  if (!holidayGifts || holidayGifts[0].x !== 310) rightSlots.push(310);
+  if (!campfire && (!jackOLantern || jackOLantern.x !== 346)) rightSlots.push(346);
+  if (!jackOLantern || jackOLantern.x !== 382) rightSlots.push(382);
 
   const flowers: FlowerPos[] = [];
   if (totalOpenPRs > 0) {
