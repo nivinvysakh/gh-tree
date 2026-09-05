@@ -50,3 +50,4 @@ npm run generate:mock
 ```
 
 This runs `scripts/generate-mock.ts`, which synthesizes rich contribution activity and renders all 12 animated GIFs in `assets/` and root `tree.gif` without making external API calls.
+

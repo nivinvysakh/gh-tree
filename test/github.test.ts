@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fetchContributions } from "../src/github";
+import { calculateStreak, fetchContributions, fetchRepoContributors } from "../src/github";
 
 describe("github module", () => {
   const originalFetch = global.fetch;
@@ -229,9 +229,7 @@ describe("github module", () => {
   });
 
   describe("calculateStreak", () => {
-    it("calculates active consecutive contribution streak correctly", async () => {
-      const { calculateStreak } = await import("../src/github");
-
+    it("calculates active consecutive contribution streak correctly", () => {
       const weeks = [
         {
           days: [
@@ -261,8 +259,7 @@ describe("github module", () => {
       expect(calculateStreak(weeks)).toBe(4);
     });
 
-    it("returns 0 if no active streak exists", async () => {
-      const { calculateStreak } = await import("../src/github");
+    it("returns 0 if no active streak exists", () => {
       const weeks = [
         {
           days: [
@@ -283,7 +280,6 @@ describe("github module", () => {
 
   describe("fetchRepoContributors", () => {
     it("fetches and parses list of repository contributors correctly", async () => {
-      const { fetchRepoContributors } = await import("../src/github");
       const mockContributors = [
         { login: "NivinVysakh", id: 1, contributions: 50 },
         { login: "AliceDev", id: 2, contributions: 12 },
@@ -300,8 +296,6 @@ describe("github module", () => {
     });
 
     it("returns empty array on API failure or invalid repo format", async () => {
-      const { fetchRepoContributors } = await import("../src/github");
-      
       const empty1 = await fetchRepoContributors("fake_token", "");
       expect(empty1).toEqual([]);
 
