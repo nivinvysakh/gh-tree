@@ -25,6 +25,68 @@ function calculateDaysStreak(allDays: { date: string; count: number }[]): number
   return streak;
 }
 
+interface CachedPRStats {
+  openPRs: number;
+  mergedPRs: number;
+  assignedPRs: number;
+  timestamp: number;
+}
+
+const prStatsCache = new Map<string, CachedPRStats>();
+
+/**
+ * Fetches real PR stats (open, merged) from GitHub Search API for a user with in-memory caching.
+ */
+async function fetchUserPRStats(username: string): Promise<{ openPRs: number; mergedPRs: number; assignedPRs: number }> {
+  const clean = username.toLowerCase().trim().replace(/^@/, "");
+  const now = Date.now();
+  const cached = prStatsCache.get(clean);
+  if (cached && now - cached.timestamp < 3600_000) {
+    return { openPRs: cached.openPRs, mergedPRs: cached.mergedPRs, assignedPRs: cached.assignedPRs };
+  }
+
+  let openPRs = 0;
+  let mergedPRs = 0;
+  let assignedPRs = 0;
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+
+    const [resOpen, resMerged] = await Promise.allSettled([
+      fetch(`https://api.github.com/search/issues?q=author:${encodeURIComponent(clean)}+type:pr+state:open`, {
+        signal: controller.signal,
+        headers: { "User-Agent": "gh-tree-api", Accept: "application/vnd.github.v3+json" },
+      }),
+      fetch(`https://api.github.com/search/issues?q=author:${encodeURIComponent(clean)}+type:pr+is:merged`, {
+        signal: controller.signal,
+        headers: { "User-Agent": "gh-tree-api", Accept: "application/vnd.github.v3+json" },
+      }),
+    ]);
+    clearTimeout(timeout);
+
+    if (resOpen.status === "fulfilled" && resOpen.value.ok) {
+      const data: any = await resOpen.value.json();
+      if (typeof data.total_count === "number") {
+        openPRs = Math.min(4, Math.max(0, data.total_count));
+      }
+    }
+
+    if (resMerged.status === "fulfilled" && resMerged.value.ok) {
+      const data: any = await resMerged.value.json();
+      if (typeof data.total_count === "number") {
+        mergedPRs = Math.min(4, Math.max(0, data.total_count));
+      }
+    }
+
+    prStatsCache.set(clean, { openPRs, mergedPRs, assignedPRs, timestamp: now });
+  } catch (err) {
+    console.warn("Could not fetch real PR stats, defaulting to 0:", err);
+  }
+
+  return { openPRs, mergedPRs, assignedPRs };
+}
+
 /**
  * Fetches contributions for a user using public endpoints.
  */
@@ -39,18 +101,34 @@ export async function fetchUserContributions(
     throw new Error("Missing or invalid GitHub username.");
   }
 
-  // 1. Fetch public contribution calendar
+  const prStatsPromise =
+    openPRsOverride === undefined || mergedPRsOverride === undefined || assignedPRsOverride === undefined
+      ? fetchUserPRStats(cleanUser)
+      : Promise.resolve({
+          openPRs: openPRsOverride ?? 0,
+          mergedPRs: mergedPRsOverride ?? 0,
+          assignedPRs: assignedPRsOverride ?? 0,
+        });
+
+  // 1. Fetch public contribution calendar & PR stats in parallel
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 6000);
 
   let contribRes: Response;
+  let prStats: { openPRs: number; mergedPRs: number; assignedPRs: number };
+
   try {
-    contribRes = await fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(cleanUser)}?y=last`, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent": "gh-tree-api",
-      },
-    });
+    const [cRes, stats] = await Promise.all([
+      fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(cleanUser)}?y=last`, {
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "gh-tree-api",
+        },
+      }),
+      prStatsPromise,
+    ]);
+    contribRes = cRes;
+    prStats = stats;
   } catch (err: any) {
     if (err?.name === "AbortError") {
       throw new Error("GitHub contribution service timed out. Please try again.");
@@ -75,13 +153,13 @@ export async function fetchUserContributions(
     throw new Error(`No contribution data found for "@${cleanUser}".`);
   }
 
+  const openPRs = openPRsOverride ?? prStats.openPRs;
+  const mergedPRs = mergedPRsOverride ?? prStats.mergedPRs;
+  const assignedPRs = assignedPRsOverride ?? prStats.assignedPRs;
+
   // Slice the most recent 28 days into 4 distinct weeks
   const recentDays = allDays.slice(-28);
   const weeks: ContributionWeek[] = [];
-
-  const openPRs = openPRsOverride ?? 2;
-  const mergedPRs = mergedPRsOverride ?? 3;
-  const assignedPRs = assignedPRsOverride ?? 1;
 
   for (let w = 0; w < 4; w++) {
     const slice = recentDays.slice(w * 7, (w + 1) * 7);

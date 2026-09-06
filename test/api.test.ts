@@ -313,5 +313,63 @@ describe("Live Dynamic Tree API (/api/tree)", () => {
     await handler(req, res);
     expect(bodySent).toContain("LAPIS ORE BLOCK");
   });
+
+  it("does not render fake apples or flowers when user has 0 PRs", async () => {
+    const mockContributions = {
+      total: { lastYear: 3 },
+      contributions: Array.from({ length: 30 }, (_, i) => ({
+        date: `2026-08-${String(i + 1).padStart(2, "0")}`,
+        count: i === 29 ? 3 : 0,
+      })),
+    };
+
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes("github-contributions-api")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => mockContributions,
+        });
+      }
+      if (url.includes("search/issues")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => ({ total_count: 0 }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => [],
+      });
+    });
+
+    const req = {
+      query: {
+        user: "ecoas12",
+        theme: "sakura",
+        format: "svg",
+      },
+    };
+
+    let bodySent = "";
+    const res = {
+      setHeader: () => {},
+      status: () => ({
+        send: (body: string) => {
+          bodySent = body;
+        },
+      }),
+    };
+
+    await handler(req, res);
+    // Should NOT contain Red Apple
+    expect(bodySent).not.toContain("Red Apple");
+    // Should NOT contain Poppy or Dandelion flowers
+    expect(bodySent).not.toContain("Poppy Flower");
+    expect(bodySent).not.toContain("Dandelion");
+  });
 });
+
 
