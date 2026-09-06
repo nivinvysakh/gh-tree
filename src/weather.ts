@@ -94,9 +94,7 @@ export async function fetchLiveWeather(
     const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
       queryCity
     )}&count=1`;
-    const geoRes = await fetch(geoUrl, {
-      headers: { "User-Agent": "gh-tree-action" },
-    });
+    const geoRes = await fetch(geoUrl);
 
     if (!geoRes.ok) {
       return { type: "sunny", description: `Weather fallback for ${queryCity}`, isDay: true };
@@ -112,9 +110,7 @@ export async function fetchLiveWeather(
 
     // 2. Fetch current weather forecast
     const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=weather_code,temperature_2m,is_day`;
-    const weatherRes = await fetch(weatherUrl, {
-      headers: { "User-Agent": "gh-tree-action" },
-    });
+    const weatherRes = await fetch(weatherUrl);
 
     if (!weatherRes.ok) {
       return {
@@ -140,7 +136,8 @@ export async function fetchLiveWeather(
       isDay,
       locationName: country ? `${name}, ${country}` : name,
     };
-  } catch {
+  } catch (err) {
+    console.warn("Could not fetch live weather from Open-Meteo:", err);
     return {
       type: "sunny",
       description: "Weather request failed, defaulted to sunny",
