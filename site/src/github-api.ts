@@ -123,14 +123,15 @@ export async function fetchGitHubProfile(username: string): Promise<GitHubUserPr
  */
 export async function fetchUserPRStats(username: string): Promise<{ openPRs: number; mergedPRs: number; assignedPRs: number }> {
   const cleanUser = username.trim().replace(/^@/, "");
-  let openPRs = 2;
-  let mergedPRs = 3;
-  let assignedPRs = 1;
+  let openPRs = 0;
+  let mergedPRs = 0;
+  let assignedPRs = 0;
 
   try {
-    const [resOpen, resMerged] = await Promise.allSettled([
+    const [resOpen, resMerged, resAssigned] = await Promise.allSettled([
       fetchWithTimeout(`https://api.github.com/search/issues?q=author:${encodeURIComponent(cleanUser)}+type:pr+state:open`, {}, 6000),
       fetchWithTimeout(`https://api.github.com/search/issues?q=author:${encodeURIComponent(cleanUser)}+type:pr+is:merged`, {}, 6000),
+      fetchWithTimeout(`https://api.github.com/search/issues?q=assignee:${encodeURIComponent(cleanUser)}+type:pr`, {}, 6000),
     ]);
 
     if (resOpen.status === "fulfilled" && resOpen.value.ok) {
@@ -144,6 +145,13 @@ export async function fetchUserPRStats(username: string): Promise<{ openPRs: num
       const data: any = await resMerged.value.json();
       if (typeof data.total_count === "number") {
         mergedPRs = Math.min(4, Math.max(0, data.total_count));
+      }
+    }
+
+    if (resAssigned.status === "fulfilled" && resAssigned.value.ok) {
+      const data: any = await resAssigned.value.json();
+      if (typeof data.total_count === "number") {
+        assignedPRs = Math.min(4, Math.max(0, data.total_count));
       }
     }
   } catch (err) {
@@ -192,9 +200,9 @@ export async function fetchGitHubContributions(
   const prStatsPromise = (openPRsOverride === undefined || mergedPRsOverride === undefined || assignedPRsOverride === undefined)
     ? fetchUserPRStats(cleanUser)
     : Promise.resolve({
-        openPRs: openPRsOverride ?? 2,
-        mergedPRs: mergedPRsOverride ?? 4,
-        assignedPRs: assignedPRsOverride ?? 1,
+        openPRs: openPRsOverride ?? 0,
+        mergedPRs: mergedPRsOverride ?? 0,
+        assignedPRs: assignedPRsOverride ?? 0,
       });
 
   try {
