@@ -11,7 +11,8 @@
     "generate:mock": "tsx scripts/generate-mock.ts",
     "site:dev": "vite site",
     "site:build": "vite build site --outDir ../dist-site",
-    "site:preview": "vite preview site"
+    "site:preview": "vite preview site",
+    "api:dev": "tsx scripts/dev-server.ts"
   },
   "license": "MIT",
   "dependencies": {
