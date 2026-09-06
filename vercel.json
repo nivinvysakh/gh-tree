@@ -4,6 +4,10 @@
   "outputDirectory": "dist-site",
   "rewrites": [
     {
+      "source": "/api/tree.gif",
+      "destination": "/api/tree?format=gif"
+    },
+    {
       "source": "/api/tree.svg",
       "destination": "/api/tree"
     }

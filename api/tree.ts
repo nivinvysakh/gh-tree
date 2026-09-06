@@ -1,5 +1,6 @@
 import { calculateTree, TreeOptions, TreeType, PetType, ChestType, SeasonalEvent } from "../src/tree";
 import { generateSvg } from "../src/svg";
+import { encodeGif } from "../src/gif";
 import { ContributionData, ContributionDay, ContributionWeek } from "../src/github";
 import { WeatherCondition } from "../src/weather";
 
@@ -251,6 +252,9 @@ export default async function handler(req: any, res: any) {
   const assignedPRs = query.assignedPRs !== undefined ? parseInt(String(query.assignedPRs), 10) : undefined;
   const frameIndex = query.frame !== undefined ? Math.max(0, Math.min(11, parseInt(String(query.frame), 10) || 0)) : 0;
 
+  const rawFormat = (query.format || query.ext || "").toLowerCase().trim();
+  const isGif = rawFormat === "gif" || (req.url && (req.url.includes(".gif") || req.url.includes("format=gif")));
+
   try {
     const contributionData = await fetchUserContributions(username, openPRs, mergedPRs, assignedPRs);
 
@@ -269,6 +273,21 @@ export default async function handler(req: any, res: any) {
     };
 
     const treeLayout = calculateTree(contributionData, treeOpts);
+
+    if (isGif) {
+      const frames: { svg: string }[] = [];
+      for (let i = 0; i < 12; i++) {
+        frames.push({ svg: generateSvg(treeLayout, i, 12) });
+      }
+      const gifBytes = await encodeGif(frames, treeLayout.width, treeLayout.height, 200);
+      const gifBuffer = Buffer.from(gifBytes);
+
+      res.setHeader?.("Content-Type", "image/gif");
+      res.setHeader?.("Cache-Control", "public, max-age=14400, s-maxage=14400, stale-while-revalidate=86400");
+
+      return res.status ? res.status(200).send(gifBuffer) : gifBuffer;
+    }
+
     const svgOutput = generateSvg(treeLayout, frameIndex, 12);
 
     res.setHeader?.("Content-Type", "image/svg+xml; charset=utf-8");

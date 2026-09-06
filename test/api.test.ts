@@ -165,4 +165,54 @@ describe("Live Dynamic Tree API (/api/tree)", () => {
     expect(bodySent).toContain("<svg");
     expect(bodySent).toContain("User &quot;@nonexistent_user_12345&quot; not found");
   });
+
+  it("returns an animated GIF buffer when format=gif is requested", async () => {
+    const mockContributions = {
+      total: { lastYear: 50 },
+      contributions: Array.from({ length: 30 }, (_, i) => ({
+        date: `2026-08-${String(i + 1).padStart(2, "0")}`,
+        count: i % 2 === 0 ? 3 : 1,
+      })),
+    };
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockContributions,
+    });
+
+    const req = {
+      query: {
+        user: "testdev",
+        format: "gif",
+      },
+      url: "/api/tree.gif?user=testdev",
+    };
+
+    const headers: Record<string, string> = {};
+    let statusSent: number | undefined;
+    let bodySent: any;
+
+    const res = {
+      setHeader: (k: string, v: string) => {
+        headers[k] = v;
+      },
+      status: (s: number) => {
+        statusSent = s;
+        return {
+          send: (body: any) => {
+            bodySent = body;
+          },
+        };
+      },
+    };
+
+    await handler(req, res);
+
+    expect(statusSent).toBe(200);
+    expect(headers["Content-Type"]).toBe("image/gif");
+    expect(Buffer.isBuffer(bodySent)).toBe(true);
+    // GIF magic header check: GIF89a
+    expect(bodySent.subarray(0, 3).toString()).toBe("GIF");
+  });
 });
