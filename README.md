@@ -3,9 +3,9 @@
 # gh-tree 🌴
 
 
-<!-- commit-tree-start -->
-![tree](tree.gif?v=1788676028412)
-<!-- commit-tree-end -->
+
+![Demo](/assets/demo-ezgif.com-gif-maker.gif)
+
 
 
 <p>
