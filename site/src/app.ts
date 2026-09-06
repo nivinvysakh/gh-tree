@@ -71,19 +71,19 @@ class GhTreeApp {
     const fetchBtn = document.getElementById("btn-fetch-user") as HTMLButtonElement;
     const userInput = document.getElementById("input-username") as HTMLInputElement;
 
+    userInput.addEventListener("input", () => {
+      this.clearInputError();
+    });
+
     fetchBtn.addEventListener("click", () => {
       const username = userInput.value.trim();
-      if (username) {
-        this.handleFetchUser(username);
-      }
+      this.handleFetchUser(username);
     });
 
     userInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const username = userInput.value.trim();
-        if (username) {
-          this.handleFetchUser(username);
-        }
+        this.handleFetchUser(username);
       }
     });
 
@@ -356,7 +356,48 @@ class GhTreeApp {
     if (label) label.textContent = `${val}${suffix}`;
   }
 
+  private showInputError(message: string): void {
+    const input = document.getElementById("input-username") as HTMLInputElement;
+    const errorContainer = document.getElementById("username-error-msg");
+    const errorText = document.getElementById("username-error-text");
+
+    if (input) {
+      input.classList.add("border-rose-500", "focus:border-rose-500", "focus:ring-rose-500");
+      input.classList.remove("border-white/10", "focus:border-emerald-500", "focus:ring-emerald-500");
+    }
+
+    if (errorContainer && errorText) {
+      errorText.textContent = message;
+      errorContainer.classList.remove("hidden");
+      errorContainer.classList.add("flex");
+    }
+  }
+
+  private clearInputError(): void {
+    const input = document.getElementById("input-username") as HTMLInputElement;
+    const errorContainer = document.getElementById("username-error-msg");
+
+    if (input) {
+      input.classList.remove("border-rose-500", "focus:border-rose-500", "focus:ring-rose-500");
+      input.classList.add("border-white/10", "focus:border-emerald-500", "focus:ring-emerald-500");
+    }
+
+    if (errorContainer) {
+      errorContainer.classList.add("hidden");
+      errorContainer.classList.remove("flex");
+    }
+  }
+
   private async handleFetchUser(username: string): Promise<void> {
+    const cleanUser = username.trim().replace(/^@/, "");
+    if (!cleanUser) {
+      this.showInputError("Please enter a valid GitHub username.");
+      this.showToast("Please enter a valid GitHub username.", "warning");
+      return;
+    }
+
+    this.clearInputError();
+
     const fetchBtn = document.getElementById("btn-fetch-user") as HTMLButtonElement;
     if (fetchBtn) {
       fetchBtn.disabled = true;
@@ -364,12 +405,16 @@ class GhTreeApp {
     }
 
     try {
-      this.currentUsername = username;
-      const [profile, contributions, status] = await Promise.all([
-        fetchGitHubProfile(username),
-        fetchGitHubContributions(username),
-        checkUserStatus(username),
+      // 1. Fetch public profile first to verify username existence
+      const profile = await fetchGitHubProfile(cleanUser);
+
+      // 2. Fetch contributions and repo status
+      const [contributions, status] = await Promise.all([
+        fetchGitHubContributions(cleanUser),
+        checkUserStatus(cleanUser),
       ]);
+
+      this.currentUsername = profile.login;
 
       // Update user badge
       const avatarEl = document.getElementById("user-avatar") as HTMLImageElement;
@@ -388,7 +433,6 @@ class GhTreeApp {
 
       // Sync all UI controls and sandbox sliders immediately
       this.syncUIToState();
-
       this.updatePreview();
 
       const statusBadge = status.isOwner 
@@ -396,10 +440,22 @@ class GhTreeApp {
         : status.isContributor 
         ? " 💎 Contributor" 
         : "";
-      this.showToast(`Fetched profile for @${profile.login}${statusBadge}! 🌴`);
-    } catch (err) {
-      console.error(err);
-      this.showToast("Could not fetch user, using simulated stats");
+      this.showToast(`Fetched profile for @${profile.login}${statusBadge}! 🌴`, "success");
+    } catch (err: any) {
+      console.error("Fetch user error:", err);
+      if (err?.code === "NOT_FOUND" || err?.message?.includes("not found")) {
+        const msg = `User "@${cleanUser}" does not exist on GitHub. Please check the spelling!`;
+        this.showInputError(msg);
+        this.showToast(`User "@${cleanUser}" not found on GitHub!`, "error");
+      } else if (err?.code === "RATE_LIMITED" || err?.message?.includes("rate limit")) {
+        const msg = "GitHub API rate limit reached. Please try again in a few moments.";
+        this.showInputError(msg);
+        this.showToast(msg, "warning");
+      } else {
+        const msg = `Could not fetch @${cleanUser}. Please check your connection and try again.`;
+        this.showInputError(msg);
+        this.showToast(msg, "error");
+      }
     } finally {
       if (fetchBtn) {
         fetchBtn.disabled = false;
@@ -529,20 +585,34 @@ jobs:
     document.getElementById("app-modal")?.classList.remove("active");
   }
 
-  private showToast(message: string): void {
+  private showToast(message: string, type: "success" | "error" | "warning" | "info" = "success"): void {
     const container = document.getElementById("toast-container");
     if (!container) return;
 
     const toast = document.createElement("div");
-    toast.className = "toast px-4 py-2.5 bg-emerald-500 text-slate-950 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2";
-    toast.textContent = message;
+    let typeClasses = "bg-emerald-500 text-slate-950 shadow-emerald-500/20";
+    let icon = "✅";
+
+    if (type === "error") {
+      typeClasses = "bg-rose-600 text-white shadow-rose-600/30 border border-rose-400/40";
+      icon = "❌";
+    } else if (type === "warning") {
+      typeClasses = "bg-amber-500 text-slate-950 shadow-amber-500/20";
+      icon = "⚠️";
+    } else if (type === "info") {
+      typeClasses = "bg-sky-500 text-slate-950 shadow-sky-500/20";
+      icon = "ℹ️";
+    }
+
+    toast.className = `toast px-4 py-2.5 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2 transition-all duration-300 ${typeClasses}`;
+    toast.innerHTML = `<span class="flex-shrink-0">${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
 
     setTimeout(() => {
       toast.style.opacity = "0";
       toast.style.transform = "translateY(20px)";
       setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 3500);
   }
 }
 

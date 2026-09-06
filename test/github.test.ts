@@ -308,4 +308,42 @@ describe("github module", () => {
       expect(empty2).toEqual([]);
     });
   });
+
+  describe("site fetchGitHubProfile", () => {
+    it("throws NOT_FOUND error when GitHub user does not exist (HTTP 404)", async () => {
+      const { fetchGitHubProfile } = await import("../site/src/github-api.js");
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+      });
+
+      await expect(fetchGitHubProfile("nonexistentuser12345")).rejects.toThrow('User "@nonexistentuser12345" not found on GitHub.');
+    });
+
+    it("throws EMPTY_USERNAME error when given empty string", async () => {
+      const { fetchGitHubProfile } = await import("../site/src/github-api.js");
+      await expect(fetchGitHubProfile("  ")).rejects.toThrow("Please enter a valid GitHub username.");
+    });
+
+    it("returns profile object when user exists", async () => {
+      const { fetchGitHubProfile } = await import("../site/src/github-api.js");
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          login: "nivinvysakh",
+          name: "Nivin Vysakh",
+          avatar_url: "https://avatars.githubusercontent.com/u/123?v=4",
+          bio: "Open Source Creator",
+          public_repos: 20,
+          followers: 100,
+        }),
+      });
+
+      const profile = await fetchGitHubProfile("nivinvysakh");
+      expect(profile.login).toBe("nivinvysakh");
+      expect(profile.name).toBe("Nivin Vysakh");
+      expect(profile.avatarUrl).toBe("https://avatars.githubusercontent.com/u/123?v=4");
+    });
+  });
 });

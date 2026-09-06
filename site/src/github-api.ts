@@ -39,30 +39,40 @@ export function calculateBrowserStreak(days: { date: string; count: number }[]):
  */
 export async function fetchGitHubProfile(username: string): Promise<GitHubUserProfile> {
   const cleanUser = username.trim().replace(/^@/, "");
-  try {
-    const res = await fetch(`https://api.github.com/users/${encodeURIComponent(cleanUser)}`);
-    if (res.ok) {
-      const data = await res.json();
-      return {
-        login: data.login || cleanUser,
-        name: data.name || data.login || cleanUser,
-        avatarUrl: data.avatar_url || `https://github.com/${cleanUser}.png?size=200`,
-        bio: data.bio || "GitHub Developer",
-        publicRepos: data.public_repos || 0,
-        followers: data.followers || 0,
-      };
-    }
-  } catch (err) {
-    console.warn("Could not fetch user profile from GitHub API:", err);
+  if (!cleanUser) {
+    const err = new Error("Please enter a valid GitHub username.");
+    (err as any).code = "EMPTY_USERNAME";
+    throw err;
   }
 
+  const res = await fetch(`https://api.github.com/users/${encodeURIComponent(cleanUser)}`);
+
+  if (res.status === 404) {
+    const err = new Error(`User "@${cleanUser}" not found on GitHub.`);
+    (err as any).code = "NOT_FOUND";
+    throw err;
+  }
+
+  if (res.status === 403) {
+    const err = new Error("GitHub API rate limit reached. Please try again in a few moments.");
+    (err as any).code = "RATE_LIMITED";
+    throw err;
+  }
+
+  if (!res.ok) {
+    const err = new Error(`GitHub API error (HTTP ${res.status}).`);
+    (err as any).code = `HTTP_${res.status}`;
+    throw err;
+  }
+
+  const data: any = await res.json();
   return {
-    login: cleanUser,
-    name: cleanUser,
-    avatarUrl: `https://github.com/${cleanUser}.png?size=200`,
-    bio: "Minecraft Profile Gardener",
-    publicRepos: 12,
-    followers: 42,
+    login: data.login || cleanUser,
+    name: data.name || data.login || cleanUser,
+    avatarUrl: data.avatar_url || `https://github.com/${cleanUser}.png?size=200`,
+    bio: data.bio || "GitHub Developer",
+    publicRepos: data.public_repos || 0,
+    followers: data.followers || 0,
   };
 }
 
@@ -82,14 +92,14 @@ export async function fetchUserPRStats(username: string): Promise<{ openPRs: num
     ]);
 
     if (resOpen.status === "fulfilled" && resOpen.value.ok) {
-      const data = await resOpen.value.json();
+      const data: any = await resOpen.value.json();
       if (typeof data.total_count === "number") {
         openPRs = Math.min(4, Math.max(0, data.total_count));
       }
     }
 
     if (resMerged.status === "fulfilled" && resMerged.value.ok) {
-      const data = await resMerged.value.json();
+      const data: any = await resMerged.value.json();
       if (typeof data.total_count === "number") {
         mergedPRs = Math.min(4, Math.max(0, data.total_count));
       }
@@ -112,7 +122,7 @@ export async function checkUserStatus(username: string): Promise<{ isOwner: bool
   try {
     const res = await fetch("https://api.github.com/repos/nivinvysakh/gh-tree/contributors");
     if (res.ok) {
-      const list = await res.json();
+      const list: any = await res.json();
       if (Array.isArray(list)) {
         isContributor = list.some((c: any) => c.login?.toLowerCase() === clean);
       }
@@ -156,7 +166,7 @@ export async function fetchGitHubContributions(
     const assignedPRs = assignedPRsOverride ?? prStats.assignedPRs;
 
     if (contribRes.ok) {
-      const data = await contribRes.json();
+      const data: any = await contribRes.json();
       if (data.contributions && Array.isArray(data.contributions) && data.contributions.length > 0) {
         const allDays: { date: string; count: number }[] = data.contributions;
         
