@@ -148,17 +148,11 @@ class GhTreeApp {
     this.bindToggle("toggle-owner", (checked) => {
       this.settings.isOwner = checked;
     });
-    this.bindToggle("toggle-contributor", (checked) => {
-      this.settings.isContributor = checked;
-    });
     this.bindToggle("toggle-signpost", (checked) => {
       this.settings.showSignpost = checked;
     });
     this.bindToggle("toggle-bee", (checked) => {
       this.settings.showBee = checked;
-    });
-    this.bindToggle("toggle-chest", (checked) => {
-      this.settings.showChest = checked;
     });
 
     // 8. Sliders
@@ -339,7 +333,6 @@ class GhTreeApp {
     this.setSwitch("toggle-chest", this.settings.showChest);
     this.setSwitch("toggle-daytime", this.settings.isDay);
     this.setSwitch("toggle-owner", this.settings.isOwner);
-    this.setSwitch("toggle-contributor", this.settings.isContributor);
     this.setSwitch("toggle-signpost", this.settings.showSignpost);
     this.setSwitch("toggle-bee", this.settings.showBee);
 

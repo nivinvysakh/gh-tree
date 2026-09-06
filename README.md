@@ -257,6 +257,61 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 
 ---
 
+## 📁 Project Structure
+
+```
+gh-tree/
+├── .github/
+│   └── workflows/
+│       ├── ci.yml                 # Continuous Integration (tests & typecheck)
+│       ├── deploy-pages.yml       # GitHub Pages automated deployment workflow
+│       ├── generate-tree.yml      # Daily profile commit tree generator action
+│       ├── dependabot-pr.yml      # Dependabot PR automation
+│       ├── pr-auto-assign.yml     # PR reviewer and assignee automation
+│       └── wiki-sync.yml          # Documentation auto-synchronizer with GitHub Wiki
+├── assets/                        # Static demo GIFs, ore SVGs, and visual artifacts
+│   ├── ore-*.svg                  # Underground ore block vectors (Netherite, Lapis, Diamond...)
+│   └── tree-*.gif                 # Biome, weather, and streak showcase GIFs
+├── dist/                          # Compiled GitHub Action bundle (ncc distribution)
+├── site/                          # gh-tree Studio Web Application (Vite + Tailwind CSS v4)
+│   ├── index.html                 # Main Studio single-page application
+│   ├── 404.html                   # Minecraft Void 404 error page
+│   ├── favicon.svg                # Emerald glowing palm tree favicon
+│   ├── styles.css                 # Minecraft dark glassmorphism design system
+│   ├── vite.config.ts             # Multi-page Vite configuration
+│   └── src/
+│       ├── app.ts                 # Studio app controller, UI bindings & modal handlers
+│       ├── preview.ts             # Real-time frame looping engine with SVG animation
+│       ├── gif-browser.ts         # Client-side canvas rasterizer and GIF encoder (gifenc)
+│       ├── github-api.ts          # CORS contribution fetcher, streak calculator & PR stats
+│       └── presets.ts             # Curated themes & preset configurations
+├── src/                           # GitHub Action Core Source Code (TypeScript)
+│   ├── main.ts                    # Action entrypoint, CLI input parser & auto-committer
+│   ├── tree.ts                    # Minecraft tree geometry, canopy grid & prop layout builder
+│   ├── svg.ts                     # Pixel art raster-to-SVG frame rendering engine
+│   ├── gif.ts                     # Multi-frame GIF encoder (gifenc + Resvg WASM)
+│   ├── github.ts                  # GraphQL/REST GitHub contribution calendar fetcher
+│   ├── weather.ts                 # Live weather integration (Open-Meteo API)
+│   └── markdown.ts                # Profile README.md tag replacer & updater
+├── test/                          # Comprehensive Unit & Integration Test Suite (Vitest)
+│   ├── tree.test.ts               # Tree layout, biome, and collectibles tests
+│   ├── svg.test.ts                # SVG rendering, typography & milestone chest tests
+│   ├── github.test.ts             # Contribution calendar and streak calculation tests
+│   ├── weather.test.ts            # Weather parser & condition mapping tests
+│   ├── markdown.test.ts           # Markdown file replacement tests
+│   ├── gif.test.ts                # GIF binary encoding tests
+│   └── e2e.test.ts                # Full end-to-end rendering pipeline test
+├── scripts/                       # Developer utility scripts
+│   └── generate-mock.ts           # Offline local mock GIF generator for all biomes
+├── wiki/                          # Documentation knowledge base synced to GitHub Wiki
+├── action.yml                     # GitHub Action definition & input/output schema
+├── package.json                   # Project dependencies and npm scripts
+├── tsconfig.json                  # TypeScript compiler configuration
+└── README.md                      # Repository documentation & visual showcase
+```
+
+---
+
 ## Local Development & Testing
 
 Generate local sample GIFs for all biomes and weather conditions without needing a token:
@@ -275,6 +330,12 @@ Build action bundle:
 
 ```bash
 npm run build
+```
+
+Run web studio locally:
+
+```bash
+npm run site:dev
 ```
 
 ## Contributors 👥
