@@ -254,7 +254,8 @@ export default async function handler(req: any, res: any) {
   const frameIndex = query.frame !== undefined ? Math.max(0, Math.min(11, parseInt(String(query.frame), 10) || 0)) : 0;
 
   const rawFormat = (query.format || query.ext || "").toLowerCase().trim();
-  const isGif = rawFormat === "gif" || (req.url && (req.url.includes(".gif") || req.url.includes("format=gif")));
+  // Default to animated GIF unless format=svg is explicitly requested
+  const isGif = rawFormat !== "svg" && rawFormat !== "static";
 
   try {
     const contributionData = await fetchUserContributions(username, openPRs, mergedPRs, assignedPRs);

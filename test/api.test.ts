@@ -97,6 +97,7 @@ describe("Live Dynamic Tree API (/api/tree)", () => {
         theme: "sakura",
         weather: "rain",
         pet: "fox",
+        format: "svg",
       },
     };
 
