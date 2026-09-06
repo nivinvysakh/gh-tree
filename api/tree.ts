@@ -2,7 +2,7 @@ import { calculateTree, TreeOptions, TreeType, PetType, ChestType, SeasonalEvent
 import { generateSvg } from "../src/svg";
 import { encodeGif } from "../src/gif";
 import { ContributionData, ContributionDay, ContributionWeek } from "../src/github";
-import { WeatherCondition } from "../src/weather";
+import { WeatherCondition, fetchLiveWeather } from "../src/weather";
 
 /**
  * Calculates current streak from an array of contribution days.
@@ -225,7 +225,8 @@ export default async function handler(req: any, res: any) {
   const rawTheme = (query.theme || query.type || query.biome || "oak").toLowerCase().trim();
   const theme: TreeType = ["oak", "sakura", "spruce", "birch"].includes(rawTheme) ? (rawTheme as TreeType) : "oak";
 
-  const weather = resolveWeather(query.weather);
+  const city = query.city || query.location;
+  const weather = city ? await fetchLiveWeather(String(city), query.weather) : resolveWeather(query.weather);
 
   const rawPet = (query.pet || "auto").toLowerCase().trim();
   const pet: PetType | "none" | "auto" = ["none", "auto", "wolf", "fox", "cat"].includes(rawPet)
