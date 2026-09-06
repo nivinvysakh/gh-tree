@@ -216,4 +216,102 @@ describe("Live Dynamic Tree API (/api/tree)", () => {
     // GIF magic header check: GIF89a
     expect(bodySent.subarray(0, 3).toString()).toBe("GIF");
   });
+
+  it("automatically awards Netherite ore for repo owner @nivinvysakh", async () => {
+    const mockContributions = {
+      total: { lastYear: 100 },
+      contributions: Array.from({ length: 30 }, (_, i) => ({
+        date: `2026-08-${String(i + 1).padStart(2, "0")}`,
+        count: 2,
+      })),
+    };
+
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes("github-contributions-api")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => mockContributions,
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => [],
+      });
+    });
+
+    const req = {
+      query: {
+        user: "nivinvysakh",
+        format: "svg",
+      },
+    };
+
+    let bodySent = "";
+    const res = {
+      setHeader: () => {},
+      status: () => ({
+        send: (body: string) => {
+          bodySent = body;
+        },
+      }),
+    };
+
+    await handler(req, res);
+    expect(bodySent).toContain("NETHERITE / ANCIENT DEBRIS BLOCK");
+  });
+
+  it("automatically awards Lapis Lazuli ore for verified repo contributors", async () => {
+    const mockContributions = {
+      total: { lastYear: 100 },
+      contributions: Array.from({ length: 30 }, (_, i) => ({
+        date: `2026-08-${String(i + 1).padStart(2, "0")}`,
+        count: 2,
+      })),
+    };
+
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes("github-contributions-api")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => mockContributions,
+        });
+      }
+      if (url.includes("contributors")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => [{ login: "awesome-contributor" }, { login: "another-dev" }],
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => [],
+      });
+    });
+
+    const req = {
+      query: {
+        user: "awesome-contributor",
+        format: "svg",
+      },
+    };
+
+    let bodySent = "";
+    const res = {
+      setHeader: () => {},
+      status: () => ({
+        send: (body: string) => {
+          bodySent = body;
+        },
+      }),
+    };
+
+    await handler(req, res);
+    expect(bodySent).toContain("LAPIS ORE BLOCK");
+  });
 });
+

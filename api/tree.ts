@@ -184,6 +184,43 @@ export function renderErrorSvg(message: string, username?: string): string {
 </svg>`;
 }
 
+let cachedContributors: { list: Set<string>; timestamp: number } | null = null;
+
+/**
+ * Checks if a user has contributed to nivinvysakh/gh-tree.
+ * Results are cached in memory for 1 hour to prevent GitHub API rate limits.
+ */
+export async function checkIsRepoContributor(username: string): Promise<boolean> {
+  const clean = username.toLowerCase().trim();
+  const now = Date.now();
+
+  if (cachedContributors && now - cachedContributors.timestamp < 3600_000) {
+    return cachedContributors.list.has(clean);
+  }
+
+  try {
+    const res = await fetch("https://api.github.com/repos/nivinvysakh/gh-tree/contributors?per_page=100", {
+      headers: {
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "gh-tree-api",
+      },
+    });
+
+    if (res.ok) {
+      const data = (await res.json()) as any[];
+      if (Array.isArray(data)) {
+        const logins = new Set(data.map((c: any) => (c.login || "").toLowerCase().trim()).filter(Boolean));
+        cachedContributors = { list: logins, timestamp: now };
+        return logins.has(clean);
+      }
+    }
+  } catch (err) {
+    console.warn("Could not check repo contributors:", err);
+  }
+
+  return cachedContributors ? cachedContributors.list.has(clean) : false;
+}
+
 /**
  * Main Serverless API Handler
  */
@@ -260,8 +297,19 @@ export default async function handler(req: any, res: any) {
   try {
     const contributionData = await fetchUserContributions(username, openPRs, mergedPRs, assignedPRs);
 
-    const isOwner = username.toLowerCase() === "nivinvysakh";
-    let isContributor = false;
+    const cleanUser = username.toLowerCase().trim();
+    const rawIsOwner = query.isOwner !== undefined ? String(query.isOwner).toLowerCase().trim() : undefined;
+    const isOwner = rawIsOwner === "true" ? true : rawIsOwner === "false" ? false : cleanUser === "nivinvysakh";
+
+    const rawIsContributor = query.isContributor !== undefined ? String(query.isContributor).toLowerCase().trim() : undefined;
+    const isContributor =
+      rawIsContributor === "true"
+        ? true
+        : rawIsContributor === "false"
+        ? false
+        : isOwner
+        ? false
+        : await checkIsRepoContributor(cleanUser);
 
     const treeOpts: TreeOptions = {
       treeType: theme,

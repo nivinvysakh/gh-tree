@@ -194,9 +194,6 @@ class GhTreeApp {
     this.bindToggle("toggle-daytime", (checked) => {
       this.settings.isDay = checked;
     });
-    this.bindToggle("toggle-owner", (checked) => {
-      this.settings.isOwner = checked;
-    });
     this.bindToggle("toggle-signpost", (checked) => {
       this.settings.showSignpost = checked;
     });
@@ -396,7 +393,6 @@ class GhTreeApp {
     this.setSwitch("toggle-campfire", this.settings.showCampfire);
     this.setSwitch("toggle-chest", this.settings.showChest);
     this.setSwitch("toggle-daytime", this.settings.isDay);
-    this.setSwitch("toggle-owner", this.settings.isOwner);
     this.setSwitch("toggle-signpost", this.settings.showSignpost);
     this.setSwitch("toggle-bee", this.settings.showBee);
 
