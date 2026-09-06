@@ -489,7 +489,7 @@ class GhTreeApp {
   }
 
   public getLiveApiUrl(): string {
-    const base = "https://gh-tree.vercel.app/api/tree";
+    const base = "https://gh-tree.vercel.app/api/tree.gif";
     const params = new URLSearchParams();
     const cleanUser = this.currentUsername || "nivinvysakh";
     params.set("user", cleanUser);
