@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "npm run site:build",
+  "outputDirectory": "dist-site",
   "rewrites": [
     {
       "source": "/api/tree.svg",
