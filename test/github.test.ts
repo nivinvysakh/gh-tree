@@ -345,5 +345,29 @@ describe("github module", () => {
       expect(profile.name).toBe("Nivin Vysakh");
       expect(profile.avatarUrl).toBe("https://avatars.githubusercontent.com/u/123?v=4");
     });
+
+    it("throws RATE_LIMITED error with parsed reset time when rate-limited (HTTP 403)", async () => {
+      const { fetchGitHubProfile } = await import("../site/src/github-api.js");
+      const futureEpoch = Math.floor(Date.now() / 1000) + 600; // 10 minutes in future
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        headers: new Headers({
+          "x-ratelimit-reset": String(futureEpoch),
+        }),
+      });
+
+      await expect(fetchGitHubProfile("anyuser")).rejects.toThrow(/rate limit reached/);
+    });
+  });
+
+  describe("site sanitizeFilename", () => {
+    it("sanitizes unsafe characters and enforces extension", async () => {
+      const { sanitizeFilename } = await import("../site/src/gif-browser.js");
+      expect(sanitizeFilename("user/with:invalid*chars?", "gif")).toBe("user-with-invalid-chars.gif");
+      expect(sanitizeFilename("already-safe.gif", "gif")).toBe("already-safe.gif");
+      expect(sanitizeFilename("   spaced name   ", "svg")).toBe("spaced-name.svg");
+      expect(sanitizeFilename("", "gif")).toBe("minecraft-tree.gif");
+    });
   });
 });

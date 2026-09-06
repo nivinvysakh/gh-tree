@@ -8,7 +8,7 @@ import {
   checkUserStatus,
   generateMockContributions,
 } from "./github-api";
-import { encodeBrowserGif, triggerFileDownload } from "./gif-browser";
+import { encodeBrowserGif, triggerFileDownload, sanitizeFilename } from "./gif-browser";
 import { PRESETS } from "./presets";
 
 class GhTreeApp {
@@ -17,6 +17,7 @@ class GhTreeApp {
   private settings: PreviewSettings;
   private currentUsername: string = "nivinvysakh";
   private isGeneratingGif: boolean = false;
+  private isFetchingUser: boolean = false;
 
   constructor() {
     const container = document.getElementById("tree-preview-container")!;
@@ -389,6 +390,8 @@ class GhTreeApp {
   }
 
   private async handleFetchUser(username: string): Promise<void> {
+    if (this.isFetchingUser) return;
+
     const cleanUser = username.trim().replace(/^@/, "");
     if (!cleanUser) {
       this.showInputError("Please enter a valid GitHub username.");
@@ -396,6 +399,7 @@ class GhTreeApp {
       return;
     }
 
+    this.isFetchingUser = true;
     this.clearInputError();
 
     const fetchBtn = document.getElementById("btn-fetch-user") as HTMLButtonElement;
@@ -448,7 +452,11 @@ class GhTreeApp {
         this.showInputError(msg);
         this.showToast(`User "@${cleanUser}" not found on GitHub!`, "error");
       } else if (err?.code === "RATE_LIMITED" || err?.message?.includes("rate limit")) {
-        const msg = "GitHub API rate limit reached. Please try again in a few moments.";
+        const msg = err?.message || "GitHub API rate limit reached. Please try again in a few moments.";
+        this.showInputError(msg);
+        this.showToast(msg, "warning");
+      } else if (err?.code === "TIMEOUT") {
+        const msg = "Network request timed out. Please check your connection and try again.";
         this.showInputError(msg);
         this.showToast(msg, "warning");
       } else {
@@ -457,6 +465,7 @@ class GhTreeApp {
         this.showToast(msg, "error");
       }
     } finally {
+      this.isFetchingUser = false;
       if (fetchBtn) {
         fetchBtn.disabled = false;
         fetchBtn.innerHTML = `<span>Fetch</span> ⚡`;
@@ -470,6 +479,13 @@ class GhTreeApp {
 
   private async handleGenerateGif(): Promise<void> {
     if (this.isGeneratingGif) return;
+
+    const frames = this.previewEngine.getFrames();
+    if (!frames || frames.length === 0) {
+      this.showToast("Cannot generate GIF: No frames available.", "error");
+      return;
+    }
+
     this.isGeneratingGif = true;
 
     const progressContainer = document.getElementById("gif-progress-container")!;
@@ -482,7 +498,6 @@ class GhTreeApp {
     gifBtn.disabled = true;
 
     try {
-      const frames = this.previewEngine.getFrames();
       const gifBlob = await encodeBrowserGif(
         frames,
         this.settings.width,
@@ -496,11 +511,12 @@ class GhTreeApp {
         }
       );
 
-      triggerFileDownload(gifBlob, `${this.currentUsername}-tree.gif`);
-      this.showToast("GIF downloaded successfully! 🎮");
+      const safeFilename = sanitizeFilename(`${this.currentUsername}-tree`, "gif");
+      triggerFileDownload(gifBlob, safeFilename);
+      this.showToast(`GIF "${safeFilename}" downloaded! 🎮`, "success");
     } catch (err) {
       console.error("GIF generation failed:", err);
-      this.showToast("Failed to generate GIF. Please try again.");
+      this.showToast("Failed to generate GIF. Please try again.", "error");
     } finally {
       this.isGeneratingGif = false;
       gifBtn.disabled = false;
@@ -513,10 +529,14 @@ class GhTreeApp {
 
   private handleDownloadSvg(): void {
     const svgStr = this.previewEngine.getCurrentSvg();
-    if (!svgStr) return;
+    if (!svgStr || !svgStr.includes("<svg")) {
+      this.showToast("Cannot export SVG: Preview is not ready.", "error");
+      return;
+    }
+    const safeFilename = sanitizeFilename(`${this.currentUsername}-tree`, "svg");
     const blob = new Blob([svgStr], { type: "image/svg+xml;charset=utf-8" });
-    triggerFileDownload(blob, `${this.currentUsername}-tree.svg`);
-    this.showToast("SVG downloaded! 🖼️");
+    triggerFileDownload(blob, safeFilename);
+    this.showToast(`SVG "${safeFilename}" downloaded! 🖼️`, "success");
   }
 
   private handleOpenMarkdownModal(): void {

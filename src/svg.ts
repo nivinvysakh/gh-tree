@@ -680,21 +680,21 @@ function renderMinecraftSignpost(
     streakText = `${streak}D`;
   }
 
-  const boardWidth = 44;
+  const boardWidth = 46;
   const boardHeight = 18;
 
-  // Auto-scale pixel size and gaps so any text length fits centered with generous margin
-  let ps = 1.6;
-  let charGap = 1.5;
+  // Crisp integer pixel sizes & gaps
+  let ps = 2;
+  let charGap = 2;
   let iconGap = 3;
 
   if (streakText.length >= 5) {
-    ps = 1.15;
-    charGap = 1.0;
+    ps = 1.2;
+    charGap = 1;
     iconGap = 2;
   } else if (streakText.length === 4) {
-    ps = 1.35;
-    charGap = 1.2;
+    ps = 1.6;
+    charGap = 1.5;
     iconGap = 2.5;
   }
 
@@ -714,8 +714,8 @@ function renderMinecraftSignpost(
   const iconWidth = 5 * ps;
   const textWidth = streakText.length * (3 * ps + charGap) - charGap;
   const totalContentWidth = iconWidth + iconGap + textWidth;
-  const startX = Math.floor(x + (boardWidth - totalContentWidth) / 2);
-  const textY = y + (boardHeight - 5 * ps) / 2;
+  const startX = Math.round(x + (boardWidth - totalContentWidth) / 2);
+  const textY = Math.round(y + (boardHeight - 5 * ps) / 2);
 
   let glyphsSvg = "";
 
@@ -727,7 +727,10 @@ function renderMinecraftSignpost(
       const val = parseInt(row[c], 10);
       if (val > 0) {
         const color = iconPalette[val];
-        glyphsSvg += `<rect x="${(curX + c * ps).toFixed(1)}" y="${(textY + r * ps).toFixed(1)}" width="${ps.toFixed(1)}" height="${ps.toFixed(1)}" fill="${color}" />`;
+        const px = Math.round(curX + c * ps);
+        const py = Math.round(textY + r * ps);
+        const pw = Math.round(ps);
+        glyphsSvg += `<rect x="${px}" y="${py}" width="${pw}" height="${pw}" fill="${color}" />`;
       }
     }
   }
@@ -742,7 +745,10 @@ function renderMinecraftSignpost(
       const row = matrix[r];
       for (let c = 0; c < 3; c++) {
         if (row[c] === "1") {
-          glyphsSvg += `<rect x="${(curX + c * ps).toFixed(1)}" y="${(textY + r * ps).toFixed(1)}" width="${ps.toFixed(1)}" height="${ps.toFixed(1)}" fill="${textColor}" />`;
+          const px = Math.round(curX + c * ps);
+          const py = Math.round(textY + r * ps);
+          const pw = Math.round(ps);
+          glyphsSvg += `<rect x="${px}" y="${py}" width="${pw}" height="${pw}" fill="${textColor}" />`;
         }
       }
     }

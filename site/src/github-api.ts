@@ -35,6 +35,47 @@ export function calculateBrowserStreak(days: { date: string; count: number }[]):
 }
 
 /**
+ * Executes a network fetch with an automatic timeout abort signal.
+ */
+export async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs: number = 8000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const res = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    return res;
+  } catch (err: any) {
+    if (err?.name === "AbortError") {
+      const timeoutErr = new Error(`Request timed out after ${timeoutMs / 1000}s`);
+      (timeoutErr as any).code = "TIMEOUT";
+      throw timeoutErr;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+/**
+ * Extracts a human-readable reset message from GitHub API rate limit response headers.
+ */
+export function parseRateLimitReset(res: Response): string {
+  const resetEpoch = res.headers.get("x-ratelimit-reset");
+  if (resetEpoch) {
+    const resetTime = parseInt(resetEpoch, 10) * 1000;
+    const diffMs = resetTime - Date.now();
+    if (diffMs > 0) {
+      const minutes = Math.ceil(diffMs / 60000);
+      return `resets in ~${minutes} min`;
+    }
+  }
+  return "resets shortly";
+}
+
+/**
  * Fetches basic public profile information for a GitHub user.
  */
 export async function fetchGitHubProfile(username: string): Promise<GitHubUserProfile> {
@@ -45,7 +86,7 @@ export async function fetchGitHubProfile(username: string): Promise<GitHubUserPr
     throw err;
   }
 
-  const res = await fetch(`https://api.github.com/users/${encodeURIComponent(cleanUser)}`);
+  const res = await fetchWithTimeout(`https://api.github.com/users/${encodeURIComponent(cleanUser)}`, {}, 8000);
 
   if (res.status === 404) {
     const err = new Error(`User "@${cleanUser}" not found on GitHub.`);
@@ -54,7 +95,8 @@ export async function fetchGitHubProfile(username: string): Promise<GitHubUserPr
   }
 
   if (res.status === 403) {
-    const err = new Error("GitHub API rate limit reached. Please try again in a few moments.");
+    const resetInfo = parseRateLimitReset(res);
+    const err = new Error(`GitHub API rate limit reached (${resetInfo}). Please try again later.`);
     (err as any).code = "RATE_LIMITED";
     throw err;
   }
@@ -87,8 +129,8 @@ export async function fetchUserPRStats(username: string): Promise<{ openPRs: num
 
   try {
     const [resOpen, resMerged] = await Promise.allSettled([
-      fetch(`https://api.github.com/search/issues?q=author:${encodeURIComponent(cleanUser)}+type:pr+state:open`),
-      fetch(`https://api.github.com/search/issues?q=author:${encodeURIComponent(cleanUser)}+type:pr+is:merged`),
+      fetchWithTimeout(`https://api.github.com/search/issues?q=author:${encodeURIComponent(cleanUser)}+type:pr+state:open`, {}, 6000),
+      fetchWithTimeout(`https://api.github.com/search/issues?q=author:${encodeURIComponent(cleanUser)}+type:pr+is:merged`, {}, 6000),
     ]);
 
     if (resOpen.status === "fulfilled" && resOpen.value.ok) {
@@ -120,7 +162,7 @@ export async function checkUserStatus(username: string): Promise<{ isOwner: bool
   let isContributor = false;
 
   try {
-    const res = await fetch("https://api.github.com/repos/nivinvysakh/gh-tree/contributors");
+    const res = await fetchWithTimeout("https://api.github.com/repos/nivinvysakh/gh-tree/contributors", {}, 6000);
     if (res.ok) {
       const list: any = await res.json();
       if (Array.isArray(list)) {

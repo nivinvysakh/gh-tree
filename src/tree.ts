@@ -452,8 +452,8 @@ export function buildTreeLayout(
 
   // 12. Dynamic Non-Overlapping Flower Placement 🌸
   const leftSlots: number[] = [];
-  if (!jackOLantern || jackOLantern.x !== 112) leftSlots.push(112);
-  leftSlots.push(144);
+  if (!jackOLantern || jackOLantern.x !== 118) leftSlots.push(118);
+  leftSlots.push(146);
   if (!pet) leftSlots.push(176);
 
   const rightSlots: number[] = [];

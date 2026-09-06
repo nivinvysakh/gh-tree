@@ -28,6 +28,11 @@ export async function rasterizeSvgToRgba(
         return reject(new Error("Could not create 2D canvas context"));
       }
 
+      ctx.imageSmoothingEnabled = false;
+      (ctx as any).mozImageSmoothingEnabled = false;
+      (ctx as any).webkitImageSmoothingEnabled = false;
+      (ctx as any).msImageSmoothingEnabled = false;
+
       ctx.clearRect(0, 0, width, height);
       ctx.drawImage(img, 0, 0, width, height);
       URL.revokeObjectURL(url);
@@ -36,7 +41,7 @@ export async function rasterizeSvgToRgba(
       resolve(imgData.data);
     };
 
-    img.onerror = (err) => {
+    img.onerror = (err: any) => {
       URL.revokeObjectURL(url);
       reject(new Error(`Failed to rasterize SVG frame: ${err}`));
     };
@@ -104,15 +109,51 @@ export async function encodeBrowserGif(
 }
 
 /**
- * Initiates an automatic file download in the browser.
+ * Sanitizes a given string to be used safely as a filename across all operating systems.
+ */
+export function sanitizeFilename(input: string, extension: string, defaultName: string = "minecraft-tree"): string {
+  if (!input || typeof input !== "string") {
+    return `${defaultName}.${extension}`;
+  }
+
+  // Remove control characters and illegal filesystem characters: / \ ? * : | " < >
+  let clean = input
+    .trim()
+    .replace(/[^\w\d\-._]/g, "-") // Replace any non-alphanumeric/hyphen/underscore with '-'
+    .replace(/-+/g, "-")         // Collapse multiple hyphens
+    .replace(/^[._-]+|[._-]+$/g, ""); // Strip leading/trailing separators
+
+  if (!clean || clean === "") {
+    clean = defaultName;
+  }
+
+  // Ensure maximum length (50 characters)
+  if (clean.length > 50) {
+    clean = clean.substring(0, 50);
+  }
+
+  const cleanExt = extension.replace(/^\./, "");
+  return clean.toLowerCase().endsWith(`.${cleanExt.toLowerCase()}`)
+    ? clean
+    : `${clean}.${cleanExt}`;
+}
+
+/**
+ * Initiates a safe, sanitized file download in the browser.
  */
 export function triggerFileDownload(blob: Blob, filename: string): void {
+  if (!blob || blob.size === 0) {
+    throw new Error("Cannot download empty file.");
+  }
+  const cleanFilename = sanitizeFilename(filename, filename.split(".").pop() || "bin");
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = filename;
+  a.download = cleanFilename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 1500);
 }
