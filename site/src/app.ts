@@ -1,5 +1,5 @@
 import { TreeType } from "../../src/tree";
-import { WeatherType } from "../../src/weather";
+import { WeatherType, fetchLiveWeather } from "../../src/weather";
 import { ContributionData } from "../../src/github";
 import { TreePreviewEngine, PreviewSettings } from "./preview";
 import {
@@ -16,8 +16,10 @@ class GhTreeApp {
   private contributionData: ContributionData;
   private settings: PreviewSettings;
   private currentUsername: string = "nivinvysakh";
+  private selectedCity: string = "";
   private isGeneratingGif: boolean = false;
   private isFetchingUser: boolean = false;
+  private isFetchingCity: boolean = false;
 
   constructor() {
     const container = document.getElementById("tree-preview-container")!;
@@ -124,6 +126,45 @@ class GhTreeApp {
       });
     });
 
+    // 6a. City Weather Fetch & Presets
+    const cityInput = document.getElementById("input-city") as HTMLInputElement;
+    const fetchCityBtn = document.getElementById("btn-fetch-city") as HTMLButtonElement;
+    const clearCityBtn = document.getElementById("btn-clear-city");
+
+    fetchCityBtn?.addEventListener("click", () => {
+      const city = cityInput?.value.trim();
+      if (city) this.handleFetchCityWeather(city);
+    });
+
+    cityInput?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const city = cityInput.value.trim();
+        if (city) this.handleFetchCityWeather(city);
+      }
+    });
+
+    document.querySelectorAll<HTMLButtonElement>(".btn-city-preset").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const city = btn.getAttribute("data-city");
+        if (city && cityInput) {
+          cityInput.value = city;
+          this.handleFetchCityWeather(city);
+        }
+      });
+    });
+
+    clearCityBtn?.addEventListener("click", () => {
+      this.selectedCity = "";
+      if (cityInput) cityInput.value = "";
+      const badge = document.getElementById("city-weather-badge");
+      if (badge) {
+        badge.classList.add("hidden");
+        badge.classList.remove("flex");
+      }
+      this.showToast("City reset to manual weather.", "info");
+      this.updatePreview();
+    });
+
     // 6. Weather Selector Pills
     const weatherPills = document.querySelectorAll<HTMLElement>("#weather-selector .pill-item");
     weatherPills.forEach((pill) => {
@@ -132,6 +173,13 @@ class GhTreeApp {
         pill.classList.add("active");
         const weather = pill.getAttribute("data-weather") as WeatherType;
         this.settings.weatherType = weather;
+        this.selectedCity = "";
+        const badge = document.getElementById("city-weather-badge");
+        if (badge) {
+          badge.classList.add("hidden");
+          badge.classList.remove("flex");
+        }
+        if (cityInput) cityInput.value = "";
         this.updatePreview();
       });
     });
@@ -488,6 +536,72 @@ class GhTreeApp {
     }
   }
 
+  private async handleFetchCityWeather(cityName: string): Promise<void> {
+    if (this.isFetchingCity) return;
+    const cleanCity = cityName.trim();
+    if (!cleanCity) return;
+
+    this.isFetchingCity = true;
+    const fetchCityBtn = document.getElementById("btn-fetch-city") as HTMLButtonElement;
+    if (fetchCityBtn) {
+      fetchCityBtn.disabled = true;
+      fetchCityBtn.innerHTML = `<span>Fetching...</span> ⏳`;
+    }
+
+    try {
+      const weather = await fetchLiveWeather(cleanCity);
+      this.selectedCity = cleanCity;
+      this.settings.weatherType = weather.type;
+      this.settings.isDay = weather.isDay ?? true;
+
+      // Sync daytime switch
+      const daytimeSwitch = document.getElementById("toggle-daytime") as HTMLInputElement;
+      if (daytimeSwitch) daytimeSwitch.checked = this.settings.isDay;
+
+      // Sync active weather pill
+      const weatherPills = document.querySelectorAll<HTMLElement>("#weather-selector .pill-item");
+      weatherPills.forEach((p) => {
+        if (p.getAttribute("data-weather") === weather.type) {
+          p.classList.add("active");
+        } else {
+          p.classList.remove("active");
+        }
+      });
+
+      // Update City Weather Badge
+      const badge = document.getElementById("city-weather-badge");
+      const nameEl = document.getElementById("city-weather-name");
+      const descEl = document.getElementById("city-weather-desc");
+      const iconEl = document.getElementById("city-weather-icon");
+
+      if (badge && nameEl && descEl) {
+        badge.classList.remove("hidden");
+        badge.classList.add("flex");
+        nameEl.textContent = weather.locationName || cleanCity;
+        const tempText = weather.temperatureC !== undefined ? `${Math.round(weather.temperatureC)}°C • ` : "";
+        descEl.textContent = `${tempText}${weather.description}`;
+        if (iconEl) {
+          if (weather.type === "rain") iconEl.textContent = "🌧️";
+          else if (weather.type === "snow") iconEl.textContent = "❄️";
+          else if (weather.type === "night") iconEl.textContent = "🌙";
+          else if (weather.type === "cloudy") iconEl.textContent = "☁️";
+          else iconEl.textContent = "☀️";
+        }
+      }
+
+      this.showToast(`Live weather loaded for ${weather.locationName || cleanCity}! 🌍`, "success");
+      this.updatePreview();
+    } catch (err: any) {
+      this.showToast(`Could not fetch weather for "${cleanCity}".`, "error");
+    } finally {
+      this.isFetchingCity = false;
+      if (fetchCityBtn) {
+        fetchCityBtn.disabled = false;
+        fetchCityBtn.innerHTML = `<span>Fetch</span> ⚡`;
+      }
+    }
+  }
+
   public getLiveApiUrl(): string {
     const base = "https://gh-tree.vercel.app/api/tree.gif";
     const params = new URLSearchParams();
@@ -497,7 +611,9 @@ class GhTreeApp {
     if (this.settings.treeType && this.settings.treeType !== "oak") {
       params.set("theme", this.settings.treeType);
     }
-    if (this.settings.weatherType && this.settings.weatherType !== "sunny") {
+    if (this.selectedCity) {
+      params.set("city", this.selectedCity);
+    } else if (this.settings.weatherType && this.settings.weatherType !== "sunny") {
       params.set("weather", this.settings.weatherType);
     }
     if (this.settings.pet && this.settings.pet !== "none") {
@@ -646,7 +762,7 @@ jobs:
           tree-type: '${this.settings.treeType}'
           pet: '${this.settings.pet}'
           event: '${this.settings.event}'
-          weather: '${this.settings.weatherType}'
+          ${this.selectedCity ? `city: '${this.selectedCity}'` : `weather: '${this.settings.weatherType}'`}
           show-campfire: ${this.settings.showCampfire}
           show-chest: ${this.settings.showChest}
           show-signpost: ${this.settings.showSignpost}
