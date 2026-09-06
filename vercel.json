@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "buildCommand": "npm run site:build",
+  "outputDirectory": "dist-site",
+  "rewrites": [
+    {
+      "source": "/api/tree.gif",
+      "destination": "/api/tree?format=gif"
+    },
+    {
+      "source": "/api/tree.svg",
+      "destination": "/api/tree"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, OPTIONS"
+        }
+      ]
+    }
+  ]
+}

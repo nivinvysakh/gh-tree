@@ -12,6 +12,7 @@ async function ensureWasmInitialized(): Promise<void> {
         const possiblePaths = [
           path.join(__dirname, "index_bg.wasm"),
           path.join(__dirname, "../node_modules/@resvg/resvg-wasm/index_bg.wasm"),
+          path.join(process.cwd(), "node_modules/@resvg/resvg-wasm/index_bg.wasm"),
         ];
 
         let wasmBuffer: Buffer | null = null;

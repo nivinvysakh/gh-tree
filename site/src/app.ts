@@ -222,6 +222,21 @@ class GhTreeApp {
     document.getElementById("btn-copy-markdown")?.addEventListener("click", () => this.handleOpenMarkdownModal());
     document.getElementById("btn-copy-workflow")?.addEventListener("click", () => this.handleOpenWorkflowModal());
 
+    // 12. Quick Embed Action Buttons
+    document.getElementById("btn-quick-copy-md")?.addEventListener("click", () => {
+      const md = this.getLiveMarkdownEmbed();
+      navigator.clipboard.writeText(md).then(() => {
+        this.showToast("Markdown embed copied! 📋 Paste it in your README", "success");
+      });
+    });
+
+    document.getElementById("btn-quick-copy-url")?.addEventListener("click", () => {
+      const url = this.getLiveApiUrl();
+      navigator.clipboard.writeText(url).then(() => {
+        this.showToast("Direct Image URL copied! 🔗", "success");
+      });
+    });
+
     // 13. Modal Close & Copy
     document.getElementById("modal-close")?.addEventListener("click", () => this.closeModal());
     document.getElementById("app-modal")?.addEventListener("click", (e) => {
@@ -473,8 +488,54 @@ class GhTreeApp {
     }
   }
 
+  public getLiveApiUrl(): string {
+    const base = "https://gh-tree.vercel.app/api/tree";
+    const params = new URLSearchParams();
+    const cleanUser = this.currentUsername || "nivinvysakh";
+    params.set("user", cleanUser);
+
+    if (this.settings.treeType && this.settings.treeType !== "oak") {
+      params.set("theme", this.settings.treeType);
+    }
+    if (this.settings.weatherType && this.settings.weatherType !== "sunny") {
+      params.set("weather", this.settings.weatherType);
+    }
+    if (this.settings.pet && this.settings.pet !== "none") {
+      params.set("pet", this.settings.pet);
+    }
+    if (this.settings.event && this.settings.event !== "none") {
+      params.set("event", this.settings.event);
+    }
+    if (this.settings.showCampfire) {
+      params.set("campfire", "true");
+    }
+
+    return `${base}?${params.toString()}`;
+  }
+
+  public getLiveMarkdownEmbed(): string {
+    const url = this.getLiveApiUrl();
+    const cleanUser = this.currentUsername || "GitHub Developer";
+    return `[![${cleanUser}'s Minecraft Tree](${url})](https://github.com/nivinvysakh/gh-tree)`;
+  }
+
   private updatePreview(): void {
     this.previewEngine.update(this.contributionData, this.settings);
+    this.updateEmbedSnippet();
+  }
+
+  private updateEmbedSnippet(): void {
+    const embedPreview = document.getElementById("embed-markdown-preview");
+    const testLink = document.getElementById("link-test-live-api") as HTMLAnchorElement;
+    const liveUrl = this.getLiveApiUrl();
+    const liveMd = this.getLiveMarkdownEmbed();
+
+    if (embedPreview) {
+      embedPreview.textContent = liveMd;
+    }
+    if (testLink) {
+      testLink.href = liveUrl;
+    }
   }
 
   private async handleGenerateGif(): Promise<void> {
@@ -540,14 +601,23 @@ class GhTreeApp {
   }
 
   private handleOpenMarkdownModal(): void {
-    const snippet = `<!-- commit-tree-start -->
+    const instantMd = this.getLiveMarkdownEmbed();
+    const actionMd = `<!-- commit-tree-start -->
 ![${this.currentUsername}'s Minecraft Tree](https://github.com/${this.currentUsername}/${this.currentUsername}/raw/main/tree.gif)
 <!-- commit-tree-end -->`;
 
+    const combinedSnippet = `### Option 1: Instant 1-Line Live URL (Zero Setup - Recommended)
+${instantMd}
+
+---
+
+### Option 2: GitHub Actions Automated Workflow (Self-Hosted)
+${actionMd}`;
+
     this.openModal(
-      "GitHub Profile README Markdown",
-      "Add this snippet to your GitHub Profile README.md (the Action will keep it automatically updated!):",
-      snippet
+      "GitHub Profile README Embed Code",
+      "Choose your preferred integration method to display your Minecraft Tree:",
+      combinedSnippet
     );
   }
 
