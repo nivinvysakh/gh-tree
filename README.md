@@ -125,9 +125,33 @@ Embedded in the underground dirt layer beneath your tree, 6 distinct ore blocks 
 
 ---
 
-## Quick Start (Profile README)
+## ⚡ Quick Start
 
-Add this simple workflow to your repository (e.g. your `username/username` profile README repository) at `.github/workflows/tree.yml`:
+Choose the integration method that fits your workflow:
+
+### 🚀 Method 1: Instant 1-Line Embed (Zero Setup - Recommended)
+
+Paste this single line directly into your GitHub Profile `README.md` (**no workflows, YAML files, or tokens needed!**):
+
+```markdown
+[![Minecraft Tree](https://gh-tree.vercel.app/api/tree?user=YOUR_USERNAME&theme=sakura)](https://github.com/nivinvysakh/gh-tree)
+```
+
+**Customize with URL parameters:**
+* `user`: Your GitHub username (`?user=nivinvysakh`)
+* `theme`: `oak` | `sakura` | `spruce` | `birch` (default: `oak`)
+* `weather`: `auto` | `sunny` | `rain` | `snow` | `night` | `cloudy`
+* `pet`: `auto` | `wolf` | `fox` | `cat` | `none`
+* `event`: `auto` | `halloween` | `holiday` | `fireworks` | `none`
+* `campfire`: `true` | `false` | `auto`
+
+👉 **Customize live in the [gh-tree Studio](https://gh-tree.vercel.app)**.
+
+---
+
+### ⚙️ Method 2: GitHub Actions Automated Workflow (Daily Updated GIF)
+
+If you prefer self-hosting the animated GIF in your repository, add this workflow at `.github/workflows/tree.yml`:
 
 ```yaml
 name: Generate Commit Tree

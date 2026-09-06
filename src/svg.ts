@@ -1424,3 +1424,5 @@ export function renderFrame(
   ${precipSvg}
 </svg>`;
 }
+
+export const generateSvg = renderFrame;

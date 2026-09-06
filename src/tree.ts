@@ -539,3 +539,43 @@ export function buildTreeLayout(
     isContributor: opts.isContributor,
   };
 }
+
+export type TreeOptions = {
+  width?: number;
+  height?: number;
+  weather?: WeatherCondition;
+  treeType?: TreeType;
+  showSignpost?: boolean;
+  showBee?: boolean;
+  isOwner?: boolean;
+  isContributor?: boolean;
+  pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+  showCampfire?: boolean | "auto";
+  showChest?: boolean | "auto";
+  event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
+  currentDate?: Date;
+  streak?: number;
+  openPRs?: number;
+  mergedPRs?: number;
+  assignedPRs?: number;
+};
+
+export function calculateTree(
+  contributions: {
+    weeks: ContributionWeek[];
+    totalCommits?: number;
+    currentStreak?: number;
+    totalOpenPRs?: number;
+    totalMergedPRs?: number;
+    totalAssignedPRs?: number;
+  },
+  opts: TreeOptions = {}
+): TreeLayout {
+  return buildTreeLayout(contributions.weeks, contributions.totalCommits, {
+    streak: contributions.currentStreak,
+    openPRs: contributions.totalOpenPRs,
+    mergedPRs: contributions.totalMergedPRs,
+    assignedPRs: contributions.totalAssignedPRs,
+    ...opts,
+  });
+}
