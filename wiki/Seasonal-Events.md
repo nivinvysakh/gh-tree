@@ -8,7 +8,7 @@
 
 | Event | Automatic Active Month | Visual Effects & Decorations |
 | :--- | :---: | :--- |
-| **Spooky Halloween 🎃** | **October** (`Month 9`) | • **Carved Jack-o'-Lantern**: Sits on the lawn with glowing carved toothy grin, glowing eyes, and candle-lit interior.<br>• Pairs well with night mode and the Tuxedo Cat companion! |
+| **Spooky Halloween 🎃** | **October** (`Month 9`) | • **Carved Jack-o'-Lantern**: Sits on the lawn with glowing carved toothy grin, glowing eyes, and candle-lit interior.<br>• **Floating Spooky Spirit Ghosts**: Semi-translucent wispy ghosts with glowing cyan eyes emerge from the pumpkin and float into the night sky!<br>• **Smart Ground Clearing**: Automatically clears flowers in front of the pumpkin for clean visibility.<br>• Pairs well with night mode and the Tuxedo Cat companion! |
 | **Winter Holiday / Christmas 🎄** | **December** (`Month 11`) | • **Fairy String Lights**: Multi-colored twinkling festive lights (red, green, gold, blue) draped across the canopy leaf blocks.<br>• **Wrapped Gift Boxes**: Red and golden wrapped gift boxes sitting under the tree with green ribbons. |
 | **New Year Fireworks 🎆** | **January** (`Month 0`) | • **Cascading Fireworks**: Cyan, gold, and magenta starburst pixel fireworks bursting across the sky with gravity-affected spark trails. |
 

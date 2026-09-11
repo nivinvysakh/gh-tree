@@ -11,8 +11,8 @@ Explore our detailed documentation and game mechanics below:
 | Guide | Description |
 | :--- | :--- |
 | **[🚀 Getting Started](Getting-Started)** | Quick setup guide for GitHub Profile READMEs & workflows. |
-| **[🌸 Biomes & Tree Types](Biomes-&-Trees)** | Guide to Oak, Sakura, Spruce, and Birch biomes & commit leaf levels. |
-| **[🐾 Collectibles & Game Mechanics](Collectibles-&-Game-Mechanics)** | Pets (Wolf, Fox, Cat), Campfire, Milestone Chests, and Stat Signposts. |
+| **[🌸 Biomes & Tree Types](Biomes-&-Trees)** | Guide to all 10 Minecraft biomes (Oak, Sakura, Spruce, Birch, Jungle, Dark Oak, Acacia, Mangrove, Crimson, Warped). |
+| **[🐾 Collectibles & Game Mechanics](Collectibles-&-Game-Mechanics)** | Pets (Wolf, Fox, Cat, Parrot), Campfire, Milestone Chests, and Stat Signposts. |
 | **[💎 Underground Ores](Underground-Ores)** | All 6 underground ores, maintainer perks, and the **Lapis Lazuli Contributor Badge**! |
 | **[🌦️ Weather & Atmosphere](Weather-&-Day-Night-Cycle)** | Real-time Open-Meteo weather integration, rain streaks, snow, and moon phases. |
 | **[🎃 Seasonal Holiday Events](Seasonal-Events)** | Spooky Halloween, Winter Holiday Christmas, and New Year Fireworks. |

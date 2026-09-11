@@ -52,18 +52,12 @@ When the GitHub Action runs, it executes the following sequence:
   - Distributes items across `leftSlots: [112, 144, 176]` and `rightSlots: [258, 296, 336, 374]`.
   - Ensures companion pets, campfires, chests, signposts, and flowers never visually overlap.
 
-### 4. SVG Pixel Art Engine (`src/svg.ts`)
-- Uses pure SVG `<rect>` elements with `shape-rendering="crispEdges"` for razor-sharp retro rendering.
-- **Layers Rendered (Bottom to Top)**:
-  1. Sky & atmospheric weather particles (sun, moon, stars, rain streaks, snow, clouds).
-  2. Underground dirt layer & unlocked Ore blocks (Netherite, Gold, Diamond, Emerald, Lapis, Redstone).
-  3. Grass lawn surface (`groundY = 370`).
-  4. Tree trunk (wood bark pattern per biome) and beehive.
-  5. Canopy leaf blocks with dynamic seasonal foliage and holiday fairy lights / gifts.
-  6. Ground props (campfires with rising smoke particles, chests, signposts).
-  7. Companion mobs (wolf wagging tail, sleeping/alert fox, cat).
-  8. Flying entities (animated buzzing bee hovering around canopy).
-  9. Hanging apples & lawn flowers.
+### 4. Modular SVG Pixel Art Engine (`src/svg.ts`, `src/palettes.ts`, `src/environment.ts`, `src/props.ts`)
+The rendering architecture uses pure SVG `<rect>` elements with `shape-rendering="crispEdges"` for razor-sharp retro pixel art:
+- **`src/palettes.ts`**: Static 16x16 pixel index maps, 10 biome foliage & bark color tokens, ground terrain profiles (`BIOME_TERRAINS`), mineral palettes, and font glyphs.
+- **`src/environment.ts`**: Celestial bodies (Minecraft Sun, Moon with craters, twinkling stars, clouds), weather precipitation (rain, snowflakes, sakura petals), and atmospheric particles (Nether spores, fireflies, fireworks).
+- **`src/props.ts`**: Ground terrain layers with jagged hanging grass fringes, trunk logs, 14 canopy leaves with commit-level shading, milestone chests, stat signposts, creature companions (wolf, fox, cat, parrot), and seasonal decorations.
+- **`src/svg.ts`**: Top-level frame compositor assembling layers into standard responsive `<svg>` frames.
 
 ### 5. High-Performance GIF Encoding (`src/gif.ts`)
 - Rasterizes SVG strings into raw RGBA pixel buffers in memory using `@resvg/resvg-wasm` (Rust-based SVG renderer compiled to WebAssembly).

@@ -4,10 +4,11 @@
 
 ---
 
-## 🐾 Companion Pets (`pet: auto | wolf | fox | cat | none`) {#pets}
+## 🐾 Companion Pets (`pet: auto | wolf | fox | cat | parrot | none`) {#pets}
 
 | Companion | Unlock Condition (Auto Mode) | Visual Behavior |
 | :--- | :--- | :--- |
+| **Red Macaw Parrot 🦜** | **Selected via `pet: parrot`** (or Jungle biome) | Perches on lawn with scarlet feathers, tri-color wings (red ➔ yellow ➔ blue), crested head, and an animated dancing head bob & tail flutter! |
 | **Tamed Wolf 🐺** | **Current streak ≥ 14 days** | Sits loyally under the canopy with a vibrant red collar, golden tag, and a happy wagging tail. |
 | **Sleeping / Alert Fox 🦊** | **Current streak ≥ 7 days** or active commits | Curls up peacefully sleeping during the daytime; wakes up alert with perked ears and twitching tail at night! |
 | **Tuxedo Cat 🐱** | **Current streak ≥ 3 days** or ≥ 25 total commits | Sits gracefully under the tree with glowing emerald green eyes, cyan collar, and swishing tail. |
@@ -31,7 +32,7 @@ As your total contributions grow across the date range, your lawn treasure chest
 | ⚙️ **Iron Chest** | $\ge 50$ commits | Sturdy steel plate armor frame. |
 | 🪙 **Golden Chest** | $\ge 150$ commits | Polished gold with animated glint sparkle. |
 | 💎 **Diamond Chest** | $\ge 300$ commits | Brilliant cyan diamond body with animated glint sparkle. |
-| 🌌 **Ender Chest** | $\ge 500$ commits | Deep obsidian/emerald body with glowing purple/cyan Eye of Ender lock! |
+| 🌌 **Ender Chest** | $\ge 500$ commits | Deep obsidian/teal body, flush ground alignment, authentic **Eye of Ender** center lock, and floating mystical portal particles! |
 
 ---
 
