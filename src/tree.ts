@@ -8,7 +8,17 @@ export const MAX_FLOWERS = 4;
 export const MAX_APPLES = 4;
 export const MAX_GOLDEN_APPLES = 4;
 
-export type TreeType = "oak" | "sakura" | "spruce" | "birch";
+export type TreeType =
+  | "oak"
+  | "sakura"
+  | "spruce"
+  | "birch"
+  | "jungle"
+  | "dark_oak"
+  | "acacia"
+  | "mangrove"
+  | "crimson"
+  | "warped";
 
 export interface LeafBlockPos {
   gridX: number; // relative to trunk (-2, -1, 0, 1, 2)

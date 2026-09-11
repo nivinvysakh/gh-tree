@@ -200,7 +200,18 @@ describe("Minecraft SVG module", () => {
   });
 
   describe("Skin & Weather Combinations Matrix", () => {
-    const biomes: ("oak" | "sakura" | "spruce" | "birch")[] = ["oak", "sakura", "spruce", "birch"];
+    const biomes = [
+      "oak",
+      "sakura",
+      "spruce",
+      "birch",
+      "jungle",
+      "dark_oak",
+      "acacia",
+      "mangrove",
+      "crimson",
+      "warped",
+    ] as const;
     const weathers: { type: "sunny" | "rain" | "snow" | "night" | "cloudy"; isDay?: boolean }[] = [
       { type: "sunny", isDay: true },
       { type: "rain", isDay: true },
@@ -238,6 +249,26 @@ describe("Minecraft SVG module", () => {
         });
       }
     }
+  });
+
+  it("renders atmospheric bioluminescent spores for Nether biomes (crimson and warped)", () => {
+    const crimsonLayout: TreeLayout = { ...mockLayout, treeType: "crimson" };
+    const crimsonSvg = renderFrame(crimsonLayout, 0, 20);
+    expect(crimsonSvg).toContain("<!-- Spores / Fireflies -->");
+    expect(crimsonSvg).toContain('fill="#ff5252"'); // Crimson spores
+
+    const warpedLayout: TreeLayout = { ...mockLayout, treeType: "warped" };
+    const warpedSvg = renderFrame(warpedLayout, 0, 20);
+    expect(warpedSvg).toContain("<!-- Spores / Fireflies -->");
+    expect(warpedSvg).toContain('fill="#00e5ff"'); // Warped cyan spores
+  });
+
+  it("renders authentic Minecraft jagged grass fringe and dirt strata texturing", () => {
+    const svg = renderFrame(mockLayout, 0, 20);
+    // Jagged fringe shadow
+    expect(svg).toContain('fill="#558b2f"');
+    // Textured dirt specks
+    expect(svg).toContain('fill="#3e2723"');
   });
 
   it("renders Minecraft Pet Companions (Wolf, Fox, Cat) with animations", () => {

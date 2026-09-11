@@ -75,9 +75,21 @@ async function run(): Promise<void> {
     const city = core.getInput("city") || "";
     const weatherOverride = core.getInput("weather") || "";
     const rawTreeType = (core.getInput("tree-type") || "oak").toLowerCase().trim();
-    const treeType = (["oak", "sakura", "spruce", "birch"].includes(rawTreeType)
+    const validTreeTypes = [
+      "oak",
+      "sakura",
+      "spruce",
+      "birch",
+      "jungle",
+      "dark_oak",
+      "acacia",
+      "mangrove",
+      "crimson",
+      "warped",
+    ];
+    const treeType = (validTreeTypes.includes(rawTreeType)
       ? rawTreeType
-      : "oak") as "oak" | "sakura" | "spruce" | "birch";
+      : "oak") as any;
     const showSignpost = core.getInput("show-signpost") !== "false";
     const showBee = core.getInput("show-bee") !== "false";
 

@@ -263,6 +263,16 @@ describe("Minecraft tree module", () => {
       expect(noChestLayout.chest).toBeUndefined();
     });
 
+    it("supports all 10 Minecraft biomes (oak, sakura, spruce, birch, jungle, dark_oak, acacia, mangrove, crimson, warped)", () => {
+      const biomes = ["oak", "sakura", "spruce", "birch", "jungle", "dark_oak", "acacia", "mangrove", "crimson", "warped"] as const;
+      for (const biome of biomes) {
+        const layout = buildTreeLayout(mockWeeks, undefined, { treeType: biome });
+        expect(layout.treeType).toBe(biome);
+        expect(layout.leafBlocks.length).toBe(14);
+        expect(layout.trunkBlocks.length).toBe(3);
+      }
+    });
+
     it("activates seasonal events (Halloween, Holiday/Christmas, Fireworks) automatically or manually", () => {
       // Halloween (October)
       const octDate = new Date(2026, 9, 31); // Month 9 = October

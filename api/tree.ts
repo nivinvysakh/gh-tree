@@ -338,7 +338,20 @@ export default async function handler(req: any, res: any) {
 
   // Parse Options
   const rawTheme = (query.theme || query.type || query.biome || "oak").toLowerCase().trim();
-  const theme: TreeType = ["oak", "sakura", "spruce", "birch"].includes(rawTheme) ? (rawTheme as TreeType) : "oak";
+  const theme: TreeType = [
+    "oak",
+    "sakura",
+    "spruce",
+    "birch",
+    "jungle",
+    "dark_oak",
+    "acacia",
+    "mangrove",
+    "crimson",
+    "warped",
+  ].includes(rawTheme)
+    ? (rawTheme as TreeType)
+    : "oak";
 
   const city = query.city || query.location;
   const weather = city ? await fetchLiveWeather(String(city), query.weather) : resolveWeather(query.weather);

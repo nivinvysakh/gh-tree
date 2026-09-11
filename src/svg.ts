@@ -58,6 +58,42 @@ const LOG_PALETTES: Record<TreeType, string[]> = {
     "#1e1e1e", // 2: Dark notch edge
     "#ffffff", // 3: Bright white highlight
   ],
+  jungle: [
+    "#564426", // 0: Jungle wood
+    "#3d301b", // 1: Dark fissure
+    "#271e11", // 2: Bark edge
+    "#735a33", // 3: Warm highlight
+  ],
+  dark_oak: [
+    "#302213", // 0: Dark oak chocolate
+    "#21160b", // 1: Deep shadow
+    "#140c05", // 2: Bark edge
+    "#47331e", // 3: Rich brown highlight
+  ],
+  acacia: [
+    "#686660", // 0: Weathered savanna gray
+    "#4d4b47", // 1: Gray fissure
+    "#33322f", // 2: Dark edge
+    "#85827b", // 3: Light silver-gray
+  ],
+  mangrove: [
+    "#542a22", // 0: Muddy red-brown
+    "#3b1a14", // 1: Dark root fissure
+    "#260e0a", // 2: Outer edge
+    "#70392f", // 3: Reddish highlight
+  ],
+  crimson: [
+    "#5c1827", // 0: Crimson hyphae
+    "#400f1a", // 1: Dark vein
+    "#29070f", // 2: Hyphae edge
+    "#7d2437", // 3: Bright crimson highlight
+  ],
+  warped: [
+    "#16615b", // 0: Warped hyphae
+    "#0d4540", // 1: Dark teal vein
+    "#062b28", // 2: Hyphae edge
+    "#228079", // 3: Bright cyan-teal highlight
+  ],
 };
 
 // Authentic 16x16 Minecraft Leaf texture
@@ -129,6 +165,78 @@ const LEAF_PALETTES: Record<TreeType, string[][]> = {
     // Level 4: rich emerald birch
     ["#476b1c", "#324f11", "#1e3308", "#5e8a26"],
   ],
+  jungle: [
+    // Level 0: dormant jungle
+    ["#6f7a59", "#535c43", "#3a412e", "#8b9970"],
+    // Level 1: bright rainforest lime
+    ["#5bb328", "#438a1b", "#2c6111", "#7ad143"],
+    // Level 2: lush rainforest green
+    ["#3ea118", "#2c7a10", "#1c5409", "#5ac72e"],
+    // Level 3: rich canopy emerald
+    ["#2d8a0f", "#1f6608", "#124204", "#43ab1f"],
+    // Level 4: vivid jungle crown
+    ["#1c7308", "#125204", "#083301", "#329415"],
+  ],
+  dark_oak: [
+    // Level 0: dormant dark oak
+    ["#596350", "#3f4738", "#292e24", "#748268"],
+    // Level 1: deep roofed forest green
+    ["#3f6b28", "#2b4f1b", "#1a360f", "#568f39"],
+    // Level 2: dense shaded green
+    ["#2d571a", "#1d3d0f", "#102608", "#437829"],
+    // Level 3: rich dark canopy
+    ["#1e4210", "#122c09", "#081b04", "#30611c"],
+    // Level 4: midnight forest emerald
+    ["#113008", "#091f04", "#031201", "#204a11"],
+  ],
+  acacia: [
+    // Level 0: dormant savanna
+    ["#8f7d63", "#6e5e47", "#4f4230", "#ad9779"],
+    // Level 1: savanna yellow-olive
+    ["#a39b37", "#807a27", "#5c5719", "#c4bc49"],
+    // Level 2: golden savanna leaf
+    ["#b5892b", "#8f691d", "#694c12", "#d4a43d"],
+    // Level 3: warm amber canopy
+    ["#b87428", "#91571b", "#6b3d0f", "#d98f38"],
+    // Level 4: fiery sunset acacia
+    ["#b35822", "#8c4015", "#632a0b", "#d47131"],
+  ],
+  mangrove: [
+    // Level 0: dormant mangrove
+    ["#637059", "#495441", "#313b2a", "#7e8f72"],
+    // Level 1: swamp moss green
+    ["#6ba83b", "#518529", "#37611a", "#87c752"],
+    // Level 2: lush mangrove leaf
+    ["#53962b", "#3c751c", "#275411", "#6eb53e"],
+    // Level 3: deep swamp canopy
+    ["#3d801d", "#296111", "#174209", "#569e2e"],
+    // Level 4: vibrant bayou green
+    ["#2a6912", "#1a4d0a", "#0d3304", "#3f8220"],
+  ],
+  crimson: [
+    // Level 0: dormant crimson wart
+    ["#69222c", "#4d151d", "#330b11", "#87303d"],
+    // Level 1: nether crimson red
+    ["#9e1b2f", "#781020", "#540714", "#c42d45"],
+    // Level 2: vibrant crimson wart
+    ["#bd1e37", "#941228", "#6b081a", "#de334f"],
+    // Level 3: rich glowing crimson
+    ["#db1f3d", "#b0122c", "#85071e", "#f53857"],
+    // Level 4: radiant Nether flame
+    ["#ff2a4d", "#d11535", "#a10a24", "#ff5c77"],
+  ],
+  warped: [
+    // Level 0: dormant warped wart
+    ["#204d4a", "#143634", "#0a2120", "#316663"],
+    // Level 1: warped forest teal
+    ["#137871", "#0b5752", "#053835", "#209c93"],
+    // Level 2: vibrant warped cyan
+    ["#129c93", "#0a736c", "#054d48", "#22c4ba"],
+    // Level 3: rich glowing warped
+    ["#14b8ae", "#0c8c84", "#065e59", "#2de0d4"],
+    // Level 4: radiant Nether aurora
+    ["#17ded2", "#10aba2", "#08736d", "#4af5ea"],
+  ],
 };
 
 function renderMinecraftSun(
@@ -186,28 +294,67 @@ function renderMinecraftStars(
   frameIndex: number
 ): string {
   const starCoords = [
-    { x: 30, y: 15 },
-    { x: 75, y: 42 },
-    { x: 135, y: 20 },
-    { x: 175, y: 48 },
-    { x: 280, y: 18 },
-    { x: 320, y: 38 },
-    { x: 415, y: 12 },
-    { x: 430, y: 55 },
+    { x: 25, y: 12, s: 2.0 },
+    { x: 55, y: 35, s: 1.5 },
+    { x: 80, y: 18, s: 2.5 },
+    { x: 120, y: 48, s: 1.5 },
+    { x: 145, y: 15, s: 2.0 },
+    { x: 185, y: 38, s: 2.5 },
+    { x: 220, y: 22, s: 1.5 },
+    { x: 260, y: 45, s: 2.0 },
+    { x: 295, y: 14, s: 2.5 },
+    { x: 330, y: 40, s: 1.5 },
+    { x: 365, y: 25, s: 2.0 },
+    { x: 400, y: 10, s: 2.5 },
+    { x: 425, y: 35, s: 1.5 },
+    { x: 445, y: 55, s: 2.0 },
   ];
 
   let rects = "";
   for (let i = 0; i < starCoords.length; i++) {
     const star = starCoords[i];
     const twinkle = (frameIndex + i * 2) % 4 === 0;
-    const opacity = twinkle ? 0.95 : 0.4;
-    const color = i % 3 === 0 ? "#fff9c4" : "#ffffff";
-    const size = (i % 2 === 0 && twinkle) ? 2.5 : 2.0;
+    const opacity = twinkle ? 0.95 : 0.35;
+    const color = i % 4 === 0 ? "#fff9c4" : i % 4 === 1 ? "#e0f7fa" : "#ffffff";
+    const size = (i % 2 === 0 && twinkle) ? star.s + 0.5 : star.s;
 
-    rects += `<rect x="${star.x}" y="${star.y}" width="${size}" height="${size}" fill="${color}" opacity="${opacity}" />`;
+    rects += `<rect x="${star.x}" y="${star.y}" width="${size.toFixed(1)}" height="${size.toFixed(1)}" fill="${color}" opacity="${opacity}" />`;
   }
 
-  return `<g shape-rendering="crispEdges">${rects}</g>`;
+  return `<g shape-rendering="crispEdges"><!-- Twinkling Star Field -->${rects}</g>`;
+}
+
+function renderBioluminescentParticles(
+  width: number,
+  groundY: number,
+  frameIndex: number,
+  totalFrames: number,
+  treeType: TreeType
+): string {
+  let rects = "";
+  const count = 14;
+  const isCrimson = treeType === "crimson";
+  const isWarped = treeType === "warped";
+  const color1 = isCrimson ? "#ff5252" : isWarped ? "#00e5ff" : "#ffd54f";
+  const color2 = isCrimson ? "#ff8a80" : isWarped ? "#80d8ff" : "#fff59d";
+
+  for (let i = 0; i < count; i++) {
+    const seedX = (i * 33 + 19) % width;
+    const rise = ((frameIndex * 3 + i * 11) % (groundY - 50));
+    const py = groundY - 15 - rise;
+    const sway = Math.sin((frameIndex + i) * 0.45) * 6;
+    const px = (seedX + sway + width) % width;
+    const pulse = (frameIndex + i) % 3 === 0;
+    const opacity = pulse ? 0.85 : 0.4;
+    const color = i % 2 === 0 ? color1 : color2;
+
+    rects += `<rect x="${px.toFixed(1)}" y="${py.toFixed(1)}" width="2" height="2" fill="${color}" opacity="${opacity}" />`;
+    if (pulse) {
+      rects += `<rect x="${(px - 1).toFixed(1)}" y="${(py - 1).toFixed(1)}" width="4" height="4" fill="${color}" opacity="0.2" />`;
+    }
+  }
+
+  return `<g shape-rendering="crispEdges"><!-- Spores / Fireflies -->${rects}</g>`;
 }
 
 function renderMinecraftCloud(
@@ -317,17 +464,126 @@ function renderSnowflakes(
   return `<g shape-rendering="crispEdges">${rects}</g>`;
 }
 
+interface BiomeTerrainPalette {
+  grassTop: string;
+  grassHighlight: string;
+  grassShadow: string;
+  dirtBase: string;
+  dirtDark: string;
+  dirtLight: string;
+  pebbleColor: string;
+}
+
+const BIOME_TERRAINS: Record<TreeType, BiomeTerrainPalette> = {
+  oak: {
+    grassTop: "#7cb342",
+    grassHighlight: "#8bc34a",
+    grassShadow: "#558b2f",
+    dirtBase: "#5d4037",
+    dirtDark: "#3e2723",
+    dirtLight: "#6d4c41",
+    pebbleColor: "#757575",
+  },
+  sakura: {
+    grassTop: "#8bc34a",
+    grassHighlight: "#aed581",
+    grassShadow: "#689f38",
+    dirtBase: "#4e342e",
+    dirtDark: "#3e2723",
+    dirtLight: "#5d4037",
+    pebbleColor: "#8d6e63",
+  },
+  spruce: {
+    grassTop: "#558b2f",
+    grassHighlight: "#689f38",
+    grassShadow: "#33691e",
+    dirtBase: "#3e2723",
+    dirtDark: "#27160c",
+    dirtLight: "#4e342e",
+    pebbleColor: "#616161",
+  },
+  birch: {
+    grassTop: "#8bc34a",
+    grassHighlight: "#9ccc65",
+    grassShadow: "#689f38",
+    dirtBase: "#5d4037",
+    dirtDark: "#3e2723",
+    dirtLight: "#6d4c41",
+    pebbleColor: "#757575",
+  },
+  jungle: {
+    grassTop: "#43a047",
+    grassHighlight: "#66bb6a",
+    grassShadow: "#2e7d32",
+    dirtBase: "#4e342e",
+    dirtDark: "#3e2723",
+    dirtLight: "#5d4037",
+    pebbleColor: "#757575",
+  },
+  dark_oak: {
+    grassTop: "#33691e",
+    grassHighlight: "#438228",
+    grassShadow: "#1b430e",
+    dirtBase: "#3e2723",
+    dirtDark: "#27160c",
+    dirtLight: "#4e342e",
+    pebbleColor: "#616161",
+  },
+  acacia: {
+    grassTop: "#9e9d24",
+    grassHighlight: "#c0ca33",
+    grassShadow: "#827717",
+    dirtBase: "#5d4037",
+    dirtDark: "#3e2723",
+    dirtLight: "#6d4c41",
+    pebbleColor: "#8d6e63",
+  },
+  mangrove: {
+    grassTop: "#689f38",
+    grassHighlight: "#8bc34a",
+    grassShadow: "#33691e",
+    dirtBase: "#3e2723",
+    dirtDark: "#28170d",
+    dirtLight: "#4e342e",
+    pebbleColor: "#757575",
+  },
+  crimson: {
+    grassTop: "#9e1b2f",
+    grassHighlight: "#c42d45",
+    grassShadow: "#781020",
+    dirtBase: "#4a1018",
+    dirtDark: "#30080f",
+    dirtLight: "#611621",
+    pebbleColor: "#29050b",
+  },
+  warped: {
+    grassTop: "#137871",
+    grassHighlight: "#209c93",
+    grassShadow: "#0b5752",
+    dirtBase: "#0d2b28",
+    dirtDark: "#061f1c",
+    dirtLight: "#143d39",
+    pebbleColor: "#051715",
+  },
+};
+
 function renderMinecraftGround(
   width: number,
   height: number,
   groundY: number,
   isSnow: boolean = false,
-  oreBlocks: OreBlockPos[] = []
+  oreBlocks: OreBlockPos[] = [],
+  treeType: TreeType = "oak"
 ): string {
+  const terrain = BIOME_TERRAINS[treeType] || BIOME_TERRAINS.oak;
   const grassHeight = 14;
-  const grassColor = isSnow ? "#eceff1" : "#7cb342";
-  const grassHighlight = isSnow ? "#ffffff" : "#8bc34a";
-  const grassShadow = isSnow ? "#cfd8dc" : "#558b2f";
+  const grassColor = isSnow ? "#eceff1" : terrain.grassTop;
+  const grassHighlight = isSnow ? "#ffffff" : terrain.grassHighlight;
+  const grassShadow = isSnow ? "#cfd8dc" : terrain.grassShadow;
+  const dirtBase = terrain.dirtBase;
+  const dirtDark = terrain.dirtDark;
+  const dirtLight = terrain.dirtLight;
+  const pebbleColor = terrain.pebbleColor;
 
   const ORE_PALETTES: Record<string, { gemColor: string; gemShine: string; gemShadow: string }> = {
     diamond: { gemColor: "#00e5ff", gemShine: "#e0f7fa", gemShadow: "#0091ea" },
@@ -406,14 +662,49 @@ function renderMinecraftGround(
     }
   }
 
+  // Authentic Minecraft side grass tuft fringe drops
+  let fringeSvg = "";
+  const tuftPattern = [3, 6, 2, 5, 2, 7, 3, 5, 2, 6, 3, 4];
+  const step = 6;
+  for (let fx = 0; fx < width; fx += step) {
+    const pIdx = Math.floor(fx / step) % tuftPattern.length;
+    const dropH = tuftPattern[pIdx];
+    fringeSvg += `<rect x="${fx}" y="${groundY + grassHeight}" width="${step}" height="${dropH}" fill="${grassColor}" />`;
+    if (dropH >= 5) {
+      fringeSvg += `<rect x="${fx + 1}" y="${groundY + grassHeight + dropH - 2}" width="${step - 2}" height="2" fill="${grassShadow}" />`;
+    }
+  }
+
+  // Textured dirt specks and root pebbles
+  let dirtSpecksSvg = "";
+  const dirtSlots = [
+    { x: 38, y: groundY + grassHeight + 7, w: 4, h: 3, c: dirtDark },
+    { x: 92, y: groundY + grassHeight + 17, w: 5, h: 3, c: pebbleColor },
+    { x: 154, y: groundY + grassHeight + 9, w: 4, h: 4, c: dirtLight },
+    { x: 208, y: groundY + grassHeight + 20, w: 6, h: 3, c: dirtDark },
+    { x: 258, y: groundY + grassHeight + 8, w: 4, h: 3, c: pebbleColor },
+    { x: 308, y: groundY + grassHeight + 19, w: 5, h: 4, c: dirtLight },
+    { x: 368, y: groundY + grassHeight + 11, w: 4, h: 3, c: dirtDark },
+    { x: 422, y: groundY + grassHeight + 22, w: 5, h: 3, c: pebbleColor },
+  ];
+  for (const s of dirtSlots) {
+    dirtSpecksSvg += `<rect x="${s.x}" y="${s.y}" width="${s.w}" height="${s.h}" fill="${s.c}" />`;
+  }
+
   return `
     <g shape-rendering="crispEdges">
+      <!-- Main Grass Bed -->
       <rect x="0" y="${groundY}" width="${width}" height="${grassHeight}" fill="${grassColor}" />
       <rect x="0" y="${groundY}" width="${width}" height="3" fill="${grassHighlight}" />
       <rect x="0" y="${groundY + grassHeight - 2}" width="${width}" height="2" fill="${grassShadow}" />
       
-      <rect x="0" y="${groundY + grassHeight}" width="${width}" height="${height - groundY - grassHeight}" fill="#5d4037" />
-      <rect x="0" y="${groundY + grassHeight}" width="${width}" height="2" fill="#4e342e" />
+      <!-- Dirt Stratum -->
+      <rect x="0" y="${groundY + grassHeight}" width="${width}" height="${height - groundY - grassHeight}" fill="${dirtBase}" />
+      <rect x="0" y="${groundY + grassHeight}" width="${width}" height="2" fill="${dirtDark}" />
+      
+      <!-- Minecraft Side Grass Fringe & Dirt Texture -->
+      ${fringeSvg}
+      ${dirtSpecksSvg}
       ${oresSvg}
     </g>
   `;
@@ -1314,8 +1605,8 @@ export function renderFrame(
     skySvg += renderSeasonalFireworks(width, height, frameIndex, totalFrames);
   }
 
-  // 2. Grass & Dirt Ground Layer (with embedded Diamond & Emerald Ore)
-  const groundSvg = renderMinecraftGround(width, height, groundY, isSnow, oreBlocks || []);
+  // 2. Grass & Dirt Ground Layer (with embedded Diamond & Emerald Ore & Biome Styling)
+  const groundSvg = renderMinecraftGround(width, height, groundY, isSnow, oreBlocks || [], treeType);
 
   // 3. Wooden Stat Signpost
   let signpostSvg = "";
@@ -1394,7 +1685,13 @@ export function renderFrame(
     beeSvg = renderMinecraftBee(bee.x, bee.y, frameIndex, totalFrames);
   }
 
-  // 17. Foreground Weather Precipitation or Sakura Petals
+  // 17. Ambient Bioluminescent Spores / Particles (Nether & Night Biomes)
+  let sporesSvg = "";
+  if (treeType === "crimson" || treeType === "warped" || (isNight && !isRain && !isSnow)) {
+    sporesSvg = renderBioluminescentParticles(width, groundY, frameIndex, totalFrames, treeType);
+  }
+
+  // 18. Foreground Weather Precipitation or Sakura Petals
   let precipSvg = "";
   if (isRain) {
     precipSvg = renderRainStreaks(width, groundY, frameIndex, totalFrames);
@@ -1421,6 +1718,7 @@ export function renderFrame(
   ${jackOLanternSvg}
   ${holidayGiftsSvg}
   ${beeSvg}
+  ${sporesSvg}
   ${precipSvg}
 </svg>`;
 }
