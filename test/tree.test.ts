@@ -183,6 +183,7 @@ describe("Minecraft tree module", () => {
       expect(wolfLayout.pet).toBeDefined();
       expect(wolfLayout.pet?.type).toBe("wolf");
       expect(wolfLayout.pet?.state).toBe("sitting");
+      expect(wolfLayout.pet?.x).toBe(176); // Left side of tree
 
       // Streak >= 7 -> Fox (sleeping in daytime, standing at night)
       const streak7Weeks: ContributionWeek[] = [
@@ -215,6 +216,49 @@ describe("Minecraft tree module", () => {
 
       const noPetLayout = buildTreeLayout(streak14Weeks, undefined, { pet: "none" });
       expect(noPetLayout.pet).toBeUndefined();
+    });
+
+    it("renders human Farmer under the tree on the right side with dynamic moods (sad, watering, dancing)", () => {
+      // 1. Dry Tree / 0 Commits -> Sad Farmer
+      const dryWeeks: ContributionWeek[] = [
+        { days: [{ date: "2026-08-01", count: 0 }], total: 0, openPRs: 0, mergedPRs: 0, assignedPRs: 0 },
+      ];
+      const sadFarmerLayout = buildTreeLayout(dryWeeks);
+      expect(sadFarmerLayout.farmer).toBeDefined();
+      expect(sadFarmerLayout.farmer?.x).toBe(266); // Right side of tree
+      expect(sadFarmerLayout.farmer?.mood).toBe("sad");
+
+      // 2. Neutral / Steady Growth Tree (1-29 commits) -> Watering Farmer
+      const steadyWeeks: ContributionWeek[] = [
+        { days: [{ date: "2026-08-01", count: 5 }], total: 5, openPRs: 0, mergedPRs: 0, assignedPRs: 0 },
+      ];
+      const wateringFarmerLayout = buildTreeLayout(steadyWeeks);
+      expect(wateringFarmerLayout.farmer?.mood).toBe("watering");
+
+      // 3. Flourishing / Cherished Tree (>= 30 commits or high streak) -> Dancing Farmer
+      const flourishingWeeks: ContributionWeek[] = [
+        { days: [{ date: "2026-08-01", count: 35 }], total: 35, openPRs: 0, mergedPRs: 0, assignedPRs: 0 },
+      ];
+      const dancingFarmerLayout = buildTreeLayout(flourishingWeeks);
+      expect(dancingFarmerLayout.farmer?.mood).toBe("dancing");
+
+      // 4. Manual mood override
+      const manualSad = buildTreeLayout(flourishingWeeks, undefined, { farmerMood: "sad" });
+      expect(manualSad.farmer?.mood).toBe("sad");
+
+      const manualDancing = buildTreeLayout(dryWeeks, undefined, { farmerMood: "dancing" });
+      expect(manualDancing.farmer?.mood).toBe("dancing");
+
+      // 5. Farmer toggle (showFarmer: false)
+      const noFarmerLayout = buildTreeLayout(flourishingWeeks, undefined, { showFarmer: false });
+      expect(noFarmerLayout.farmer).toBeUndefined();
+
+      // 6. Coexistence of Pet on the left and Farmer on the right
+      const dualLayout = buildTreeLayout(flourishingWeeks, undefined, { pet: "wolf" });
+      expect(dualLayout.pet?.type).toBe("wolf");
+      expect(dualLayout.pet?.x).toBe(176); // Left of trunk
+      expect(dualLayout.farmer).toBeDefined();
+      expect(dualLayout.farmer?.x).toBe(266); // Right of trunk
     });
 
     it("triggers roasting campfire during high activity sprints or manual toggle", () => {

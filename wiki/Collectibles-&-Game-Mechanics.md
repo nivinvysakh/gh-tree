@@ -4,13 +4,27 @@
 
 ---
 
-## 🐾 Companion Pets (`pet: auto | wolf | fox | cat | parrot | none`) {#pets}
+## 👨‍🌾 Human Farmer (`show-farmer: auto | true | false`, `farmer-mood: auto | sad | dancing | watering`) {#farmer}
+
+The human Minecraft Farmer stands loyally under the right side of the tree canopy, caring for the tree and reacting to your development velocity:
+
+| Mood / Activity | Trigger Condition | Visual & Animation Details |
+| :--- | :--- | :--- |
+| 😢 **Sad Farmer** | **Dormant tree** ($0$ commits or all dormant leaves) | Slumped posture, drooping straw hat, downcast sad eyes, falling tear droplet, and holding a withered dry twig. |
+| 💧 **Watering Farmer** | **Neutral / Steady Growth** ($1$–$29$ commits) | Holding an Iron Water Bucket tilted toward the trunk, streaming sparkling cyan water with animated splash droplets onto the roots. |
+| 💃 **Dancing Farmer** | **Flourishing / Cherished Tree** ($\ge 30$ commits, streak $\ge 7\text{d}$, or active sprint) | Energetic hopping harvest dance, smiling rosy cheeks, waving golden wheat stalk, and floating celebration sparkles! |
+
+---
+
+## 🐾 Animal Companion Pets (`pet: auto | wolf | fox | cat | parrot | none`) {#pets}
+
+Animal companion mobs sit and play on the **left side** of the tree canopy:
 
 | Companion | Unlock Condition (Auto Mode) | Visual Behavior |
 | :--- | :--- | :--- |
 | **Red Macaw Parrot 🦜** | **Selected via `pet: parrot`** (or Jungle biome) | Perches on lawn with scarlet feathers, tri-color wings (red ➔ yellow ➔ blue), crested head, and an animated dancing head bob & tail flutter! |
 | **Tamed Wolf 🐺** | **Current streak ≥ 14 days** | Sits loyally under the canopy with a vibrant red collar, golden tag, and a happy wagging tail. |
-| **Sleeping / Alert Fox 🦊** | **Current streak ≥ 7 days** or active commits | Curls up peacefully sleeping during the daytime; wakes up alert with perked ears and twitching tail at night! |
+| **Sleeping / Alert Fox 🦊** | **Current streak ≥ 7 days** | Curls up peacefully sleeping during the daytime; wakes up alert with perked ears and twitching tail at night! |
 | **Tuxedo Cat 🐱** | **Current streak ≥ 3 days** or ≥ 25 total commits | Sits gracefully under the tree with glowing emerald green eyes, cyan collar, and swishing tail. |
 
 ---

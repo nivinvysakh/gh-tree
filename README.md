@@ -62,12 +62,12 @@
 
 ---
 
-## Special Collectibles & Milestone Demos 🔮🦜
+## Special Collectibles & Milestone Demos 👨‍🌾🔮🦜
 
-| **Ender Milestone Chest 🔮** (≥ 500 Commits) | **Red Macaw Parrot 🦜** (`pet: parrot`) |
-| :---: | :---: |
-| ![Ender Chest](assets/tree-ender-chest.gif) | ![Parrot](assets/tree-parrot.gif) |
-| *Obsidian body, glowing Eye of Ender & portal particles* | *Dancing head-bob & tri-color fluttering wings* |
+| **Minecraft Farmer Villager 👨‍🌾** (`pet: farmer`) | **Ender Milestone Chest 🔮** (≥ 500 Commits) | **Red Macaw Parrot 🦜** (`pet: parrot`) |
+| :---: | :---: | :---: |
+| ![Farmer](assets/tree-farmer.gif) | ![Ender Chest](assets/tree-ender-chest.gif) | ![Parrot](assets/tree-parrot.gif) |
+| *Default companion with straw hat, robe & wheat* | *Obsidian body, glowing Eye of Ender & portal particles* | *Dancing head-bob & tri-color fluttering wings* |
 
 ---
 
@@ -98,17 +98,18 @@
 
 gh-tree turns your GitHub contributions into living Minecraft collectibles and milestones:
 
-### 🐾 Minecraft Pet Companions & Campfire
+### 👨‍🌾 Human Farmer & 🐾 Animal Pet Companions
 
-| Companion / Prop | Appearance & Behavior | Unlock Condition |
-| :--- | :--- | :--- |
-| **Tamed Wolf 🐺** | Sits loyally on the lawn with a red collar and wagging tail. | **Current streak ≥ 14 days** (or `pet: wolf`) |
-| **Sleeping / Alert Fox 🦊** | Curls up sleeping during the day; wakes up and stays alert at night. | **Current streak ≥ 7 days** or active commits (or `pet: fox`) |
-| **Tuxedo Cat 🐱** | Sits peacefully under the tree canopy with glowing emerald eyes. | **Current streak ≥ 3 days** or ≥ 25 commits (or `pet: cat`) |
-| **Red Macaw Parrot 🦜** | Dances on the lawn with head-bobbing and fluttering tri-color wings. | **Jungle biome** or `pet: parrot` |
-| **Roasting Campfire 🔥** | Crackling campfire with crossed logs, flickering flame tongues, and rising smoke. | **Sprint mode**: ≥ 12 commits in recent 2 weeks, streak ≥ 10d, or ≥ 60 total commits (or `show-campfire: true`) |
-| **Milestone Chests 📦** | Leveling treasure chests: **Wood** (≥ 15 commits) 🪵 $\rightarrow$ **Iron** (≥ 50) ⚙️ $\rightarrow$ **Gold** (≥ 150) 🪙 $\rightarrow$ **Diamond** (≥ 300) 💎 $\rightarrow$ **Ender Chest** (≥ 500) 🌌 | Total commits in date range (or `show-chest: true`) |
-| **Seasonal Events 🎃🎄🎆** | **Halloween** (Jack-o'-Lantern & Ghosts), **Holiday** (Fairy lights & gift boxes), **New Year** (Fireworks) | Auto-detected by month (Oct, Dec, Jan) or `event: halloween \| holiday \| fireworks` |
+| Companion / Character | Side / Position | Dynamic Appearance & Behavior | Condition / Override |
+| :--- | :---: | :--- | :--- |
+| **Human Farmer 👨‍🌾**<br>*(Cares for Tree)* | **Right Side**<br>*(Default)* | • 😢 **Sad**: Tree is dry/dormant (0 commits) — slumped posture, drooping hat, tear droplet, withered twig.<br>• 💧 **Watering**: Neutral / steady growth (1–29 commits) — Iron Water Bucket pouring streaming cyan water onto trunk roots with splashes.<br>• 💃 **Dancing**: Flourishing tree (≥ 30 commits or ≥ 7d streak) — joyful hop, rosy cheeks, waving golden wheat, floating sparkles. | **Always enabled by default**<br>(`show-farmer: true/false`, `farmer-mood: auto/sad/watering/dancing`) |
+| **Tamed Wolf 🐺** | Left Side | Sits loyally on the left grass lawn with a red collar and wagging tail. | **Current streak ≥ 14 days** (or `pet: wolf`) |
+| **Sleeping / Alert Fox 🦊** | Left Side | Curls up sleeping during the day; wakes up and stays alert at night. | **Current streak ≥ 7 days** (or `pet: fox`) |
+| **Tuxedo Cat 🐱** | Left Side | Sits peacefully under the tree canopy with glowing emerald eyes. | **Current streak ≥ 3 days** or ≥ 25 commits (or `pet: cat`) |
+| **Red Macaw Parrot 🦜** | Left Side | Dances on the lawn with head-bobbing and fluttering tri-color wings. | **Jungle biome** or `pet: parrot` |
+| **Roasting Campfire 🔥** | Right Side | Crackling campfire with crossed logs, flickering flame tongues, and flying sparks. | **Sprint mode**: ≥ 12 commits in recent 2w, streak ≥ 10d, or ≥ 60 commits (or `show-campfire: true`) |
+| **Milestone Chests 📦** | Right Side | Leveling chests: **Wood** (≥ 15) 🪵 $\rightarrow$ **Iron** (≥ 50) ⚙️ $\rightarrow$ **Gold** (≥ 150) 🪙 $\rightarrow$ **Diamond** (≥ 300) 💎 $\rightarrow$ **Ender Chest** (≥ 500) 🌌 | Total commits in range (or `show-chest: true`) |
+| **Seasonal Events 🎃🎄🎆** | Scene | **Halloween** (Jack-o'-Lantern & Ghosts), **Holiday** (Fairy lights & gift boxes), **New Year** (Fireworks) | Auto-detected by month (Oct, Dec, Jan) or `event: halloween \| holiday \| fireworks` |
 
 ---
 
@@ -164,9 +165,11 @@ Paste this single line directly into your GitHub Profile `README.md` (**no workf
 
 **Customize with URL parameters:**
 * `user`: Your GitHub username (`?user=nivinvysakh`)
-* `theme`: `oak` | `sakura` | `spruce` | `birch` (default: `oak`)
+* `theme`: `oak` | `sakura` | `spruce` | `birch` | `jungle` | `dark_oak` | `acacia` | `mangrove` | `crimson` | `warped` (default: `oak`)
 * `weather`: `auto` | `sunny` | `rain` | `snow` | `night` | `cloudy`
-* `pet`: `auto` | `wolf` | `fox` | `cat` | `none`
+* `farmer`: `true` | `false` | `auto` (default: `auto` - stands under tree caring for it)
+* `farmer_mood`: `auto` | `sad` | `dancing` | `watering` (default: `auto` - dynamic tree health reaction)
+* `pet`: `auto` | `wolf` | `fox` | `cat` | `parrot` | `none`
 * `event`: `auto` | `halloween` | `holiday` | `fireworks` | `none`
 * `campfire`: `true` | `false` | `auto`
 
@@ -224,9 +227,13 @@ jobs:
       - uses: nivinvysakh/gh-tree@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          # Tree biome variety: oak | sakura | spruce | birch
+          # Tree biome variety (10 Minecraft biomes): oak | sakura | spruce | birch | jungle | dark_oak | acacia | mangrove | crimson | warped
           tree-type: "sakura"
-          # Companion pet companion: auto | wolf | fox | cat | none
+          # Human farmer under the tree (right side): auto | true | false
+          show-farmer: "auto"
+          # Farmer mood: auto | sad | dancing | watering
+          farmer-mood: "auto"
+          # Animal companion pet (left side): auto | wolf | fox | cat | parrot | none
           pet: "auto"
           # Roasting campfire & milestone treasure chest: auto | true | false
           show-campfire: "auto"
@@ -254,7 +261,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1789120090378)
+![tree](tree.gif?v=1789136347577)
 <!-- commit-tree-end -->
 ```
 
@@ -268,8 +275,10 @@ The action will automatically generate `tree.gif`, update your `README.md`, and 
 |-------------------|--------------|--------------------------------------------------|
 | `github-token`    | *(Required)* | GitHub Token or PAT with `read:user` scope |
 | `github-login`    | `repository_owner`    | GitHub username (defaults to repo owner)   |
-| `tree-type`       | `oak`        | Biome tree type (`oak`, `sakura`, `spruce`, `birch`) |
-| `pet`             | `auto`       | Minecraft pet companion (`auto`, `wolf`, `fox`, `cat`, `none`) |
+| `tree-type`       | `oak`        | Biome tree type (`oak`, `sakura`, `spruce`, `birch`, `jungle`, `dark_oak`, `acacia`, `mangrove`, `crimson`, `warped`) |
+| `show-farmer`     | `auto`       | Render human Minecraft farmer caring for tree on the right side (`auto`, `true`, `false`) |
+| `farmer-mood`     | `auto`       | Farmer mood override (`auto`, `sad`, `dancing`, `watering`). Auto dynamically responds to tree health: sad when dormant, dancing when flourishing, watering when growing |
+| `pet`             | `auto`       | Minecraft animal companion pet on left side (`auto`, `wolf`, `fox`, `cat`, `parrot`, `none`) |
 | `show-campfire`   | `auto`       | Render roasting campfire during active sprints (`auto`, `true`, `false`) |
 | `show-chest`      | `auto`       | Render milestone treasure chest (`auto`, `true`, `false`) |
 | `event`           | `auto`       | Seasonal holiday event (`auto`, `halloween`, `holiday`, `fireworks`, `none`) |

@@ -55,7 +55,15 @@ inputs:
     required: false
     default: "true"
   pet:
-    description: "Minecraft companion pet sitting/sleeping under the tree (options: auto, wolf, fox, cat, none)"
+    description: "Minecraft animal companion pet sitting/standing under tree on left side (options: auto, wolf, fox, cat, parrot, none)"
+    required: false
+    default: "auto"
+  show-farmer:
+    description: "Whether to render the human Minecraft farmer under the tree on the right side caring for the tree (options: auto, true, false)"
+    required: false
+    default: "auto"
+  farmer-mood:
+    description: "Manual override for farmer mood (options: auto, sad, dancing, watering). Auto dynamically reflects tree health: sad when dry, dancing when flourishing, watering when growing."
     required: false
     default: "auto"
   show-campfire:

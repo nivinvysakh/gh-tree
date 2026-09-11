@@ -361,6 +361,16 @@ export default async function handler(req: any, res: any) {
     ? (rawPet as PetType | "none" | "auto")
     : "auto";
 
+  const rawFarmer = (query.farmer || query.show_farmer || query.showFarmer || "auto").toLowerCase().trim();
+  let showFarmer: boolean | "auto" = "auto";
+  if (rawFarmer === "true" || rawFarmer === "1") showFarmer = true;
+  else if (rawFarmer === "false" || rawFarmer === "0" || rawFarmer === "none") showFarmer = false;
+
+  const rawFarmerMood = (query.farmer_mood || query.farmerMood || query.mood || "auto").toLowerCase().trim();
+  const farmerMood: "auto" | "sad" | "dancing" | "watering" = ["auto", "sad", "dancing", "watering"].includes(rawFarmerMood)
+    ? (rawFarmerMood as "auto" | "sad" | "dancing" | "watering")
+    : "auto";
+
   const rawChest = (query.chest || "auto").toLowerCase().trim();
   let showChest: boolean | "auto" = "auto";
   if (rawChest === "true" || rawChest === "1") showChest = true;
@@ -406,6 +416,8 @@ export default async function handler(req: any, res: any) {
       treeType: theme,
       weather,
       pet,
+      showFarmer,
+      farmerMood,
       showChest,
       showCampfire,
       event,

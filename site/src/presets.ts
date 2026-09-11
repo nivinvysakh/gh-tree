@@ -9,6 +9,8 @@ export interface TreePreset {
   options: {
     treeType: TreeType;
     pet: "none" | "wolf" | "cat" | "fox" | "parrot";
+    showFarmer?: boolean | "auto";
+    farmerMood?: "auto" | "sad" | "dancing" | "watering";
     showCampfire: boolean;
     weather: WeatherType;
     isDay: boolean;

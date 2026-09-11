@@ -11,7 +11,9 @@ Complete technical reference for all **`gh-tree`** GitHub Action parameters.
 | `github-token` | `string` | *(Required)* | GitHub Token or PAT with `read:user` scope. |
 | `github-login` | `string` | `repository_owner` | Target GitHub username whose activity drives the tree. |
 | `tree-type` | `string` | `oak` | Biome variety: `oak`, `sakura`, `spruce`, `birch`, `jungle`, `dark_oak`, `acacia`, `mangrove`, `crimson`, `warped`. |
-| `pet` | `string` | `auto` | Companion pet: `auto`, `wolf`, `fox`, `cat`, `parrot`, `none`. |
+| `show-farmer` | `string` | `auto` | Human Minecraft farmer under the tree on the right side: `auto`, `true`, `false`. |
+| `farmer-mood` | `string` | `auto` | Farmer mood override: `auto`, `sad`, `dancing`, `watering`. Auto dynamically responds to tree health: sad when dormant, dancing when flourishing, watering when growing. |
+| `pet` | `string` | `auto` | Companion animal pet on left side: `auto`, `wolf`, `fox`, `cat`, `parrot`, `none`. |
 | `show-campfire` | `string` | `auto` | Roasting campfire toggle: `auto`, `true`, `false`. |
 | `show-chest` | `string` | `auto` | Milestone treasure chest toggle: `auto`, `true`, `false`. |
 | `event` | `string` | `auto` | Seasonal holiday event: `auto`, `halloween`, `holiday`, `fireworks`, `none`. |

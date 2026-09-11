@@ -214,25 +214,61 @@
               </div>
             </div>
 
+            <!-- Human Farmer Under Tree (Right Side - Default) -->
             <div>
-              <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Companion Pet</label>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400">👨‍🌾 Human Farmer (Right Side - Default)</label>
+                <span class="text-[10px] text-emerald-400 font-semibold">Cares for tree</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 mb-2" id="farmer-selector">
+                <div class="pill-item active p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-farmer="auto" title="Auto: Always stands under the tree caring for it">
+                  ✨ Auto (Enabled)
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-farmer="true" title="Always visible">
+                  🟢 Enabled
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-farmer="false" title="Hide farmer">
+                  🚫 Disabled
+                </div>
+              </div>
+
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Farmer Mood & Activity</label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5" id="farmer-mood-selector">
+                <div class="pill-item active p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-mood="auto" title="Auto: Sad (0 commits/dry) / Water (steady) / Dance (flourishing)">
+                  🎲 Dynamic Auto
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-mood="watering" title="Pouring water bucket onto tree trunk roots">
+                  💧 Watering
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-mood="dancing" title="Joyful harvest dance with golden wheat & sparkles">
+                  💃 Dancing
+                </div>
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-mood="sad" title="Sad slumped posture with tear when tree is dormant">
+                  😢 Sad
+                </div>
+              </div>
+            </div>
+
+            <!-- Animal Pet Companion (Left Side) -->
+            <div>
+              <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">🐾 Animal Pet Companion (Left Side)</label>
               <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5" id="pet-selector">
-                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="auto" title="Auto-selects pet based on activity">
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="auto" title="Auto-selects animal mob based on biome">
                   🎲 Auto
                 </div>
-                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="wolf">
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="wolf" title="Tamed Wolf with red collar">
                   🐺 Wolf
                 </div>
-                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="cat">
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="cat" title="Tuxedo Cat with emerald eyes">
                   🐱 Cat
                 </div>
-                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="fox">
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="fox" title="Red Fox (sleeps by day, stands by night)">
                   🦊 Fox
                 </div>
-                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="parrot">
+                <div class="pill-item p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="parrot" title="Red Macaw Parrot with tropical wings">
                   🦜 Parrot
                 </div>
-                <div class="pill-item active p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="none">
+                <div class="pill-item active p-2 rounded-lg bg-slate-800/60 border border-white/10 hover:bg-slate-700/60 text-xs font-semibold text-center transition cursor-pointer" data-pet="none" title="No animal companion">
                   🚫 None
                 </div>
               </div>

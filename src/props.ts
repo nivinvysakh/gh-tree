@@ -5,6 +5,7 @@ import {
   FlowerPos,
   GoldenApplePos,
   PetPos,
+  FarmerPos,
   CampfirePos,
   ChestPos,
   JackOLanternPos,
@@ -328,24 +329,47 @@ export function renderApple(apple: ApplePos, frameIndex: number): string {
 
 export function renderGoldenAppleOnGrass(apple: GoldenApplePos, frameIndex: number): string {
   const { x, y, size } = apple;
-  const ps = size / 12;
+  const ps = size / 12; // 18 / 12 = 1.5
   const cx = x;
   const cy = y;
 
-  const shimmer = (frameIndex + Math.floor(cx / 10)) % 4 === 0;
-  const pulse = shimmer ? ps * 0.4 : 0;
+  // Enchanted sparkle twinkle cycle
+  const sparkle = (frameIndex + Math.floor(cx / 12)) % 4;
+  const sp1Opacity = sparkle === 0 || sparkle === 1 ? 0.9 : 0.25;
+  const sp2Opacity = sparkle === 2 || sparkle === 3 ? 0.9 : 0.25;
+  const sp1Y = cy - 2 - (sparkle === 0 ? 1 : 0);
+  const sp2Y = cy + 3 - (sparkle === 2 ? 1 : 0);
 
   return `
+    <!-- Enchanted Minecraft Golden Apple -->
     <g shape-rendering="crispEdges">
-      <rect x="${cx + 5 * ps}" y="${cy}" width="${2 * ps}" height="${4 * ps}" fill="#4e342e" />
-      <rect x="${cx + 7 * ps}" y="${cy + 1 * ps}" width="${2.5 * ps}" height="${2 * ps}" fill="#ffd700" />
-      
-      <rect x="${cx + 2 * ps - pulse}" y="${cy + 4 * ps - pulse}" width="${8 * ps + pulse * 2}" height="${8 * ps + pulse * 2}" fill="#ffb703" />
-      <rect x="${cx + 1 * ps - pulse}" y="${cy + 5 * ps - pulse}" width="${10 * ps + pulse * 2}" height="${6 * ps + pulse * 2}" fill="#ffc300" />
-      
-      <rect x="${cx + 3 * ps}" y="${cy + 11 * ps}" width="${6 * ps}" height="${1.5 * ps}" fill="#cc8800" />
-      <rect x="${cx + 3 * ps}" y="${cy + 5 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#ffffff" />
-      <rect x="${cx + 7 * ps}" y="${cy + 3 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="#fff9c4" opacity="${shimmer ? 1 : 0.4}" />
+      <!-- Floating Magic Gold Glint Sparkles -->
+      <rect x="${(cx + 10 * ps).toFixed(1)}" y="${sp1Y.toFixed(1)}" width="1.5" height="1.5" fill="#fff9c4" opacity="${sp1Opacity}" />
+      <rect x="${(cx - 1 * ps).toFixed(1)}" y="${sp2Y.toFixed(1)}" width="1.5" height="1.5" fill="#ffd54f" opacity="${sp2Opacity}" />
+
+      <!-- Apple Stem (Oak wood brown) -->
+      <rect x="${(cx + 5 * ps).toFixed(1)}" y="${cy.toFixed(1)}" width="${(2 * ps).toFixed(1)}" height="${(4 * ps).toFixed(1)}" fill="#4e342e" />
+      <!-- Green Leaf on stem -->
+      <rect x="${(cx + 7 * ps).toFixed(1)}" y="${(cy + 1 * ps).toFixed(1)}" width="${(2 * ps).toFixed(1)}" height="${(2 * ps).toFixed(1)}" fill="#4caf50" />
+      <rect x="${(cx + 8 * ps).toFixed(1)}" y="${(cy + 1.5 * ps).toFixed(1)}" width="${(1 * ps).toFixed(1)}" height="${(1 * ps).toFixed(1)}" fill="#81c784" />
+
+      <!-- Apple Body Outer Gold Border/Shadow -->
+      <rect x="${(cx + 2 * ps).toFixed(1)}" y="${(cy + 4 * ps).toFixed(1)}" width="${(8 * ps).toFixed(1)}" height="${(8 * ps).toFixed(1)}" fill="#c67d00" />
+      <rect x="${(cx + 1 * ps).toFixed(1)}" y="${(cy + 5 * ps).toFixed(1)}" width="${(10 * ps).toFixed(1)}" height="${(6 * ps).toFixed(1)}" fill="#c67d00" />
+
+      <!-- Golden Apple Core (Rich Radiant Gold) -->
+      <rect x="${(cx + 2 * ps).toFixed(1)}" y="${(cy + 5 * ps).toFixed(1)}" width="${(8 * ps).toFixed(1)}" height="${(6 * ps).toFixed(1)}" fill="#ffc107" />
+      <rect x="${(cx + 3 * ps).toFixed(1)}" y="${(cy + 4 * ps).toFixed(1)}" width="${(6 * ps).toFixed(1)}" height="${(7 * ps).toFixed(1)}" fill="#ffb703" />
+
+      <!-- Top Highlight Shimmer -->
+      <rect x="${(cx + 3 * ps).toFixed(1)}" y="${(cy + 4.5 * ps).toFixed(1)}" width="${(4 * ps).toFixed(1)}" height="${(2 * ps).toFixed(1)}" fill="#ffe082" />
+
+      <!-- Specular White Glint -->
+      <rect x="${(cx + 3 * ps).toFixed(1)}" y="${(cy + 5 * ps).toFixed(1)}" width="${(2 * ps).toFixed(1)}" height="${(2 * ps).toFixed(1)}" fill="#ffffff" />
+      <rect x="${(cx + 4 * ps).toFixed(1)}" y="${(cy + 6 * ps).toFixed(1)}" width="${(1 * ps).toFixed(1)}" height="${(1 * ps).toFixed(1)}" fill="#ffffff" />
+
+      <!-- Bottom Indent Shadow -->
+      <rect x="${(cx + 4 * ps).toFixed(1)}" y="${(cy + 11 * ps).toFixed(1)}" width="${(4 * ps).toFixed(1)}" height="${(1 * ps).toFixed(1)}" fill="#996515" />
     </g>
   `;
 }
@@ -589,6 +613,243 @@ export function renderMinecraftSignpost(
       ${boardSvg}
       <!-- Carved & Glowing Pixel Art Glyphs -->
       ${glyphsSvg}
+    </g>
+  `;
+}
+
+export function renderMinecraftFarmer(
+  farmer: FarmerPos,
+  frameIndex: number,
+  _totalFrames: number = 20
+): string {
+  const { x, y, mood } = farmer;
+
+  if (mood === "sad") {
+    // 1. SAD FARMER (Dry Tree / 0 Commits)
+    // Slumped posture, drooping hat, sad face with tear, empty hands/downward arms
+    const sigh = frameIndex % 6 < 3 ? 0 : 0.8;
+    const tearY = y + 7 + ((frameIndex * 1.2) % 6);
+
+    return `
+      <!-- Minecraft Sad Farmer (Dry Tree / 0 Commits) -->
+      <g shape-rendering="crispEdges">
+        <!-- Drooping Straw Hat Crown -->
+        <rect x="${x + 2}" y="${(y - 1 + sigh).toFixed(1)}" width="8" height="4" fill="#d49726" />
+        <rect x="${x + 3}" y="${(y - 2 + sigh).toFixed(1)}" width="6" height="1" fill="#e0a92a" />
+        <rect x="${x + 2}" y="${(y + 2 + sigh).toFixed(1)}" width="8" height="1" fill="#a07018" />
+
+        <!-- Tilted Straw Hat Brim -->
+        <rect x="${x - 3}" y="${(y + 3 + sigh).toFixed(1)}" width="18" height="2" fill="#d49726" />
+        <rect x="${x - 2}" y="${(y + 3 + sigh).toFixed(1)}" width="16" height="1" fill="#e0a92a" />
+        <rect x="${x - 3}" y="${(y + 4 + sigh).toFixed(1)}" width="18" height="1" fill="#a07018" />
+        <rect x="${x + 2}" y="${(y + 2 + sigh).toFixed(1)}" width="8" height="1" fill="#4e342e" />
+
+        <!-- Villager Head (Slumped Down) -->
+        <rect x="${x + 2}" y="${(y + 5 + sigh).toFixed(1)}" width="8" height="8" fill="#b87a55" />
+        <rect x="${x + 3}" y="${(y + 5 + sigh).toFixed(1)}" width="6" height="1" fill="#c98c68" />
+
+        <!-- Drooping Sad Uni-brow -->
+        <rect x="${x + 3}" y="${(y + 6.5 + sigh).toFixed(1)}" width="6" height="1" fill="#3e2723" />
+        <rect x="${x + 2}" y="${(y + 6 + sigh).toFixed(1)}" width="2" height="1" fill="#3e2723" />
+        <rect x="${x + 8}" y="${(y + 6 + sigh).toFixed(1)}" width="2" height="1" fill="#3e2723" />
+
+        <!-- Sad Downcast Eyes -->
+        <rect x="${x + 2.5}" y="${(y + 7.5 + sigh).toFixed(1)}" width="2" height="1.5" fill="#ffffff" />
+        <rect x="${x + 2.5}" y="${(y + 8.5 + sigh).toFixed(1)}" width="1.5" height="1" fill="#2e7d32" />
+        <rect x="${x + 7.5}" y="${(y + 7.5 + sigh).toFixed(1)}" width="2" height="1.5" fill="#ffffff" />
+        <rect x="${x + 7.5}" y="${(y + 8.5 + sigh).toFixed(1)}" width="1.5" height="1" fill="#2e7d32" />
+
+        <!-- Tear / Sweat Droplet -->
+        <rect x="${x + 2}" y="${tearY.toFixed(1)}" width="1" height="1.5" fill="#42a5f5" opacity="0.85" />
+
+        <!-- Long Overhanging Nose -->
+        <rect x="${x + 5}" y="${(y + 8.5 + sigh).toFixed(1)}" width="2" height="4.5" fill="#b87a55" />
+        <rect x="${x + 5}" y="${(y + 12 + sigh).toFixed(1)}" width="2" height="1" fill="#8d4e2b" />
+
+        <!-- Sad Frowning Mouth -->
+        <rect x="${x + 4.5}" y="${(y + 13 + sigh).toFixed(1)}" width="3" height="1" fill="#3e2723" />
+        <rect x="${x + 4}" y="${(y + 13.5 + sigh).toFixed(1)}" width="1" height="1" fill="#3e2723" />
+        <rect x="${x + 7}" y="${(y + 13.5 + sigh).toFixed(1)}" width="1" height="1" fill="#3e2723" />
+
+        <!-- Slumped Brown Robe -->
+        <rect x="${x + 2}" y="${(y + 13.5 + sigh).toFixed(1)}" width="8" height="9" fill="#54382e" />
+        <!-- Arms hanging down sadly -->
+        <rect x="${x}" y="${(y + 14 + sigh).toFixed(1)}" width="2.5" height="7" fill="#54382e" />
+        <rect x="${x + 9.5}" y="${(y + 14 + sigh).toFixed(1)}" width="2.5" height="7" fill="#54382e" />
+        <rect x="${x}" y="${(y + 20 + sigh).toFixed(1)}" width="2" height="1.5" fill="#b87a55" />
+        <rect x="${x + 10}" y="${(y + 20 + sigh).toFixed(1)}" width="2" height="1.5" fill="#b87a55" />
+
+        <!-- Withered dry twig in hand -->
+        <rect x="${x - 1}" y="${(y + 21 + sigh).toFixed(1)}" width="1" height="3" fill="#795548" />
+
+        <!-- Legs & Boots -->
+        <rect x="${x + 3}" y="${y + 22}" width="2.5" height="2" fill="#3e2723" />
+        <rect x="${x + 6.5}" y="${y + 22}" width="2.5" height="2" fill="#3e2723" />
+        <rect x="${x + 2.5}" y="${y + 23.5}" width="3" height="1.5" fill="#211510" />
+        <rect x="${x + 6.5}" y="${y + 23.5}" width="3" height="1.5" fill="#211510" />
+      </g>
+    `;
+  }
+
+  if (mood === "dancing") {
+    // 2. HAPPY DANCING FARMER (Flourishing / Cherished Tree)
+    // Energetic harvest dance, waving golden wheat, joyful smiling face & floating sparkles!
+    const step = frameIndex % 4;
+    const hop = step === 1 || step === 2 ? 2.0 : 0;
+    const tilt = step === 0 || step === 1 ? 1 : -1;
+    const armWave = step % 2 === 0 ? 0 : 2;
+
+    // Floating celebratory sparkles / music notes
+    const sp1Y = y - 4 - ((frameIndex * 1.5) % 12);
+    const sp2Y = y - 2 - (((frameIndex + 3) * 1.2) % 10);
+
+    return `
+      <!-- Minecraft Happy Dancing Farmer (Flourishing Tree) -->
+      <g shape-rendering="crispEdges">
+        <!-- Floating Joy Sparkles -->
+        <rect x="${x + 12}" y="${sp1Y.toFixed(1)}" width="2" height="2" fill="#ffd54f" opacity="0.9" />
+        <rect x="${x - 5}" y="${sp2Y.toFixed(1)}" width="1.5" height="1.5" fill="#aed581" opacity="0.8" />
+
+        <!-- Straw Hat Crown (Bouncing with joy) -->
+        <rect x="${x + 2 + tilt}" y="${(y - 3 - hop).toFixed(1)}" width="8" height="4" fill="#f9c851" />
+        <rect x="${x + 3 + tilt}" y="${(y - 4 - hop).toFixed(1)}" width="6" height="1" fill="#ffe082" />
+        <rect x="${x + 2 + tilt}" y="${(y - hop).toFixed(1)}" width="8" height="1" fill="#c28b1e" />
+        <rect x="${x + 2 + tilt}" y="${(y - hop).toFixed(1)}" width="8" height="1" fill="#5d4037" />
+
+        <!-- Wide Bouncing Hat Brim -->
+        <rect x="${x - 3 + tilt}" y="${(y + 1 - hop).toFixed(1)}" width="18" height="2" fill="#f9c851" />
+        <rect x="${x - 2 + tilt}" y="${(y + 1 - hop).toFixed(1)}" width="16" height="1" fill="#ffe082" />
+        <rect x="${x - 3 + tilt}" y="${(y + 2 - hop).toFixed(1)}" width="18" height="1" fill="#c28b1e" />
+
+        <!-- Villager Head -->
+        <rect x="${x + 2 + tilt}" y="${(y + 3 - hop).toFixed(1)}" width="8" height="8" fill="#c98c68" />
+        <rect x="${x + 3 + tilt}" y="${(y + 3 - hop).toFixed(1)}" width="6" height="1" fill="#dfa27e" />
+
+        <!-- Uni-brow -->
+        <rect x="${x + 3 + tilt}" y="${(y + 4 - hop).toFixed(1)}" width="6" height="1" fill="#54382e" />
+
+        <!-- Bright Cheerful Eyes -->
+        <rect x="${x + 2.5 + tilt}" y="${(y + 5 - hop).toFixed(1)}" width="2" height="2" fill="#ffffff" />
+        <rect x="${x + 3.5 + tilt}" y="${(y + 5 - hop).toFixed(1)}" width="1" height="2" fill="#2e7d32" />
+        <rect x="${x + 3.5 + tilt}" y="${(y + 5 - hop).toFixed(1)}" width="1" height="1" fill="#43a047" />
+        <rect x="${x + 7.5 + tilt}" y="${(y + 5 - hop).toFixed(1)}" width="2" height="2" fill="#ffffff" />
+        <rect x="${x + 7.5 + tilt}" y="${(y + 5 - hop).toFixed(1)}" width="1" height="2" fill="#2e7d32" />
+        <rect x="${x + 7.5 + tilt}" y="${(y + 5 - hop).toFixed(1)}" width="1" height="1" fill="#43a047" />
+
+        <!-- Cheerful Rosy Cheeks -->
+        <rect x="${x + 1.5 + tilt}" y="${(y + 7 - hop).toFixed(1)}" width="1.5" height="1" fill="#ff8a80" opacity="0.7" />
+        <rect x="${x + 9 + tilt}" y="${(y + 7 - hop).toFixed(1)}" width="1.5" height="1" fill="#ff8a80" opacity="0.7" />
+
+        <!-- Nose -->
+        <rect x="${x + 5 + tilt}" y="${(y + 6 - hop).toFixed(1)}" width="2" height="4.5" fill="#c98c68" />
+        <rect x="${x + 5 + tilt}" y="${(y + 9.5 - hop).toFixed(1)}" width="2" height="1" fill="#9c5f3c" />
+
+        <!-- Big Happy Grin -->
+        <rect x="${x + 4 + tilt}" y="${(y + 10 - hop).toFixed(1)}" width="4" height="1.5" fill="#212121" />
+        <rect x="${x + 4.5 + tilt}" y="${(y + 10.5 - hop).toFixed(1)}" width="3" height="1" fill="#ffffff" />
+
+        <!-- Robe & Dancing Arms -->
+        <rect x="${x + 2}" y="${(y + 11 - hop).toFixed(1)}" width="8" height="10" fill="#6d4c41" />
+        <rect x="${x + 3}" y="${(y + 11 - hop).toFixed(1)}" width="6" height="2" fill="#7c584c" />
+
+        <!-- Left Arm Raised Waving Golden Wheat -->
+        <rect x="${x - 1}" y="${(y + 8 - hop - armWave).toFixed(1)}" width="3" height="6" fill="#54382e" />
+        <rect x="${x - 1}" y="${(y + 7 - hop - armWave).toFixed(1)}" width="2" height="2" fill="#c98c68" />
+        <!-- Golden Wheat in hand waving -->
+        <rect x="${x - 3}" y="${(y + 2 - hop - armWave).toFixed(1)}" width="1" height="7" fill="#4caf50" />
+        <rect x="${x - 4}" y="${(y - 1 - hop - armWave).toFixed(1)}" width="3" height="4" fill="#fbc02d" />
+        <rect x="${x - 3.5}" y="${(y - 1 - hop - armWave).toFixed(1)}" width="2" height="2" fill="#fff59d" />
+
+        <!-- Right Arm Celebrating -->
+        <rect x="${x + 10}" y="${(y + 9 - hop + armWave).toFixed(1)}" width="3" height="6" fill="#54382e" />
+        <rect x="${x + 11}" y="${(y + 14 - hop + armWave).toFixed(1)}" width="2" height="2" fill="#c98c68" />
+
+        <!-- Lower Apron -->
+        <rect x="${x + 3}" y="${(y + 17 - hop).toFixed(1)}" width="6" height="4" fill="#8d6e63" />
+
+        <!-- Hopping Legs & Boots -->
+        <rect x="${x + 3}" y="${(y + 21 - hop).toFixed(1)}" width="2.5" height="${(2 + hop).toFixed(1)}" fill="#3e2723" />
+        <rect x="${x + 6.5}" y="${(y + 21 - hop).toFixed(1)}" width="2.5" height="${(2 + hop).toFixed(1)}" fill="#3e2723" />
+        <rect x="${x + 2.5}" y="${(y + 23 - hop).toFixed(1)}" width="3" height="2" fill="#211510" />
+        <rect x="${x + 6.5}" y="${(y + 23 - hop).toFixed(1)}" width="3" height="2" fill="#211510" />
+      </g>
+    `;
+  }
+
+  // 3. WATERING FARMER (Default / Neutral Growth)
+  // Facing tree trunk, holding iron water bucket, pouring sparkling cyan water stream onto trunk roots!
+  const breath = frameIndex % 4 < 2 ? 0 : 0.6;
+  const splashTick = frameIndex % 3;
+  const waterStreamWave = frameIndex % 2 === 0 ? 0.5 : 0;
+
+  return `
+    <!-- Minecraft Watering Farmer (Neutral / Steady Growth) -->
+    <g shape-rendering="crispEdges">
+      <!-- Straw Sun Hat -->
+      <rect x="${x + 2}" y="${(y - 2 - breath).toFixed(1)}" width="8" height="4" fill="#f9c851" />
+      <rect x="${x + 3}" y="${(y - 3 - breath).toFixed(1)}" width="6" height="1" fill="#ffe082" />
+      <rect x="${x + 2}" y="${(y + 1 - breath).toFixed(1)}" width="8" height="1" fill="#c28b1e" />
+      <rect x="${x + 2}" y="${(y + 1 - breath).toFixed(1)}" width="8" height="1" fill="#5d4037" />
+
+      <rect x="${x - 3}" y="${(y + 2 - breath).toFixed(1)}" width="18" height="2" fill="#f9c851" />
+      <rect x="${x - 2}" y="${(y + 2 - breath).toFixed(1)}" width="16" height="1" fill="#ffe082" />
+      <rect x="${x - 3}" y="${(y + 3 - breath).toFixed(1)}" width="18" height="1" fill="#c28b1e" />
+
+      <!-- Villager Head (Focused forward/down at tree) -->
+      <rect x="${x + 2}" y="${(y + 4 - breath).toFixed(1)}" width="8" height="8" fill="#c98c68" />
+      <rect x="${x + 3}" y="${(y + 4 - breath).toFixed(1)}" width="6" height="1" fill="#dfa27e" />
+
+      <!-- Uni-brow -->
+      <rect x="${x + 3}" y="${(y + 5 - breath).toFixed(1)}" width="6" height="1" fill="#54382e" />
+
+      <!-- Eyes looking left toward tree trunk -->
+      <rect x="${x + 2}" y="${(y + 6 - breath).toFixed(1)}" width="2" height="2" fill="#ffffff" />
+      <rect x="${x + 2}" y="${(y + 6 - breath).toFixed(1)}" width="1" height="2" fill="#2e7d32" />
+      <rect x="${x + 7}" y="${(y + 6 - breath).toFixed(1)}" width="2" height="2" fill="#ffffff" />
+      <rect x="${x + 7}" y="${(y + 6 - breath).toFixed(1)}" width="1" height="2" fill="#2e7d32" />
+
+      <!-- Nose facing left -->
+      <rect x="${x + 4}" y="${(y + 7 - breath).toFixed(1)}" width="2.5" height="4.5" fill="#c98c68" />
+      <rect x="${x + 4}" y="${(y + 10.5 - breath).toFixed(1)}" width="2.5" height="1" fill="#9c5f3c" />
+
+      <!-- Brown Robe -->
+      <rect x="${x + 2}" y="${(y + 12 - breath).toFixed(1)}" width="8" height="10" fill="#6d4c41" />
+      <rect x="${x + 3}" y="${(y + 12 - breath).toFixed(1)}" width="6" height="2" fill="#7c584c" />
+
+      <!-- Arms Extended Forward Holding Water Bucket -->
+      <rect x="${x - 2}" y="${(y + 13 - breath).toFixed(1)}" width="5" height="4" fill="#54382e" />
+      <rect x="${x - 4}" y="${(y + 14 - breath).toFixed(1)}" width="3" height="2.5" fill="#c98c68" />
+
+      <!-- Iron Water Bucket (Tilted left pouring water) -->
+      <!-- Bucket Outer Iron Shell -->
+      <rect x="${x - 10}" y="${(y + 13 - breath).toFixed(1)}" width="6" height="6" fill="#90a4ae" />
+      <rect x="${x - 9}" y="${(y + 14 - breath).toFixed(1)}" width="5" height="5" fill="#cfd8dc" />
+      <rect x="${x - 9}" y="${(y + 13 - breath).toFixed(1)}" width="4" height="1" fill="#eceff1" />
+      <rect x="${x - 11}" y="${(y + 14 - breath).toFixed(1)}" width="2" height="4" fill="#78909c" />
+      <!-- Water inside bucket -->
+      <rect x="${x - 10}" y="${(y + 14 - breath).toFixed(1)}" width="3" height="3" fill="#00e5ff" />
+
+      <!-- Flowing Animated Water Stream pouring down to tree base -->
+      <rect x="${(x - 12 - waterStreamWave).toFixed(1)}" y="${(y + 16 - breath).toFixed(1)}" width="3" height="4" fill="#00e5ff" opacity="0.9" />
+      <rect x="${(x - 13 + waterStreamWave).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="3" height="5" fill="#40c4ff" opacity="0.85" />
+      <rect x="${x - 14}" y="${y + 23}" width="4" height="2" fill="#00b0ff" opacity="0.9" />
+
+      <!-- Water Splashes on Grass Lawn -->
+      <rect x="${(x - 16).toFixed(1)}" y="${(y + 22 - (splashTick === 0 ? 2 : 0)).toFixed(1)}" width="1.5" height="1.5" fill="#e0f7fa" opacity="${splashTick === 0 ? 0.9 : 0.4}" />
+      <rect x="${(x - 11).toFixed(1)}" y="${(y + 22 - (splashTick === 1 ? 2.5 : 0)).toFixed(1)}" width="1.5" height="1.5" fill="#e0f7fa" opacity="${splashTick === 1 ? 0.9 : 0.4}" />
+      <!-- Damp Water Pool at Trunk Roots -->
+      <rect x="${x - 15}" y="${y + 24}" width="6" height="1.5" fill="#0288d1" opacity="0.8" />
+      <rect x="${x - 14}" y="${y + 24.5}" width="4" height="1" fill="#00e5ff" opacity="0.9" />
+
+      <!-- Lower Apron -->
+      <rect x="${x + 2}" y="${(y + 18 - breath).toFixed(1)}" width="8" height="4" fill="#54382e" />
+      <rect x="${x + 3}" y="${(y + 18 - breath).toFixed(1)}" width="4" height="3" fill="#8d6e63" />
+
+      <!-- Legs & Dark Leather Boots -->
+      <rect x="${x + 3}" y="${y + 22}" width="2.5" height="2" fill="#3e2723" />
+      <rect x="${x + 6.5}" y="${y + 22}" width="2.5" height="2" fill="#3e2723" />
+      <rect x="${x + 2.5}" y="${y + 23.5}" width="3" height="1.5" fill="#211510" />
+      <rect x="${x + 6.5}" y="${y + 23.5}" width="3" height="1.5" fill="#211510" />
     </g>
   `;
 }

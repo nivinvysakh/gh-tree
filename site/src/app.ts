@@ -29,6 +29,8 @@ class GhTreeApp {
     this.settings = {
       treeType: "oak",
       pet: "none",
+      showFarmer: "auto",
+      farmerMood: "auto",
       showCampfire: false,
       weatherType: "sunny",
       isDay: true,
@@ -102,7 +104,31 @@ class GhTreeApp {
       });
     });
 
-    // 4. Pet Selector Pills
+    // 4. Farmer Selector Pills
+    const farmerPills = document.querySelectorAll<HTMLElement>("#farmer-selector .pill-item");
+    farmerPills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        farmerPills.forEach((p) => p.classList.remove("active"));
+        pill.classList.add("active");
+        const val = pill.getAttribute("data-farmer");
+        this.settings.showFarmer = val === "true" ? true : val === "false" ? false : "auto";
+        this.updatePreview();
+      });
+    });
+
+    // 4b. Farmer Mood Selector Pills
+    const farmerMoodPills = document.querySelectorAll<HTMLElement>("#farmer-mood-selector .pill-item");
+    farmerMoodPills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        farmerMoodPills.forEach((p) => p.classList.remove("active"));
+        pill.classList.add("active");
+        const mood = pill.getAttribute("data-mood") as any;
+        this.settings.farmerMood = mood;
+        this.updatePreview();
+      });
+    });
+
+    // 4c. Pet Selector Pills
     const petPills = document.querySelectorAll<HTMLElement>("#pet-selector .pill-item");
     petPills.forEach((pill) => {
       pill.addEventListener("click", () => {
@@ -353,6 +379,9 @@ class GhTreeApp {
     this.settings.isOwner = opt.isOwner;
     this.settings.isContributor = opt.isContributor;
 
+    if (opt.showFarmer !== undefined) this.settings.showFarmer = opt.showFarmer;
+    if (opt.farmerMood !== undefined) this.settings.farmerMood = opt.farmerMood;
+
     if (opt.showJackOLantern) this.settings.event = "halloween";
     else if (opt.showHolidayGift) this.settings.event = "holiday";
     else if (opt.showFireworks) this.settings.event = "fireworks";
@@ -374,6 +403,15 @@ class GhTreeApp {
     // Biome
     document.querySelectorAll(".biome-card").forEach((c) => {
       c.classList.toggle("active", c.getAttribute("data-biome") === this.settings.treeType);
+    });
+    // Farmer
+    document.querySelectorAll("#farmer-selector .pill-item").forEach((p) => {
+      const fVal = String(this.settings.showFarmer);
+      p.classList.toggle("active", p.getAttribute("data-farmer") === fVal);
+    });
+    // Farmer Mood
+    document.querySelectorAll("#farmer-mood-selector .pill-item").forEach((p) => {
+      p.classList.toggle("active", p.getAttribute("data-mood") === this.settings.farmerMood);
     });
     // Pet
     document.querySelectorAll("#pet-selector .pill-item").forEach((p) => {
@@ -612,6 +650,12 @@ class GhTreeApp {
     } else if (this.settings.weatherType && this.settings.weatherType !== "sunny") {
       params.set("weather", this.settings.weatherType);
     }
+    if (this.settings.showFarmer === false) {
+      params.set("farmer", "false");
+    }
+    if (this.settings.farmerMood && this.settings.farmerMood !== "auto") {
+      params.set("farmer_mood", this.settings.farmerMood);
+    }
     if (this.settings.pet && this.settings.pet !== "none") {
       params.set("pet", this.settings.pet);
     }
@@ -757,6 +801,7 @@ jobs:
           github-token: \${{ secrets.GITHUB_TOKEN }}
           tree-type: '${this.settings.treeType}'
           pet: '${this.settings.pet}'
+          show-farmer: ${this.settings.showFarmer}${this.settings.farmerMood !== "auto" ? `\n          farmer-mood: '${this.settings.farmerMood}'` : ""}
           event: '${this.settings.event}'
           ${this.selectedCity ? `city: '${this.selectedCity}'` : `weather: '${this.settings.weatherType}'`}
           show-campfire: ${this.settings.showCampfire}

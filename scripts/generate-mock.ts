@@ -18,6 +18,8 @@ async function generateGifVariant(
   frameDelayMs: number,
   customOpts: {
     pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
+    showFarmer?: boolean | "auto";
+    farmerMood?: "auto" | "sad" | "dancing" | "watering";
     showCampfire?: boolean | "auto";
     showChest?: boolean | "auto";
     event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
@@ -111,6 +113,8 @@ async function runMockGeneration(): Promise<void> {
     treeType: TreeType;
     opts?: {
       pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
+      showFarmer?: boolean | "auto";
+      farmerMood?: "auto" | "sad" | "dancing" | "watering";
       showCampfire?: boolean | "auto";
       showChest?: boolean | "auto";
       event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
@@ -118,7 +122,8 @@ async function runMockGeneration(): Promise<void> {
       customWeeks?: ContributionWeek[];
     };
   }[] = [
-    { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" }, treeType: "oak", opts: { pet: "wolf", showCampfire: true, showChest: true } },
+    { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" }, treeType: "oak", opts: { pet: "wolf", showFarmer: true, showCampfire: true, showChest: true } },
+    { file: "assets/tree-farmer.gif", weather: { type: "sunny", description: "Default Minecraft Farmer Villager" }, treeType: "oak", opts: { showFarmer: true, farmerMood: "watering", showCampfire: false } },
     { file: "assets/tree-sakura.gif", weather: { type: "sunny", description: "Sunny Sakura Blossom" }, treeType: "sakura", opts: { pet: "cat", showChest: true } },
     { file: "assets/tree-sakura-rain.gif", weather: { type: "rain", description: "Sakura in Rain" }, treeType: "sakura" },
     { file: "assets/tree-sakura-snow.gif", weather: { type: "snow", description: "Sakura in Snow" }, treeType: "sakura" },

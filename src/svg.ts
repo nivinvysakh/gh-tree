@@ -20,6 +20,7 @@ import {
   renderMinecraftBee,
   renderMinecraftBeehive,
   renderMinecraftSignpost,
+  renderMinecraftFarmer,
   renderMinecraftWolf,
   renderMinecraftFox,
   renderMinecraftCat,
@@ -54,6 +55,7 @@ export {
   renderMinecraftBee,
   renderMinecraftBeehive,
   renderMinecraftSignpost,
+  renderMinecraftFarmer,
   renderMinecraftWolf,
   renderMinecraftFox,
   renderMinecraftCat,
@@ -86,6 +88,7 @@ export function renderFrame(
     beehive,
     signpost,
     pet,
+    farmer,
     campfire,
     chest,
     seasonalEvent,
@@ -195,7 +198,7 @@ export function renderFrame(
   // 11. Golden Apples on Grass
   const goldenApplesSvg = (goldenApples || []).map((g) => renderGoldenAppleOnGrass(g, frameIndex)).join("\n");
 
-  // 12. Pet Companion (Wolf / Fox / Cat / Parrot)
+  // 12. Pet Animal Companion (Wolf / Fox / Cat / Parrot - Left side)
   let petSvg = "";
   if (pet) {
     if (pet.type === "wolf") {
@@ -209,13 +212,19 @@ export function renderFrame(
     }
   }
 
-  // 13. Roasting Campfire
+  // 13. Minecraft Farmer Under Tree (Right side)
+  let farmerSvg = "";
+  if (farmer) {
+    farmerSvg = renderMinecraftFarmer(farmer, frameIndex, totalFrames);
+  }
+
+  // 14. Roasting Campfire
   let campfireSvg = "";
   if (campfire) {
     campfireSvg = renderMinecraftCampfire(campfire, frameIndex, totalFrames);
   }
 
-  // 14. Halloween Jack-o'-Lantern & Flying Ghosts
+  // 15. Halloween Jack-o'-Lantern & Flying Ghosts
   let jackOLanternSvg = "";
   let ghostsSvg = "";
   if (jackOLantern) {
@@ -223,25 +232,25 @@ export function renderFrame(
     ghostsSvg = renderHalloweenGhosts(jackOLantern.x, jackOLantern.y, frameIndex, totalFrames);
   }
 
-  // 15. Holiday Gift Boxes
+  // 16. Holiday Gift Boxes
   let holidayGiftsSvg = "";
   if (holidayGifts && holidayGifts.length > 0) {
     holidayGiftsSvg = renderSeasonalHolidayGifts(holidayGifts, frameIndex);
   }
 
-  // 16. Flying Minecraft Bee
+  // 17. Flying Minecraft Bee
   let beeSvg = "";
   if (bee && !isRain && !isSnow) {
     beeSvg = renderMinecraftBee(bee.x, bee.y, frameIndex, totalFrames);
   }
 
-  // 17. Ambient Bioluminescent Spores / Particles (Nether & Night Biomes)
+  // 18. Ambient Bioluminescent Spores / Particles (Nether & Night Biomes)
   let sporesSvg = "";
   if (treeType === "crimson" || treeType === "warped" || (isNight && !isRain && !isSnow)) {
     sporesSvg = renderBioluminescentParticles(width, groundY, frameIndex, totalFrames, treeType);
   }
 
-  // 18. Foreground Weather Precipitation or Sakura Petals
+  // 19. Foreground Weather Precipitation or Sakura Petals
   let precipSvg = "";
   if (isRain) {
     precipSvg = renderRainStreaks(width, groundY, frameIndex, totalFrames);
@@ -264,6 +273,7 @@ export function renderFrame(
   ${goldenApplesSvg}
   ${flowersSvg}
   ${petSvg}
+  ${farmerSvg}
   ${campfireSvg}
   ${jackOLanternSvg}
   ${ghostsSvg}

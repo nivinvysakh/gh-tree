@@ -159,6 +159,12 @@ async function run(): Promise<void> {
       return "auto";
     };
 
+    const showFarmer = parseAutoBool(core.getInput("show-farmer"));
+    const rawFarmerMood = (core.getInput("farmer-mood") || "auto").trim().toLowerCase();
+    const farmerMood = (["auto", "sad", "dancing", "watering"].includes(rawFarmerMood)
+      ? rawFarmerMood
+      : "auto") as "auto" | "sad" | "dancing" | "watering";
+
     const showCampfire = parseAutoBool(core.getInput("show-campfire"));
     const showChest = parseAutoBool(core.getInput("show-chest"));
 
@@ -177,6 +183,8 @@ async function run(): Promise<void> {
       isOwner,
       isContributor,
       pet,
+      showFarmer,
+      farmerMood,
       showCampfire,
       showChest,
       event,

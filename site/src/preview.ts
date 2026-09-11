@@ -6,6 +6,8 @@ import { WeatherCondition, WeatherType } from "../../src/weather";
 export interface PreviewSettings {
   treeType: TreeType;
   pet: "none" | "wolf" | "cat" | "fox" | "parrot" | "auto";
+  showFarmer: boolean | "auto";
+  farmerMood: "auto" | "sad" | "dancing" | "watering";
   showCampfire: boolean;
   weatherType: WeatherType;
   isDay: boolean;
@@ -59,6 +61,8 @@ export class TreePreviewEngine {
         showSignpost: settings.showSignpost,
         showBee: settings.showBee,
         pet: settings.pet === "none" ? "none" : settings.pet,
+        showFarmer: settings.showFarmer,
+        farmerMood: settings.farmerMood,
         showCampfire: settings.showCampfire,
         showChest: settings.showChest,
         event: settings.event === "none" ? "none" : settings.event,

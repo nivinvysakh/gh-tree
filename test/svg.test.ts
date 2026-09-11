@@ -320,6 +320,41 @@ describe("Minecraft SVG module", () => {
     expect(parrotSvg).toContain('fill="#1e88e5"'); // Royal blue wing tips
   });
 
+  it("renders human Farmer under the tree with distinct visual states for sad, dancing, and watering moods", () => {
+    // 1. Sad Farmer (Dormant tree / 0 commits)
+    const sadLayout: TreeLayout = {
+      ...mockLayout,
+      farmer: { x: 266, y: 346, mood: "sad" },
+    };
+    const sadSvg = renderFrame(sadLayout, 0, 20);
+    expect(sadSvg).toContain("<!-- Minecraft Sad Farmer (Dry Tree / 0 Commits) -->");
+    expect(sadSvg).toContain('fill="#d49726"'); // Drooping straw hat
+    expect(sadSvg).toContain('fill="#42a5f5"'); // Tear droplet
+    expect(sadSvg).toContain('fill="#795548"'); // Withered dry twig
+
+    // 2. Happy Dancing Farmer (Flourishing tree)
+    const dancingLayout: TreeLayout = {
+      ...mockLayout,
+      farmer: { x: 266, y: 346, mood: "dancing" },
+    };
+    const dancingSvg = renderFrame(dancingLayout, 0, 20);
+    expect(dancingSvg).toContain("<!-- Minecraft Happy Dancing Farmer (Flourishing Tree) -->");
+    expect(dancingSvg).toContain('fill="#fbc02d"'); // Golden wheat waving
+    expect(dancingSvg).toContain('fill="#ffd54f"'); // Floating joy sparkles
+    expect(dancingSvg).toContain('fill="#ff8a80"'); // Cheerful rosy cheeks
+
+    // 3. Watering Farmer (Neutral / Steady Growth)
+    const wateringLayout: TreeLayout = {
+      ...mockLayout,
+      farmer: { x: 266, y: 346, mood: "watering" },
+    };
+    const wateringSvg = renderFrame(wateringLayout, 0, 20);
+    expect(wateringSvg).toContain("<!-- Minecraft Watering Farmer (Neutral / Steady Growth) -->");
+    expect(wateringSvg).toContain('fill="#90a4ae"'); // Iron water bucket shell
+    expect(wateringSvg).toContain('fill="#00e5ff"'); // Water stream & splashes
+    expect(wateringSvg).toContain('fill="#0288d1"'); // Damp water pool at trunk roots
+  });
+
   it("renders roasting campfire with crackling flames and rising smoke", () => {
     const campfireLayout: TreeLayout = {
       ...mockLayout,

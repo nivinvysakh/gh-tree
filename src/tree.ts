@@ -71,6 +71,14 @@ export interface PetPos {
   state: "sitting" | "sleeping" | "standing";
 }
 
+export type FarmerMood = "sad" | "dancing" | "watering";
+
+export interface FarmerPos {
+  x: number;
+  y: number;
+  mood: FarmerMood;
+}
+
 export interface CampfirePos {
   x: number;
   y: number;
@@ -132,6 +140,7 @@ export interface TreeLayout {
   beehive?: BeehivePos;
   signpost?: SignpostPos;
   pet?: PetPos;
+  farmer?: FarmerPos;
   campfire?: CampfirePos;
   chest?: ChestPos;
   seasonalEvent?: SeasonalEvent;
@@ -154,13 +163,13 @@ const CANOPY_SLOTS: { gridX: number; gridY: number }[] = [
   { gridX: 0, gridY: 0 },
   { gridX: 1, gridY: 0 },
   { gridX: 2, gridY: 0 },
-  // Tier -1 (Middle tier)
+  // Tier -1 (Lower mid)
   { gridX: -2, gridY: -1 },
   { gridX: -1, gridY: -1 },
   { gridX: 0, gridY: -1 },
   { gridX: 1, gridY: -1 },
   { gridX: 2, gridY: -1 },
-  // Tier -2 (Upper tier)
+  // Tier -2 (Upper mid)
   { gridX: -1, gridY: -2 },
   { gridX: 0, gridY: -2 },
   { gridX: 1, gridY: -2 },
@@ -192,6 +201,8 @@ export function buildTreeLayout(
     isOwner?: boolean;
     isContributor?: boolean;
     pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
+    showFarmer?: boolean | "auto";
+    farmerMood?: "auto" | "sad" | "dancing" | "watering";
     showCampfire?: boolean | "auto";
     showChest?: boolean | "auto";
     event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
@@ -298,29 +309,6 @@ export function buildTreeLayout(
     }
   }
 
-  // 4. Golden Apples 🍏✨ for PR Reviews & Assigned PRs: Outermost corners of grass lawn (Max 4)
-  const goldenApples: GoldenApplePos[] = [];
-  if (totalAssignedPRs > 0) {
-    const goldenAppleSize = 18;
-    const separateSlots: { x: number; side: "left" | "right" }[] = [
-      { x: 12, side: "left" },   // Far Left 1
-      { x: 34, side: "left" },   // Far Left 2
-      { x: 412, side: "right" }, // Far Right 2
-      { x: 434, side: "right" }, // Far Right 1
-    ];
-
-    const count = Math.min(totalAssignedPRs, MAX_GOLDEN_APPLES);
-    for (let g = 0; g < count; g++) {
-      const slot = separateSlots[g];
-      goldenApples.push({
-        x: slot.x,
-        y: groundY - goldenAppleSize + 2,
-        size: goldenAppleSize,
-        side: slot.side,
-      });
-    }
-  }
-
   // 5. Underground Ore Blocks 💎 (Embedded in dirt layer: 6 slots across width 460)
   const oreBlocks: OreBlockPos[] = [];
   
@@ -358,7 +346,7 @@ export function buildTreeLayout(
     bee = { x: trunkX - 44, y: canopyBottomY + 28 };
   }
 
-  // 8. Minecraft Pet Companion 🐾 (Wolf 🐺, Fox 🦊, Cat 🐱)
+  // 8. Minecraft Companion Pet 🐾 (Wolf 🐺, Fox 🦊, Cat 🐱, Parrot 🦜 on Left Side)
   let pet: PetPos | undefined;
   const rawPetOpt = opts.pet ?? "auto";
   const isNight = weather.type === "night" || weather.isDay === false;
@@ -397,7 +385,42 @@ export function buildTreeLayout(
     }
   }
 
-  // 9. Milestone Treasure Chest 📦
+  // 9. Minecraft Farmer Under Tree 👨‍🌾 (Default on right side of trunk)
+  let farmer: FarmerPos | undefined;
+  const recent2WeeksCommits = recentWeeks.slice(-2).reduce((acc, w) => acc + (w ? w.total : 0), 0);
+  const showFarmerOpt = opts.showFarmer ?? true;
+
+  if (showFarmerOpt !== false) {
+    let mood: FarmerMood = "watering";
+    const rawMoodOpt = opts.farmerMood ?? "auto";
+
+    if (rawMoodOpt === "sad" || rawMoodOpt === "dancing" || rawMoodOpt === "watering") {
+      mood = rawMoodOpt;
+    } else {
+      // Auto mood based on tree health and commits:
+      // If tree is dry / dormant (0 commits or all dormant leaves) -> sad
+      // If tree is flourishing / cherish (>= 30 commits, streak >= 7, or active sprint >= 10) -> dancing
+      // If tree is neutral / steady growth -> watering
+      const isDry = totalCommits === 0 || leafBlocks.every((l) => l.commitLevel === 0);
+      const isFlourishing = totalCommits >= 30 || currentStreak >= 7 || recent2WeeksCommits >= 10;
+
+      if (isDry) {
+        mood = "sad";
+      } else if (isFlourishing) {
+        mood = "dancing";
+      } else {
+        mood = "watering";
+      }
+    }
+
+    farmer = {
+      x: 266, // Stands on right side of trunk (trunk is 206..254)
+      y: groundY - 24, // Feet resting flush on grass surface (370)
+      mood,
+    };
+  }
+
+  // 10. Milestone Treasure Chest 📦
   let chest: ChestPos | undefined;
   const showChestOpt = opts.showChest ?? "auto";
   if (showChestOpt !== false) {
@@ -415,23 +438,24 @@ export function buildTreeLayout(
     }
 
     if (chestType) {
-      chest = { x: 274, y: groundY - 16, type: chestType };
+      const chestX = farmer ? 308 : 274;
+      chest = { x: chestX, y: groundY - 16, type: chestType };
     }
   }
 
-  // 10. Roasting Campfire 🔥 (Active sprint mode)
+  // 11. Roasting Campfire 🔥 (Active sprint mode)
   let campfire: CampfirePos | undefined;
-  const recent2WeeksCommits = recentWeeks.slice(-2).reduce((acc, w) => acc + (w ? w.total : 0), 0);
   const showCampfireOpt = opts.showCampfire ?? "auto";
   const shouldShowCampfire =
     showCampfireOpt === true ||
     (showCampfireOpt === "auto" && (recent2WeeksCommits >= 12 || currentStreak >= 10 || totalCommits >= 60));
 
   if (shouldShowCampfire) {
-    campfire = { x: 346, y: groundY - 16 };
+    const campfireX = farmer && chest ? 356 : farmer || chest ? 346 : 310;
+    campfire = { x: campfireX, y: groundY - 16 };
   }
 
-  // 11. Seasonal Holiday / Event Modes 🎃🎄🎆
+  // 12. Seasonal Holiday / Event Modes 🎃🎄🎆
   const curDate = opts.currentDate ?? new Date();
   const curMonth = curDate.getMonth(); // 0 = Jan, 9 = Oct, 11 = Dec
   const eventOpt = opts.event ?? "auto";
@@ -455,79 +479,89 @@ export function buildTreeLayout(
   if (seasonalEvent === "halloween") {
     jackOLantern = { x: campfire ? 112 : 382, y: groundY - 16 };
   } else if (seasonalEvent === "holiday") {
-    const giftBaseX = chest ? 310 : 274;
+    const giftBaseX = chest ? 336 : farmer ? 308 : 274;
     holidayGifts = [
       { x: giftBaseX, y: groundY - 12, size: 12, boxColor: "#d32f2f", ribbonColor: "#388e3c" },
       { x: giftBaseX + 13, y: groundY - 10, size: 10, boxColor: "#fbc02d", ribbonColor: "#d32f2f" },
     ];
   }
 
-  // 12. Dynamic Non-Overlapping Flower Placement 🌸
+  // 13. Dynamic Non-Overlapping Flower Placement 🌸
   const occupiedRanges: [number, number][] = [];
-  if (signpost) occupiedRanges.push([50, 102]);
-  if (jackOLantern) occupiedRanges.push([jackOLantern.x - 10, jackOLantern.x + 24]);
-  if (pet) occupiedRanges.push([pet.x - 10, pet.x + 24]);
-  if (chest) occupiedRanges.push([chest.x - 10, chest.x + 24]);
+  if (signpost) occupiedRanges.push([38, 104]); // Protects signpost area and ensures only one clean far-left slot at x: 18
+  if (jackOLantern) occupiedRanges.push([jackOLantern.x - 14, jackOLantern.x + 20]);
+  if (pet) occupiedRanges.push([pet.x - 14, pet.x + 20]);
+  if (farmer) occupiedRanges.push([farmer.x - 14, farmer.x + 20]);
+  if (chest) occupiedRanges.push([chest.x - 14, chest.x + 20]);
   if (holidayGifts) {
     for (const g of holidayGifts) {
       occupiedRanges.push([g.x - 8, g.x + g.size + 8]);
     }
   }
-  if (campfire) occupiedRanges.push([campfire.x - 10, campfire.x + 26]);
+  if (campfire) occupiedRanges.push([campfire.x - 14, campfire.x + 22]);
 
   const isSlotAvailable = (x: number): boolean => {
     return !occupiedRanges.some(([minX, maxX]) => x >= minX && x <= maxX);
   };
 
-  const leftCandidateSlots = [112, 142, 172];
-  const rightCandidateSlots = [274, 308, 344, 380];
-
-  const leftSlots = leftCandidateSlots.filter(isSlotAvailable);
-  const rightSlots = rightCandidateSlots.filter(isSlotAvailable);
+  const flowerLeftCandidates = [116, 146, 18, 176];
+  const flowerRightCandidates = [344, 376, 408, 438, 312, 276];
 
   const flowers: FlowerPos[] = [];
-  if (totalOpenPRs > 0) {
-    const flowerTypes: ("poppy" | "dandelion" | "tulip" | "sakura")[] = [
-      "poppy",
-      "dandelion",
-      "tulip",
-      "sakura",
-    ];
-    const flowerWidth = 16;
-    const flowerHeight = 22;
-    const count = Math.min(totalOpenPRs, MAX_FLOWERS);
+  const flowerTypes: ("poppy" | "dandelion" | "tulip" | "sakura")[] =
+    treeType === "sakura"
+      ? ["sakura", "poppy", "dandelion", "tulip"]
+      : ["poppy", "dandelion", "tulip", "poppy"];
 
-    let lIdx = 0;
-    let rIdx = 0;
+  const flowerCount = Math.min(4, totalOpenPRs);
+  for (let i = 0; i < flowerCount; i++) {
+    const isLeft = i % 2 === 0;
+    const targetCandidates = isLeft ? flowerLeftCandidates : flowerRightCandidates;
+    const fallbackCandidates = isLeft ? flowerRightCandidates : flowerLeftCandidates;
 
-    for (let f = 0; f < count; f++) {
-      let chosenX: number | undefined;
-      let side: "left" | "right" = "left";
+    let slotX = targetCandidates.find(isSlotAvailable);
+    if (slotX === undefined) {
+      slotX = fallbackCandidates.find(isSlotAvailable);
+    }
 
-      if (f % 2 === 0 && lIdx < leftSlots.length) {
-        chosenX = leftSlots[lIdx++];
-        side = "left";
-      } else if (rIdx < rightSlots.length) {
-        chosenX = rightSlots[rIdx++];
-        side = "right";
-      } else if (lIdx < leftSlots.length) {
-        chosenX = leftSlots[lIdx++];
-        side = "left";
-      } else if (rIdx < rightSlots.length) {
-        chosenX = rightSlots[rIdx++];
-        side = "right";
-      }
+    if (slotX !== undefined) {
+      occupiedRanges.push([slotX - 14, slotX + 16]);
+      flowers.push({
+        x: slotX,
+        y: groundY - 21,
+        width: 18,
+        height: 24,
+        type: flowerTypes[i % flowerTypes.length],
+        side: slotX < trunkX ? "left" : "right",
+      });
+    }
+  }
 
-      if (chosenX !== undefined) {
-        flowers.push({
-          x: chosenX,
-          y: groundY - flowerHeight + 3,
-          width: flowerWidth,
-          height: flowerHeight,
-          type: flowerTypes[f % flowerTypes.length],
-          side,
-        });
-      }
+  // 14. Golden Apples on Grass Lawn (Assigned PRs / Reviews) 🍏✨
+  const goldenAppleLeftCandidates = [18, 146, 116, 176];
+  const goldenAppleRightCandidates = [408, 438, 344, 376, 312, 276];
+
+  const goldenApples: GoldenApplePos[] = [];
+  const goldenAppleCount = Math.min(4, totalAssignedPRs);
+
+  for (let i = 0; i < goldenAppleCount; i++) {
+    const isLeft = i % 2 === 0;
+    const targetCandidates = isLeft ? goldenAppleLeftCandidates : goldenAppleRightCandidates;
+    const fallbackCandidates = isLeft ? goldenAppleRightCandidates : goldenAppleLeftCandidates;
+
+    let slotX = targetCandidates.find(isSlotAvailable);
+    if (slotX === undefined) {
+      slotX = fallbackCandidates.find(isSlotAvailable);
+    }
+
+    if (slotX !== undefined) {
+      occupiedRanges.push([slotX - 14, slotX + 16]);
+      goldenApples.push({
+        x: slotX,
+        y: groundY - 18,
+        size: 18,
+        side: slotX < trunkX ? "left" : "right",
+      });
     }
   }
 
@@ -547,6 +581,7 @@ export function buildTreeLayout(
     beehive,
     signpost,
     pet,
+    farmer,
     campfire,
     chest,
     seasonalEvent,
@@ -573,6 +608,8 @@ export type TreeOptions = {
   isOwner?: boolean;
   isContributor?: boolean;
   pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
+  showFarmer?: boolean | "auto";
+  farmerMood?: "auto" | "sad" | "dancing" | "watering";
   showCampfire?: boolean | "auto";
   showChest?: boolean | "auto";
   event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
