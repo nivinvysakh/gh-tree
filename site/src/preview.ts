@@ -5,7 +5,7 @@ import { WeatherCondition, WeatherType } from "../../src/weather";
 
 export interface PreviewSettings {
   treeType: TreeType;
-  pet: "none" | "wolf" | "cat" | "fox" | "auto";
+  pet: "none" | "wolf" | "cat" | "fox" | "parrot" | "auto";
   showCampfire: boolean;
   weatherType: WeatherType;
   isDay: boolean;

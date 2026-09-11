@@ -148,9 +148,9 @@ async function run(): Promise<void> {
         : isActionContributor;
 
     const rawPet = (core.getInput("pet") || "auto").trim().toLowerCase();
-    const pet = (["auto", "wolf", "fox", "cat", "none"].includes(rawPet)
+    const pet = (["auto", "wolf", "fox", "cat", "parrot", "none"].includes(rawPet)
       ? rawPet
-      : "auto") as "auto" | "wolf" | "fox" | "cat" | "none";
+      : "auto") as "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
 
     const parseAutoBool = (val: string): boolean | "auto" => {
       const v = (val || "auto").trim().toLowerCase();

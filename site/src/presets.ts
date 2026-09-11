@@ -8,7 +8,7 @@ export interface TreePreset {
   description: string;
   options: {
     treeType: TreeType;
-    pet: "none" | "wolf" | "cat" | "fox";
+    pet: "none" | "wolf" | "cat" | "fox" | "parrot";
     showCampfire: boolean;
     weather: WeatherType;
     isDay: boolean;
@@ -103,12 +103,12 @@ export const PRESETS: TreePreset[] = [
     id: "spooky-woods",
     name: "Spooky Autumn",
     emoji: "🎃",
-    description: "Halloween Jack-o'-lantern, stormy rain showers, and black cat.",
+    description: "Halloween Jack-o'-lantern, flying spirits, and black cat.",
     options: {
       treeType: "oak",
       pet: "cat",
       showCampfire: false,
-      weather: "rain",
+      weather: "night",
       isDay: false,
       streak: 60,
       ore: "redstone",
@@ -199,10 +199,10 @@ export const PRESETS: TreePreset[] = [
     id: "jungle-rainforest",
     name: "Jungle Rainforest",
     emoji: "🌴",
-    description: "Lush tropical emerald canopy, hanging fruits, and gentle rain.",
+    description: "Lush tropical emerald canopy, Red Macaw Parrot, and gentle rain.",
     options: {
       treeType: "jungle",
-      pet: "cat",
+      pet: "parrot",
       showCampfire: false,
       weather: "rain",
       isDay: true,
@@ -217,6 +217,30 @@ export const PRESETS: TreePreset[] = [
       openPRs: 4,
       mergedPRs: 14,
       assignedPRs: 3,
+    },
+  },
+  {
+    id: "ender-vault",
+    name: "Ender Void Vault",
+    emoji: "🔮",
+    description: "500+ Milestone Ender Chest with glowing Eye of Ender, portal particles, and starlight.",
+    options: {
+      treeType: "warped",
+      pet: "cat",
+      showCampfire: false,
+      weather: "night",
+      isDay: false,
+      streak: 520,
+      ore: "netherite",
+      showJackOLantern: false,
+      showHolidayGift: false,
+      showFireworks: false,
+      isOwner: true,
+      isContributor: true,
+      totalCommits: 550,
+      openPRs: 4,
+      mergedPRs: 25,
+      assignedPRs: 4,
     },
   },
 ];

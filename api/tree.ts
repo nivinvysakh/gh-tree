@@ -357,7 +357,7 @@ export default async function handler(req: any, res: any) {
   const weather = city ? await fetchLiveWeather(String(city), query.weather) : resolveWeather(query.weather);
 
   const rawPet = (query.pet || "auto").toLowerCase().trim();
-  const pet: PetType | "none" | "auto" = ["none", "auto", "wolf", "fox", "cat"].includes(rawPet)
+  const pet: PetType | "none" | "auto" = ["none", "auto", "wolf", "fox", "cat", "parrot"].includes(rawPet)
     ? (rawPet as PetType | "none" | "auto")
     : "auto";
 

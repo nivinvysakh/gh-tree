@@ -1271,6 +1271,53 @@ function renderMinecraftCat(pet: PetPos, frameIndex: number): string {
   `;
 }
 
+function renderMinecraftParrot(pet: PetPos, frameIndex: number): string {
+  const { x, y } = pet;
+  // Dancing head bob / tail flutter
+  const dance = (frameIndex % 4 === 0 || frameIndex % 4 === 1);
+  const headBob = dance ? 1 : 0;
+  const wingFlutter = frameIndex % 4 === 2;
+
+  return `
+    <!-- Minecraft Red Macaw Parrot -->
+    <g shape-rendering="crispEdges">
+      <!-- Tail Feathers (Long royal blue & dark blue trailing to grass) -->
+      <rect x="${x + 2}" y="${y + 10}" width="3" height="6" fill="#1565c0" />
+      <rect x="${x + 3}" y="${y + 12}" width="2" height="4" fill="#0d47a1" />
+
+      <!-- Scarlet Red Main Body -->
+      <rect x="${x + 4}" y="${y + 5}" width="7" height="9" fill="#d32f2f" />
+      <rect x="${x + 5}" y="${y + 6}" width="5" height="7" fill="#f44336" />
+
+      <!-- Tri-color Wing (Red -> Yellow -> Blue) -->
+      <rect x="${x + 2}" y="${y + 5}" width="4" height="${wingFlutter ? 7 : 8}" fill="#d32f2f" />
+      <rect x="${x + 2}" y="${y + 7}" width="4" height="3" fill="#ffd600" />
+      <rect x="${x + 2}" y="${y + 10}" width="4" height="3" fill="#1e88e5" />
+      <rect x="${x + 3}" y="${y + 11}" width="2" height="2" fill="#0d47a1" />
+
+      <!-- Head & Crown Crest -->
+      <rect x="${x + 5}" y="${y - 3 + headBob}" width="2" height="3" fill="#b71c1c" />
+      <rect x="${x + 6}" y="${y - 4 + headBob}" width="2" height="3" fill="#d32f2f" />
+      <!-- Main Head block -->
+      <rect x="${x + 5}" y="${y - 1 + headBob}" width="6" height="6" fill="#d32f2f" />
+
+      <!-- White Eye Patch & Black Pupil with Catchlight -->
+      <rect x="${x + 6}" y="${y + headBob}" width="3" height="3" fill="#ffffff" />
+      <rect x="${x + 7}" y="${y + 1 + headBob}" width="1.5" height="1.5" fill="#212121" />
+      <rect x="${x + 7}" y="${y + 1 + headBob}" width="0.8" height="0.8" fill="#ffffff" />
+
+      <!-- Curved Gray/Black Beak -->
+      <rect x="${x + 10}" y="${y + 1 + headBob}" width="3" height="3" fill="#616161" />
+      <rect x="${x + 11}" y="${y + 2 + headBob}" width="2" height="3" fill="#212121" />
+      <rect x="${x + 11}" y="${y + 4 + headBob}" width="1" height="1" fill="#212121" />
+
+      <!-- Claws perching on lawn -->
+      <rect x="${x + 6}" y="${y + 14}" width="2" height="2" fill="#424242" />
+      <rect x="${x + 9}" y="${y + 14}" width="2" height="2" fill="#424242" />
+    </g>
+  `;
+}
+
 function renderMinecraftCampfire(
   campfire: CampfirePos,
   frameIndex: number,
@@ -1751,6 +1798,8 @@ export function renderFrame(
       petSvg = renderMinecraftFox(pet, frameIndex, isNight);
     } else if (pet.type === "cat") {
       petSvg = renderMinecraftCat(pet, frameIndex);
+    } else if (pet.type === "parrot") {
+      petSvg = renderMinecraftParrot(pet, frameIndex);
     }
   }
 

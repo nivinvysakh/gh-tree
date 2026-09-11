@@ -308,6 +308,16 @@ describe("Minecraft SVG module", () => {
     const catSvg = renderFrame(catLayout, 0, 20);
     expect(catSvg).toContain("<!-- Minecraft Tuxedo Cat -->");
     expect(catSvg).toContain('fill="#00e676"'); // Emerald green cat eyes
+
+    // Parrot
+    const parrotLayout: TreeLayout = {
+      ...mockLayout,
+      pet: { x: 172, y: 350, type: "parrot", state: "sitting" },
+    };
+    const parrotSvg = renderFrame(parrotLayout, 0, 20);
+    expect(parrotSvg).toContain("<!-- Minecraft Red Macaw Parrot -->");
+    expect(parrotSvg).toContain('fill="#ffd600"'); // Yellow wing band
+    expect(parrotSvg).toContain('fill="#1e88e5"'); // Royal blue wing tips
   });
 
   it("renders roasting campfire with crackling flames and rising smoke", () => {

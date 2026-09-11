@@ -18,10 +18,10 @@
 
 - **Minecraft Tree Biomes 🌸🌲⚪🌳🌴🪵🏜️🌿🔥🌌** — choose between 10 authentic biomes: **Oak**, **Sakura / Cherry Blossom**, **Taiga Spruce**, **Golden Birch**, **Lush Jungle**, **Dark Oak**, **Savanna Acacia**, **Mangrove Swamp**, **Crimson Nether**, or **Warped Nether**.
 - **Minecraft Biome Canopies** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink/cyan/amber) across the 14 canopy blocks.
-- **Minecraft Pet Companions 🐾 (Wolf 🐺, Fox 🦊, Cat 🐱)** — tamed red-collared **Wolf** (tail-wagging with active streaks $\ge 14\text{d}$), sleeping/waking orange **Fox** (curled up during day, alert at night for streak $\ge 7\text{d}$), and cute **Tuxedo Cat**.
+- **Minecraft Pet Companions 🐾 (Wolf 🐺, Fox 🦊, Cat 🐱, Parrot 🦜)** — tamed red-collared **Wolf** (tail-wagging with active streaks $\ge 14\text{d}$), sleeping/waking orange **Fox** (curled up during day, alert at night for streak $\ge 7\text{d}$), cute **Tuxedo Cat**, and dancing **Red Macaw Parrot** (with tri-color wings & head-bobbing dance).
 - **Roasting Campfire 🔥** — crackling campfire with rising smoke particles and flying ember sparks during high-velocity sprint periods.
-- **Milestone Treasure Chests 📦 (Wood, Iron, Gold, Diamond, Ender)** — treasure chests sitting on the lawn leveling up as your total commit milestones grow!
-- **Seasonal Holiday Modes 🎃🎄🎆** — auto-detects or manual **Halloween** (glowing Jack-o'-Lantern), **Holiday Christmas** (twinkling canopy fairy lights & wrapped gifts), and **New Year Fireworks** (colorful sky starbursts).
+- **Milestone Treasure Chests 📦 (Wood, Iron, Gold, Diamond, Ender 🔮)** — treasure chests sitting flush on the lawn leveling up as your total commit milestones grow, culminating in the **Ender Chest** with glowing Eye of Ender and floating portal particles!
+- **Seasonal Holiday Modes 🎃🎄🎆** — auto-detects or manual **Halloween** (glowing Jack-o'-Lantern & flying spooky ghosts), **Holiday Christmas** (twinkling canopy fairy lights & wrapped gifts), and **New Year Fireworks** (colorful sky starbursts).
 - **Wooden & Milestone Stat Signposts 🪧 (Wood, Gold 🪙, Diamond 💎)** — a pixelated signpost displaying your live streak with smart auto-scaling (`14d`, `100d`, `1.2k`), leveling up with glowing ink & royal crowns for Century Club ($\ge 100\text{d}$) and 1-Year ($\ge 365\text{d}$) streaks!
 - **Minecraft Bee 🐝 & Streak Beehive 🍯** — an animated buzzing bee with fluttering wings and a wooden beehive on the trunk celebrating your active commit streak.
 - **Underground Ore Blocks 💎 (Netherite, Gold, Diamond, Emerald, Lapis Lazuli, Redstone)** — embedded in the dirt layer featuring creator-exclusive **Netherite** (`@nivinvysakh`), **Lapis Lazuli** exclusively for verified `nivinvysakh/gh-tree` contributors, and productivity milestone ores.
@@ -48,7 +48,7 @@
 | **Lush Jungle 🌴** (`tree-type: jungle`) | **Dark Oak Forest 🪵** (`tree-type: dark_oak`) |
 | :---: | :---: |
 | ![Jungle](assets/tree-jungle.gif) | ![Dark Oak](assets/tree-dark-oak.gif) |
-| *Tropical rainforest emeralds & Cat pet* | *Deep shadow canopy & Wolf pet* |
+| *Tropical rainforest emeralds & Parrot pet* | *Deep shadow canopy & Wolf pet* |
 
 | **Savanna Acacia 🏜️** (`tree-type: acacia`) | **Mangrove Swamp 🌿** (`tree-type: mangrove`) |
 | :---: | :---: |
@@ -62,12 +62,21 @@
 
 ---
 
+## Special Collectibles & Milestone Demos 🔮🦜
+
+| **Ender Milestone Chest 🔮** (≥ 500 Commits) | **Red Macaw Parrot 🦜** (`pet: parrot`) |
+| :---: | :---: |
+| ![Ender Chest](assets/tree-ender-chest.gif) | ![Parrot](assets/tree-parrot.gif) |
+| *Obsidian body, glowing Eye of Ender & portal particles* | *Dancing head-bob & tri-color fluttering wings* |
+
+---
+
 ## Seasonal Holiday Events Showcase 🎃🎄🎆
 
 | **Spooky Halloween 🎃** (`event: halloween`) | **Winter Holiday Christmas 🎄** (`event: holiday`) | **New Year Fireworks 🎆** (`event: fireworks`) |
 | :---: | :---: | :---: |
 | ![Halloween](assets/tree-halloween.gif) | ![Holiday](assets/tree-holiday.gif) | ![Fireworks](assets/tree-fireworks.gif) |
-| *Carved Jack-o'-Lantern & Cat Pet* | *Twinkling fairy lights, gifts & snow* | *Sky starburst fireworks, Campfire & Fox* |
+| *Carved Jack-o'-Lantern & Flying Ghosts* | *Twinkling fairy lights, gifts & snow* | *Sky starburst fireworks, Campfire & Fox* |
 
 ---
 
@@ -96,9 +105,10 @@ gh-tree turns your GitHub contributions into living Minecraft collectibles and m
 | **Tamed Wolf 🐺** | Sits loyally on the lawn with a red collar and wagging tail. | **Current streak ≥ 14 days** (or `pet: wolf`) |
 | **Sleeping / Alert Fox 🦊** | Curls up sleeping during the day; wakes up and stays alert at night. | **Current streak ≥ 7 days** or active commits (or `pet: fox`) |
 | **Tuxedo Cat 🐱** | Sits peacefully under the tree canopy with glowing emerald eyes. | **Current streak ≥ 3 days** or ≥ 25 commits (or `pet: cat`) |
+| **Red Macaw Parrot 🦜** | Dances on the lawn with head-bobbing and fluttering tri-color wings. | **Jungle biome** or `pet: parrot` |
 | **Roasting Campfire 🔥** | Crackling campfire with crossed logs, flickering flame tongues, and rising smoke. | **Sprint mode**: ≥ 12 commits in recent 2 weeks, streak ≥ 10d, or ≥ 60 total commits (or `show-campfire: true`) |
 | **Milestone Chests 📦** | Leveling treasure chests: **Wood** (≥ 15 commits) 🪵 $\rightarrow$ **Iron** (≥ 50) ⚙️ $\rightarrow$ **Gold** (≥ 150) 🪙 $\rightarrow$ **Diamond** (≥ 300) 💎 $\rightarrow$ **Ender Chest** (≥ 500) 🌌 | Total commits in date range (or `show-chest: true`) |
-| **Seasonal Events 🎃🎄🎆** | **Halloween** (Jack-o'-Lantern), **Holiday** (Fairy lights & gift boxes), **New Year** (Fireworks) | Auto-detected by month (Oct, Dec, Jan) or `event: halloween \| holiday \| fireworks` |
+| **Seasonal Events 🎃🎄🎆** | **Halloween** (Jack-o'-Lantern & Ghosts), **Holiday** (Fairy lights & gift boxes), **New Year** (Fireworks) | Auto-detected by month (Oct, Dec, Jan) or `event: halloween \| holiday \| fireworks` |
 
 ---
 
@@ -244,7 +254,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1789119195627)
+![tree](tree.gif?v=1789119555118)
 <!-- commit-tree-end -->
 ```
 

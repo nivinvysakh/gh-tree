@@ -17,14 +17,16 @@ async function generateGifVariant(
   frameCount: number,
   frameDelayMs: number,
   customOpts: {
-    pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+    pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
     showCampfire?: boolean | "auto";
     showChest?: boolean | "auto";
     event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
     streak?: number;
+    customWeeks?: ContributionWeek[];
   } = {}
 ): Promise<string> {
-  const layout = buildTreeLayout(weeks, undefined, {
+  const activeWeeks = customOpts.customWeeks || weeks;
+  const layout = buildTreeLayout(activeWeeks, undefined, {
     width,
     height,
     weather,
@@ -85,6 +87,19 @@ async function runMockGeneration(): Promise<void> {
     };
   });
 
+  // 550 total commits weeks for Ender Milestone Chest showcase
+  const enderWeeks: ContributionWeek[] = Array.from({ length: 14 }, (_, idx) => {
+    const count = 40;
+    const d = new Date(now.getTime() - (13 - idx) * 7 * 24 * 60 * 60 * 1000);
+    return {
+      days: [{ date: d.toISOString().slice(0, 10), count }],
+      total: count,
+      openPRs: 0,
+      mergedPRs: idx === 2 || idx === 8 ? 2 : 0,
+      assignedPRs: idx === 1 || idx === 7 ? 2 : 0,
+    };
+  });
+
   const width = 460;
   const height = 420;
   const frameCount = 14;
@@ -95,11 +110,12 @@ async function runMockGeneration(): Promise<void> {
     weather: WeatherCondition;
     treeType: TreeType;
     opts?: {
-      pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+      pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
       showCampfire?: boolean | "auto";
       showChest?: boolean | "auto";
       event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
       streak?: number;
+      customWeeks?: ContributionWeek[];
     };
   }[] = [
     { file: "tree.gif", weather: { type: "sunny", description: "Sunny / Clear sky" }, treeType: "oak", opts: { pet: "wolf", showCampfire: true, showChest: true } },
@@ -117,13 +133,15 @@ async function runMockGeneration(): Promise<void> {
     { file: "assets/tree-halloween.gif", weather: { type: "night", description: "Spooky Halloween Night", isDay: false }, treeType: "oak", opts: { event: "halloween", pet: "cat" } },
     { file: "assets/tree-holiday.gif", weather: { type: "snow", description: "Winter Holiday Christmas", isDay: true }, treeType: "spruce", opts: { event: "holiday", pet: "wolf", showChest: true } },
     { file: "assets/tree-fireworks.gif", weather: { type: "night", description: "New Year Fireworks Celebration", isDay: false }, treeType: "oak", opts: { event: "fireworks", pet: "fox", showCampfire: true } },
-    { file: "assets/tree-jungle.gif", weather: { type: "sunny", description: "Lush Jungle Rainforest" }, treeType: "jungle", opts: { pet: "cat", showChest: true } },
+    { file: "assets/tree-jungle.gif", weather: { type: "sunny", description: "Lush Jungle Rainforest" }, treeType: "jungle", opts: { pet: "parrot", showChest: true } },
     { file: "assets/tree-jungle-rain.gif", weather: { type: "rain", description: "Jungle Tropical Rain" }, treeType: "jungle" },
     { file: "assets/tree-dark-oak.gif", weather: { type: "sunny", description: "Dark Oak Forest" }, treeType: "dark_oak", opts: { pet: "wolf" } },
     { file: "assets/tree-acacia.gif", weather: { type: "sunny", description: "Savanna Acacia" }, treeType: "acacia", opts: { pet: "fox", showCampfire: true } },
     { file: "assets/tree-mangrove.gif", weather: { type: "sunny", description: "Mangrove Bayou Swamp" }, treeType: "mangrove", opts: { pet: "cat", showCampfire: true } },
     { file: "assets/tree-crimson.gif", weather: { type: "night", description: "Crimson Nether Forest", isDay: false }, treeType: "crimson", opts: { pet: "fox", showCampfire: true, showChest: true } },
     { file: "assets/tree-warped.gif", weather: { type: "night", description: "Warped Nether Aurora", isDay: false }, treeType: "warped", opts: { pet: "cat", showChest: true } },
+    { file: "assets/tree-parrot.gif", weather: { type: "sunny", description: "Red Macaw Parrot Companion" }, treeType: "jungle", opts: { pet: "parrot" } },
+    { file: "assets/tree-ender-chest.gif", weather: { type: "night", description: "Ender Milestone Chest (500+ Commits)", isDay: false }, treeType: "warped", opts: { showChest: true, customWeeks: enderWeeks, pet: "cat" } },
     { file: "assets/tree-streak-14.gif", weather: { type: "sunny", description: "Standard Streak (<100 Days)" }, treeType: "oak", opts: { streak: 14, pet: "wolf" } },
     { file: "assets/tree-streak-100.gif", weather: { type: "sunny", description: "100+ Day Golden Milestone Streak" }, treeType: "oak", opts: { streak: 100, pet: "wolf", showCampfire: true, showChest: true } },
     { file: "assets/tree-streak-365.gif", weather: { type: "night", description: "365+ Day Diamond Milestone Streak", isDay: false }, treeType: "sakura", opts: { streak: 365, pet: "fox", showCampfire: true, showChest: true } },

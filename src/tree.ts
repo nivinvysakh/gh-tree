@@ -62,7 +62,7 @@ export interface OreBlockPos {
   type: OreType;
 }
 
-export type PetType = "wolf" | "fox" | "cat";
+export type PetType = "wolf" | "fox" | "cat" | "parrot";
 
 export interface PetPos {
   x: number;
@@ -191,7 +191,7 @@ export function buildTreeLayout(
     showBee?: boolean;
     isOwner?: boolean;
     isContributor?: boolean;
-    pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+    pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
     showCampfire?: boolean | "auto";
     showChest?: boolean | "auto";
     event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";
@@ -365,10 +365,12 @@ export function buildTreeLayout(
 
   if (rawPetOpt !== "none") {
     let chosenType: PetType | undefined;
-    if (rawPetOpt === "wolf" || rawPetOpt === "fox" || rawPetOpt === "cat") {
+    if (rawPetOpt === "wolf" || rawPetOpt === "fox" || rawPetOpt === "cat" || rawPetOpt === "parrot") {
       chosenType = rawPetOpt;
     } else if (rawPetOpt === "auto") {
-      if (currentStreak >= 14) {
+      if (treeType === "jungle") {
+        chosenType = "parrot";
+      } else if (currentStreak >= 14) {
         chosenType = "wolf";
       } else if (currentStreak >= 7) {
         chosenType = "fox";
@@ -388,7 +390,7 @@ export function buildTreeLayout(
           : "sitting";
       pet = {
         x: 176, // Sits comfortably in Slot L3 next to trunk
-        y: groundY - (chosenType === "fox" && petState === "sleeping" ? 12 : 18),
+        y: groundY - (chosenType === "fox" && petState === "sleeping" ? 12 : chosenType === "parrot" ? 16 : 18),
         type: chosenType,
         state: petState,
       };
@@ -570,7 +572,7 @@ export type TreeOptions = {
   showBee?: boolean;
   isOwner?: boolean;
   isContributor?: boolean;
-  pet?: "auto" | "wolf" | "fox" | "cat" | "none";
+  pet?: "auto" | "wolf" | "fox" | "cat" | "parrot" | "none";
   showCampfire?: boolean | "auto";
   showChest?: boolean | "auto";
   event?: "auto" | "halloween" | "holiday" | "fireworks" | "none";

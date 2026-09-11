@@ -202,6 +202,13 @@ describe("Minecraft tree module", () => {
       expect(foxNightLayout.pet?.type).toBe("fox");
       expect(foxNightLayout.pet?.state).toBe("standing");
 
+      // Parrot in Jungle biome or explicit override
+      const jungleLayout = buildTreeLayout(streak7Weeks, undefined, { treeType: "jungle" });
+      expect(jungleLayout.pet?.type).toBe("parrot");
+
+      const customParrotLayout = buildTreeLayout(streak7Weeks, undefined, { pet: "parrot" });
+      expect(customParrotLayout.pet?.type).toBe("parrot");
+
       // Explicit pet override and pet: 'none'
       const customPetLayout = buildTreeLayout(streak7Weeks, undefined, { pet: "cat" });
       expect(customPetLayout.pet?.type).toBe("cat");
