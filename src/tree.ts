@@ -325,22 +325,22 @@ export function buildTreeLayout(
   const oreBlocks: OreBlockPos[] = [];
   
   if (opts.isOwner === true) {
-    oreBlocks.push({ x: 20, y: groundY + 16, type: "netherite" });
+    oreBlocks.push({ x: 20, y: groundY + 24, type: "netherite" });
   }
   if (currentStreak >= 7 || totalCommits >= 50) {
-    oreBlocks.push({ x: 76, y: groundY + 16, type: "gold" });
+    oreBlocks.push({ x: 76, y: groundY + 24, type: "gold" });
   }
   if (totalCommits >= 25 || totalMergedPRs >= 1) {
-    oreBlocks.push({ x: 132, y: groundY + 16, type: "diamond" });
+    oreBlocks.push({ x: 132, y: groundY + 24, type: "diamond" });
   }
   if (totalCommits >= 100 || leafBlocks.some((b) => b.commitLevel === 4)) {
-    oreBlocks.push({ x: 280, y: groundY + 16, type: "emerald" });
+    oreBlocks.push({ x: 280, y: groundY + 24, type: "emerald" });
   }
   if (opts.isContributor === true) {
-    oreBlocks.push({ x: 336, y: groundY + 16, type: "lapis" });
+    oreBlocks.push({ x: 336, y: groundY + 24, type: "lapis" });
   }
   if (totalMergedPRs >= 2 || (totalOpenPRs + totalMergedPRs + totalAssignedPRs) >= 3 || currentStreak >= 14) {
-    oreBlocks.push({ x: 392, y: groundY + 16, type: "redstone" });
+    oreBlocks.push({ x: 392, y: groundY + 24, type: "redstone" });
   }
 
   // 6. Wooden Stat Signpost 🪧 (Placed at x: 62 with comfortable spacing)

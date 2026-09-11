@@ -16,8 +16,8 @@
 
 ---
 
-- **Minecraft Tree Biomes 🌸🌲⚪🌳** — choose between **Sakura / Cherry Blossom** (with falling pink petals), **Spruce Taiga**, **Birch Forest**, or classic **Oak**.
-- **Minecraft Oak / Sakura Leaves** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink) across the 14 canopy blocks.
+- **Minecraft Tree Biomes 🌸🌲⚪🌳🌴🪵🏜️🌿🔥🌌** — choose between 10 authentic biomes: **Oak**, **Sakura / Cherry Blossom**, **Taiga Spruce**, **Golden Birch**, **Lush Jungle**, **Dark Oak**, **Savanna Acacia**, **Mangrove Swamp**, **Crimson Nether**, or **Warped Nether**.
+- **Minecraft Biome Canopies** — weekly commits drive the lushness and color intensity levels (Level 0 dormant to Level 4 rich emerald/pink/cyan/amber) across the 14 canopy blocks.
 - **Minecraft Pet Companions 🐾 (Wolf 🐺, Fox 🦊, Cat 🐱)** — tamed red-collared **Wolf** (tail-wagging with active streaks $\ge 14\text{d}$), sleeping/waking orange **Fox** (curled up during day, alert at night for streak $\ge 7\text{d}$), and cute **Tuxedo Cat**.
 - **Roasting Campfire 🔥** — crackling campfire with rising smoke particles and flying ember sparks during high-velocity sprint periods.
 - **Milestone Treasure Chests 📦 (Wood, Iron, Gold, Diamond, Ender)** — treasure chests sitting on the lawn leveling up as your total commit milestones grow!
@@ -33,7 +33,7 @@
 
 ---
 
-## Biome & Tree Varieties Showcase 🌸🌲⚪🌳
+## Biome & Tree Varieties Showcase 🌸🌲⚪🌳🌴🪵🏜️🌿🔥🌌
 
 | **Classic Oak 🌳** (`tree-type: oak`) | **Sakura Cherry Blossom 🌸** (`tree-type: sakura`) |
 | :---: | :---: |
@@ -44,6 +44,21 @@
 | :---: | :---: |
 | ![Spruce](assets/tree-spruce.gif) | ![Birch](assets/tree-birch.gif) |
 | *Dark coniferous needles, Fox & spruce bark* | *White notched birch bark & Wolf pet* |
+
+| **Lush Jungle 🌴** (`tree-type: jungle`) | **Dark Oak Forest 🪵** (`tree-type: dark_oak`) |
+| :---: | :---: |
+| ![Jungle](assets/tree-jungle.gif) | ![Dark Oak](assets/tree-dark-oak.gif) |
+| *Tropical rainforest emeralds & Cat pet* | *Deep shadow canopy & Wolf pet* |
+
+| **Savanna Acacia 🏜️** (`tree-type: acacia`) | **Mangrove Swamp 🌿** (`tree-type: mangrove`) |
+| :---: | :---: |
+| ![Acacia](assets/tree-acacia.gif) | ![Mangrove](assets/tree-mangrove.gif) |
+| *Warm sunset amber leaves & Fox pet* | *Bayou olive foliage, swamp roots & Campfire* |
+
+| **Crimson Nether 🔥** (`tree-type: crimson`) | **Warped Nether 🌌** (`tree-type: warped`) |
+| :---: | :---: |
+| ![Crimson](assets/tree-crimson.gif) | ![Warped](assets/tree-warped.gif) |
+| *Nether crimson hyphae & floating red spores* | *Bioluminescent cyan canopy & cyan spores* |
 
 ---
 
@@ -229,7 +244,7 @@ Add this anywhere in your `README.md`:
 
 ```markdown
 <!-- commit-tree-start -->
-![tree](tree.gif?v=1789118913569)
+![tree](tree.gif?v=1789119065186)
 <!-- commit-tree-end -->
 ```
 

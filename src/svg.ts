@@ -678,13 +678,13 @@ function renderMinecraftGround(
   // Textured dirt specks and root pebbles
   let dirtSpecksSvg = "";
   const dirtSlots = [
-    { x: 38, y: groundY + grassHeight + 7, w: 4, h: 3, c: dirtDark },
-    { x: 92, y: groundY + grassHeight + 17, w: 5, h: 3, c: pebbleColor },
-    { x: 154, y: groundY + grassHeight + 9, w: 4, h: 4, c: dirtLight },
+    { x: 52, y: groundY + grassHeight + 7, w: 4, h: 3, c: dirtDark },
+    { x: 108, y: groundY + grassHeight + 17, w: 5, h: 3, c: pebbleColor },
+    { x: 164, y: groundY + grassHeight + 9, w: 4, h: 4, c: dirtLight },
     { x: 208, y: groundY + grassHeight + 20, w: 6, h: 3, c: dirtDark },
     { x: 258, y: groundY + grassHeight + 8, w: 4, h: 3, c: pebbleColor },
-    { x: 308, y: groundY + grassHeight + 19, w: 5, h: 4, c: dirtLight },
-    { x: 368, y: groundY + grassHeight + 11, w: 4, h: 3, c: dirtDark },
+    { x: 318, y: groundY + grassHeight + 19, w: 5, h: 4, c: dirtLight },
+    { x: 372, y: groundY + grassHeight + 11, w: 4, h: 3, c: dirtDark },
     { x: 422, y: groundY + grassHeight + 22, w: 5, h: 3, c: pebbleColor },
   ];
   for (const s of dirtSlots) {
