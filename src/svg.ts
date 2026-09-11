@@ -1352,53 +1352,91 @@ function renderMinecraftCampfire(
 
 function renderMinecraftChest(chest: ChestPos, frameIndex: number): string {
   const { x, y, type } = chest;
-  const ps = 1.35;
+  const isEnder = type === "ender";
+  const isDiamond = type === "diamond";
+  const isGold = type === "gold";
 
-  const CHEST_PALETTES: Record<string, { body: string; shadow: string; highlight: string; latch: string; latchH: string }> = {
-    wood: { body: "#a66a38", shadow: "#422814", highlight: "#c68642", latch: "#ffd54f", latchH: "#ffffff" },
-    iron: { body: "#b0bec5", shadow: "#37474f", highlight: "#eceff1", latch: "#78909c", latchH: "#ffffff" },
-    gold: { body: "#ffd54f", shadow: "#ff8f00", highlight: "#fff9c4", latch: "#ff6f00", latchH: "#ffffff" },
-    diamond: { body: "#00e5ff", shadow: "#0091ea", highlight: "#e0f7fa", latch: "#00b0ff", latchH: "#ffffff" },
-    ender: { body: "#1a3636", shadow: "#091c1c", highlight: "#2d5a5a", latch: "#00e5ff", latchH: "#b388ff" },
+  const CHEST_PALETTES: Record<string, { body: string; shadow: string; highlight: string; seam: string; latchBorder: string; latchCore: string; latchShine: string }> = {
+    wood: { body: "#a66a38", shadow: "#422814", highlight: "#c68642", seam: "#321d0d", latchBorder: "#263238", latchCore: "#ffd54f", latchShine: "#ffffff" },
+    iron: { body: "#b0bec5", shadow: "#37474f", highlight: "#eceff1", seam: "#263238", latchBorder: "#263238", latchCore: "#eceff1", latchShine: "#ffffff" },
+    gold: { body: "#ffd54f", shadow: "#bf360c", highlight: "#fff9c4", seam: "#e65100", latchBorder: "#bf360c", latchCore: "#fff9c4", latchShine: "#ffffff" },
+    diamond: { body: "#00e5ff", shadow: "#006064", highlight: "#e0f7fa", seam: "#00838f", latchBorder: "#006064", latchCore: "#e0f7fa", latchShine: "#ffffff" },
+    ender: { body: "#1a3636", shadow: "#091c1c", highlight: "#2d5a5a", seam: "#061313", latchBorder: "#060d0e", latchCore: "#00e5ff", latchShine: "#ffffff" },
   };
 
   const p = CHEST_PALETTES[type] || CHEST_PALETTES.wood;
-  const glint = (type === "diamond" || type === "gold" || type === "ender") && frameIndex % 4 === 0;
+
+  // Latch rendering
+  let latchSvg = "";
+  if (isEnder) {
+    // Authentic Eye of Ender center latch with turquoise/cyan iris and purple pupil slit
+    latchSvg = `
+      <!-- Eye of Ender Center Latch -->
+      <rect x="${x + 6}" y="${y + 4}" width="6" height="5" fill="#060d0e" />
+      <rect x="${x + 7}" y="${y + 4}" width="4" height="4" fill="#00e5ff" />
+      <rect x="${x + 8}" y="${y + 4}" width="2" height="4" fill="#7c4dff" />
+      <rect x="${x + 8.5}" y="${y + 5}" width="1" height="2" fill="#311b92" />
+      <rect x="${x + 7}" y="${y + 4}" width="1" height="1" fill="#ffffff" />
+    `;
+  } else {
+    latchSvg = `
+      <!-- Center Lock Latch -->
+      <rect x="${x + 7}" y="${y + 4}" width="4" height="5" fill="${p.latchBorder}" />
+      <rect x="${x + 8}" y="${y + 5}" width="2" height="3" fill="${p.latchCore}" />
+      <rect x="${x + 8}" y="${y + 5}" width="1" height="1" fill="${p.latchShine}" />
+    `;
+  }
+
+  // Floating mystical portal particles for Ender Chest (amethyst purple & cyan embers)
+  let particlesSvg = "";
+  if (isEnder) {
+    const p1Y = y - 2 - ((frameIndex * 2) % 12);
+    const p1X = x + 4 + ((frameIndex * 1.5) % 10);
+    const p2Y = y - 4 - (((frameIndex + 2) * 2) % 14);
+    const p2X = x + 12 - ((frameIndex * 1.2) % 8);
+    particlesSvg = `
+      <!-- Ender Portal Particles -->
+      <rect x="${p1X.toFixed(1)}" y="${p1Y.toFixed(1)}" width="2" height="2" fill="#b388ff" opacity="0.85" />
+      <rect x="${p2X.toFixed(1)}" y="${p2Y.toFixed(1)}" width="2" height="2" fill="#00e5ff" opacity="0.75" />
+    `;
+  } else if ((isDiamond || isGold) && frameIndex % 4 === 0) {
+    // Subtle specular glint dot on the metal corner for gold/diamond chests
+    particlesSvg = `
+      <rect x="${x + 14}" y="${y + 2}" width="1.5" height="1.5" fill="#ffffff" opacity="0.9" />
+    `;
+  }
 
   return `
     <!-- Minecraft ${type.toUpperCase()} Milestone Chest -->
     <g shape-rendering="crispEdges">
-      <!-- Chest Outer Shadow/Dark Iron Border -->
-      <rect x="${x}" y="${y}" width="${14 * ps}" height="${12 * ps}" fill="${p.shadow}" />
+      ${particlesSvg}
+      <!-- Chest Outer Shadow/Dark Border (Flush with ground: y to y+16) -->
+      <rect x="${x}" y="${y}" width="18" height="16" fill="${p.shadow}" />
       
       <!-- Lid -->
-      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${12 * ps}" height="${4 * ps}" fill="${p.body}" />
-      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${12 * ps}" height="${1 * ps}" fill="${p.highlight}" />
+      <rect x="${x + 2}" y="${y + 2}" width="14" height="4" fill="${p.body}" />
+      <rect x="${x + 2}" y="${y + 2}" width="14" height="1" fill="${p.highlight}" />
       <!-- Lid Seam -->
-      <rect x="${x}" y="${y + 5 * ps}" width="${14 * ps}" height="${1 * ps}" fill="${p.shadow}" />
+      <rect x="${x + 1}" y="${y + 6}" width="16" height="1" fill="${p.seam}" />
       
       <!-- Body -->
-      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${12 * ps}" height="${5 * ps}" fill="${p.body}" />
-      <rect x="${x + 1 * ps}" y="${y + 6 * ps}" width="${12 * ps}" height="${1 * ps}" fill="${p.highlight}" />
+      <rect x="${x + 2}" y="${y + 7}" width="14" height="7" fill="${p.body}" />
+      <rect x="${x + 2}" y="${y + 7}" width="14" height="1" fill="${p.highlight}" />
+      <rect x="${x + 2}" y="${y + 13}" width="14" height="1" fill="${p.shadow}" />
       
-      <!-- Metal Corner Brackets -->
-      <rect x="${x}" y="${y}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
-      <rect x="${x + 12 * ps}" y="${y}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
-      <rect x="${x}" y="${y + 10 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
-      <rect x="${x + 12 * ps}" y="${y + 10 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.shadow}" />
+      <!-- Reinforced Metal Corner Brackets -->
+      <rect x="${x}" y="${y}" width="3" height="3" fill="${p.shadow}" />
+      <rect x="${x + 15}" y="${y}" width="3" height="3" fill="${p.shadow}" />
+      <rect x="${x}" y="${y + 13}" width="3" height="3" fill="${p.shadow}" />
+      <rect x="${x + 15}" y="${y + 13}" width="3" height="3" fill="${p.shadow}" />
 
-      <!-- Center Lock Latch -->
-      <rect x="${x + 5.5 * ps}" y="${y + 3.5 * ps}" width="${3 * ps}" height="${4 * ps}" fill="${p.latch}" />
-      <rect x="${x + 6 * ps}" y="${y + 4.5 * ps}" width="${2 * ps}" height="${2 * ps}" fill="${p.latchH}" />
-
-      ${glint ? `<rect x="${x + 2 * ps}" y="${y + 2 * ps}" width="${2 * ps}" height="${2 * ps}" fill="#ffffff" opacity="0.95" />` : ""}
+      ${latchSvg}
     </g>
   `;
 }
 
 function renderSeasonalJackOLantern(jack: JackOLanternPos, frameIndex: number): string {
   const { x, y } = jack;
-  const ps = 1.3;
   const flicker = frameIndex % 3 === 0;
   const flameColor = flicker ? "#fff176" : "#ffd54f";
 
@@ -1406,30 +1444,30 @@ function renderSeasonalJackOLantern(jack: JackOLanternPos, frameIndex: number): 
     <!-- Seasonal Halloween Jack-o'-Lantern -->
     <g shape-rendering="crispEdges">
       <!-- Green Stem -->
-      <rect x="${x + 6 * ps}" y="${y - 2 * ps}" width="${2 * ps}" height="${3 * ps}" fill="#558b2f" />
+      <rect x="${x + 8}" y="${y - 3}" width="3" height="4" fill="#558b2f" />
 
-      <!-- Pumpkin Body -->
-      <rect x="${x}" y="${y}" width="${14 * ps}" height="${12 * ps}" fill="#e65100" />
-      <rect x="${x + 1 * ps}" y="${y + 1 * ps}" width="${12 * ps}" height="${10 * ps}" fill="#f57c00" />
+      <!-- Pumpkin Body (Flush with ground: y to y+16) -->
+      <rect x="${x}" y="${y}" width="18" height="16" fill="#e65100" />
+      <rect x="${x + 1}" y="${y + 1}" width="16" height="14" fill="#f57c00" />
       <!-- Ribs -->
-      <rect x="${x + 4 * ps}" y="${y}" width="${1 * ps}" height="${12 * ps}" fill="#e65100" />
-      <rect x="${x + 9 * ps}" y="${y}" width="${1 * ps}" height="${12 * ps}" fill="#e65100" />
+      <rect x="${x + 5}" y="${y}" width="1" height="16" fill="#e65100" />
+      <rect x="${x + 12}" y="${y}" width="1" height="16" fill="#e65100" />
 
       <!-- Carved Glowing Eyes -->
-      <rect x="${x + 2.5 * ps}" y="${y + 3 * ps}" width="${2.5 * ps}" height="${2.5 * ps}" fill="#212121" />
-      <rect x="${x + 3 * ps}" y="${y + 3.5 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
+      <rect x="${x + 3}" y="${y + 4}" width="3" height="3" fill="#212121" />
+      <rect x="${x + 4}" y="${y + 5}" width="2" height="2" fill="${flameColor}" />
 
-      <rect x="${x + 9 * ps}" y="${y + 3 * ps}" width="${2.5 * ps}" height="${2.5 * ps}" fill="#212121" />
-      <rect x="${x + 9.5 * ps}" y="${y + 3.5 * ps}" width="${1.5 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
+      <rect x="${x + 12}" y="${y + 4}" width="3" height="3" fill="#212121" />
+      <rect x="${x + 12}" y="${y + 5}" width="2" height="2" fill="${flameColor}" />
 
       <!-- Carved Nose -->
-      <rect x="${x + 6 * ps}" y="${y + 5.5 * ps}" width="${2 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
+      <rect x="${x + 8}" y="${y + 7}" width="2" height="2" fill="${flameColor}" />
 
       <!-- Carved Grinning Tooth Mouth -->
-      <rect x="${x + 3 * ps}" y="${y + 8 * ps}" width="${8 * ps}" height="${2.5 * ps}" fill="#212121" />
-      <rect x="${x + 3.5 * ps}" y="${y + 8.5 * ps}" width="${7 * ps}" height="${1.5 * ps}" fill="${flameColor}" />
-      <rect x="${x + 5 * ps}" y="${y + 8 * ps}" width="${1 * ps}" height="${1 * ps}" fill="#f57c00" />
-      <rect x="${x + 8 * ps}" y="${y + 9 * ps}" width="${1 * ps}" height="${1 * ps}" fill="#f57c00" />
+      <rect x="${x + 4}" y="${y + 10}" width="10" height="3" fill="#212121" />
+      <rect x="${x + 5}" y="${y + 11}" width="8" height="2" fill="${flameColor}" />
+      <rect x="${x + 7}" y="${y + 10}" width="1" height="1" fill="#f57c00" />
+      <rect x="${x + 10}" y="${y + 12}" width="1" height="1" fill="#f57c00" />
     </g>
   `;
 }

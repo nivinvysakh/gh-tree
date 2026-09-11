@@ -413,7 +413,7 @@ export function buildTreeLayout(
     }
 
     if (chestType) {
-      chest = { x: 274, y: groundY - 18, type: chestType };
+      chest = { x: 274, y: groundY - 16, type: chestType };
     }
   }
 
