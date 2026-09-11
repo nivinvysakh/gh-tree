@@ -342,7 +342,7 @@ describe("Minecraft SVG module", () => {
     expect(diamondSvg).toContain('fill="#00e5ff"');
   });
 
-  it("renders Halloween Jack-o'-Lantern with glowing carved face", () => {
+  it("renders Halloween Jack-o'-Lantern with glowing carved face and flying ghosts", () => {
     const halloweenLayout: TreeLayout = {
       ...mockLayout,
       seasonalEvent: "halloween",
@@ -352,6 +352,8 @@ describe("Minecraft SVG module", () => {
     expect(svg).toContain("<!-- Seasonal Halloween Jack-o'-Lantern -->");
     expect(svg).toContain('fill="#e65100"');
     expect(svg).toContain('fill="#558b2f"'); // Stem
+    expect(svg).toContain("<!-- Flying Halloween Ghosts -->");
+    expect(svg).toContain("<!-- Floating Spooky Spirit Ghost -->");
   });
 
   it("renders Holiday Christmas fairy lights and wrapped gift boxes", () => {

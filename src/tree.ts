@@ -461,16 +461,27 @@ export function buildTreeLayout(
   }
 
   // 12. Dynamic Non-Overlapping Flower Placement 🌸
-  const leftSlots: number[] = [];
-  if (!jackOLantern || jackOLantern.x !== 118) leftSlots.push(118);
-  leftSlots.push(146);
-  if (!pet) leftSlots.push(176);
+  const occupiedRanges: [number, number][] = [];
+  if (signpost) occupiedRanges.push([50, 102]);
+  if (jackOLantern) occupiedRanges.push([jackOLantern.x - 10, jackOLantern.x + 24]);
+  if (pet) occupiedRanges.push([pet.x - 10, pet.x + 24]);
+  if (chest) occupiedRanges.push([chest.x - 10, chest.x + 24]);
+  if (holidayGifts) {
+    for (const g of holidayGifts) {
+      occupiedRanges.push([g.x - 8, g.x + g.size + 8]);
+    }
+  }
+  if (campfire) occupiedRanges.push([campfire.x - 10, campfire.x + 26]);
 
-  const rightSlots: number[] = [];
-  if (!chest && (!holidayGifts || holidayGifts[0].x !== 274)) rightSlots.push(274);
-  if (!holidayGifts || holidayGifts[0].x !== 310) rightSlots.push(310);
-  if (!campfire && (!jackOLantern || jackOLantern.x !== 346)) rightSlots.push(346);
-  if (!jackOLantern || jackOLantern.x !== 382) rightSlots.push(382);
+  const isSlotAvailable = (x: number): boolean => {
+    return !occupiedRanges.some(([minX, maxX]) => x >= minX && x <= maxX);
+  };
+
+  const leftCandidateSlots = [112, 142, 172];
+  const rightCandidateSlots = [274, 308, 344, 380];
+
+  const leftSlots = leftCandidateSlots.filter(isSlotAvailable);
+  const rightSlots = rightCandidateSlots.filter(isSlotAvailable);
 
   const flowers: FlowerPos[] = [];
   if (totalOpenPRs > 0) {

@@ -1472,6 +1472,61 @@ function renderSeasonalJackOLantern(jack: JackOLanternPos, frameIndex: number): 
   `;
 }
 
+function renderHalloweenGhosts(
+  jackX: number,
+  jackY: number,
+  frameIndex: number,
+  totalFrames: number
+): string {
+  let ghostsSvg = "";
+  const ghostCount = 3;
+
+  for (let g = 0; g < ghostCount; g++) {
+    const cycle = totalFrames > 0 ? (frameIndex + g * 5) % totalFrames : 0;
+    const progress = cycle / Math.max(1, totalFrames);
+    
+    // Ghosts emerge and ascend from the jack-o'-lantern into the night sky
+    const startX = jackX + 4 + g * 3;
+    const startY = jackY - 6;
+    const endY = startY - 80 - g * 30;
+    
+    const gy = startY - progress * (startY - endY);
+    const sway = Math.sin(progress * Math.PI * 2 + g * 1.8) * (12 + g * 6);
+    const gx = startX + sway;
+    
+    // Fade in as they emerge, fade out as they ascend
+    const opacity = progress < 0.2 ? (progress / 0.2) * 0.85 : progress > 0.75 ? ((1 - progress) / 0.25) * 0.85 : 0.85;
+    
+    // Tail animation waving
+    const tailWiggle = (frameIndex + g) % 2 === 0;
+
+    ghostsSvg += `
+      <!-- Floating Spooky Spirit Ghost -->
+      <g shape-rendering="crispEdges">
+        <!-- Ghost Aura Glow -->
+        <rect x="${(gx - 1).toFixed(1)}" y="${(gy - 1).toFixed(1)}" width="10" height="11" fill="#e0f7fa" opacity="${(opacity * 0.25).toFixed(2)}" />
+        
+        <!-- Ghost Head & Body -->
+        <rect x="${(gx + 2).toFixed(1)}" y="${gy.toFixed(1)}" width="4" height="2" fill="#ffffff" opacity="${opacity.toFixed(2)}" />
+        <rect x="${gx.toFixed(1)}" y="${(gy + 2).toFixed(1)}" width="8" height="5" fill="#ffffff" opacity="${opacity.toFixed(2)}" />
+        
+        <!-- Waving Wispy Ghost Tails -->
+        <rect x="${(gx + (tailWiggle ? 1 : 0)).toFixed(1)}" y="${(gy + 7).toFixed(1)}" width="2" height="${tailWiggle ? 2 : 3}" fill="#ffffff" opacity="${(opacity * 0.8).toFixed(2)}" />
+        <rect x="${(gx + 3).toFixed(1)}" y="${(gy + 7).toFixed(1)}" width="2" height="${tailWiggle ? 3 : 2}" fill="#ffffff" opacity="${(opacity * 0.8).toFixed(2)}" />
+        <rect x="${(gx + (tailWiggle ? 5 : 6)).toFixed(1)}" y="${(gy + 7).toFixed(1)}" width="2" height="${tailWiggle ? 2 : 3}" fill="#ffffff" opacity="${(opacity * 0.8).toFixed(2)}" />
+        
+        <!-- Cute Spooky Eyes with Cyan Pupil Glow -->
+        <rect x="${(gx + 1.5).toFixed(1)}" y="${(gy + 3).toFixed(1)}" width="2" height="2" fill="#1a237e" opacity="${opacity.toFixed(2)}" />
+        <rect x="${(gx + 4.5).toFixed(1)}" y="${(gy + 3).toFixed(1)}" width="2" height="2" fill="#1a237e" opacity="${opacity.toFixed(2)}" />
+        <rect x="${(gx + 2).toFixed(1)}" y="${(gy + 3.5).toFixed(1)}" width="1" height="1" fill="#00e5ff" opacity="${opacity.toFixed(2)}" />
+        <rect x="${(gx + 5).toFixed(1)}" y="${(gy + 3.5).toFixed(1)}" width="1" height="1" fill="#00e5ff" opacity="${opacity.toFixed(2)}" />
+      </g>
+    `;
+  }
+
+  return `<g shape-rendering="crispEdges"><!-- Flying Halloween Ghosts -->${ghostsSvg}</g>`;
+}
+
 function renderSeasonalHolidayGifts(gifts: HolidayGiftPos[], _frameIndex: number): string {
   let res = "";
   for (const gift of gifts) {
@@ -1705,10 +1760,12 @@ export function renderFrame(
     campfireSvg = renderMinecraftCampfire(campfire, frameIndex, totalFrames);
   }
 
-  // 14. Halloween Jack-o'-Lantern
+  // 14. Halloween Jack-o'-Lantern & Flying Ghosts
   let jackOLanternSvg = "";
+  let ghostsSvg = "";
   if (jackOLantern) {
     jackOLanternSvg = renderSeasonalJackOLantern(jackOLantern, frameIndex);
+    ghostsSvg = renderHalloweenGhosts(jackOLantern.x, jackOLantern.y, frameIndex, totalFrames);
   }
 
   // 15. Holiday Gift Boxes
@@ -1754,6 +1811,7 @@ export function renderFrame(
   ${petSvg}
   ${campfireSvg}
   ${jackOLanternSvg}
+  ${ghostsSvg}
   ${holidayGiftsSvg}
   ${beeSvg}
   ${sporesSvg}
