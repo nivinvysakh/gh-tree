@@ -1,0 +1,22 @@
+import { TreeType, LeafBlockPos, ApplePos, FlowerPos, GoldenApplePos, PetPos, FarmerPos, CampfirePos, ChestPos, JackOLanternPos, HolidayGiftPos, OreBlockPos } from "./tree";
+export declare function renderMinecraftGround(width: number, height: number, groundY: number, isSnow?: boolean, oreBlocks?: OreBlockPos[], treeType?: TreeType): string;
+export declare function renderMinecraftLog(x: number, y: number, size: number, treeType?: TreeType): string;
+export declare function renderMinecraftLeaf(leaf: LeafBlockPos, frameIndex: number, totalFrames: number, isSnow?: boolean, treeType?: TreeType): string;
+export declare function renderFlowerOnGrass(flower: FlowerPos, frameIndex: number): string;
+export declare function renderApple(apple: ApplePos, frameIndex: number): string;
+export declare function renderGoldenAppleOnGrass(apple: GoldenApplePos, frameIndex: number): string;
+export declare function renderMinecraftBee(baseX: number, baseY: number, frameIndex: number, totalFrames: number): string;
+export declare function renderMinecraftBeehive(x: number, y: number, _side?: "left" | "right"): string;
+export declare function renderMinecraftSignpost(x: number, y: number, streak: number): string;
+export declare function renderMinecraftFarmer(farmer: FarmerPos, frameIndex: number, _totalFrames?: number): string;
+export declare function renderMinecraftWolf(pet: PetPos, frameIndex: number): string;
+export declare function renderMinecraftFox(pet: PetPos, frameIndex: number, isNight: boolean): string;
+export declare function renderMinecraftCat(pet: PetPos, frameIndex: number): string;
+export declare function renderMinecraftParrot(pet: PetPos, frameIndex: number): string;
+export declare function renderMinecraftCampfire(campfire: CampfirePos, frameIndex: number, totalFrames: number): string;
+export declare function renderMinecraftChest(chest: ChestPos, frameIndex: number): string;
+export declare function renderSeasonalJackOLantern(jack: JackOLanternPos, frameIndex: number): string;
+export declare function renderHalloweenGhosts(jackX: number, jackY: number, frameIndex: number, totalFrames: number): string;
+export declare function renderSeasonalHolidayGifts(gifts: HolidayGiftPos[], _frameIndex: number): string;
+export declare function renderSeasonalFairyLights(leafBlocks: LeafBlockPos[], frameIndex: number): string;
+//# sourceMappingURL=props.d.ts.map

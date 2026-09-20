@@ -12,7 +12,9 @@
     "site:dev": "vite site",
     "site:build": "vite build site --outDir ../dist-site",
     "site:preview": "vite preview site",
-    "api:dev": "tsx scripts/dev-server.ts"
+    "api:dev": "tsx scripts/dev-server.ts",
+    "npm:build": "tsc -p npm/tsconfig.json",
+    "npm:typecheck": "tsc -p npm/tsconfig.json --noEmit"
   },
   "license": "MIT",
   "dependencies": {

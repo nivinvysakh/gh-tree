@@ -1,0 +1,49 @@
+{
+  "name": "gh-tree",
+  "version": "1.4.0",
+  "description": "Generate animated Minecraft contribution tree GIFs, SVGs, and profile widgets from GitHub activity or custom inputs.",
+  "main": "./dist/npm/src/index.js",
+  "module": "./dist/npm/src/index.js",
+  "types": "./dist/npm/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/npm/src/index.d.ts",
+      "require": "./dist/npm/src/index.js",
+      "import": "./dist/npm/src/index.js"
+    },
+    "./decode": {
+      "types": "./dist/npm/src/decode.d.ts",
+      "require": "./dist/npm/src/decode.js",
+      "import": "./dist/npm/src/decode.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "minecraft",
+    "github",
+    "contributions",
+    "commit-tree",
+    "pixel-art",
+    "animated-gif",
+    "svg",
+    "tree-generator"
+  ],
+  "author": "Nivin Vysakh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nivinvysakh/gh-tree.git",
+    "directory": "npm"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
+    "gifenc": "^1.0.3"
+  }
+}
