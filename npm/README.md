@@ -1,9 +1,9 @@
-# gh-tree 🌲
+# @nivinvysakh/gh-tree 🌲
 
 > **Minecraft Contribution Tree Generator for Node.js & JavaScript**  
 > Generate animated Minecraft tree GIFs, SVG frames, and profile widgets directly from GitHub contribution activity or custom parameters.
 
-[![npm version](https://img.shields.io/npm/v/gh-tree?color=10b981&logo=npm)](https://www.npmjs.com/package/gh-tree)
+[![npm version](https://img.shields.io/npm/v/@nivinvysakh/gh-tree?color=10b981&logo=npm)](https://www.npmjs.com/package/@nivinvysakh/gh-tree)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -11,13 +11,13 @@
 ## 📦 Installation
 
 ```bash
-npm install gh-tree
+npm install @nivinvysakh/gh-tree
 ```
 or with Yarn / pnpm / Bun:
 ```bash
-pnpm add gh-tree
-yarn add gh-tree
-bun add gh-tree
+pnpm add @nivinvysakh/gh-tree
+yarn add @nivinvysakh/gh-tree
+bun add @nivinvysakh/gh-tree
 ```
 
 ---
@@ -27,7 +27,7 @@ bun add gh-tree
 ### 1. Generate an Animated GIF from GitHub Activity
 
 ```typescript
-import { generateTreeGif } from "gh-tree";
+import { generateTreeGif } from "@nivinvysakh/gh-tree";
 import * as fs from "fs";
 
 async function main() {

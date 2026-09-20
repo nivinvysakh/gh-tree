@@ -1,6 +1,9 @@
 {
-  "name": "gh-tree",
+  "name": "@nivinvysakh/gh-tree",
   "version": "1.4.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Generate animated Minecraft contribution tree GIFs, SVGs, and profile widgets from GitHub activity or custom inputs.",
   "main": "./dist/npm/src/index.js",
   "module": "./dist/npm/src/index.js",
