@@ -22,7 +22,7 @@
     "gifenc": "^1.0.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.4",
     "@types/node": "^26.6.6",
     "@vercel/ncc": "^0.38.1",
     "tailwindcss": "^4.3.4",
